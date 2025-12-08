@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOVA - Cheap. Social. Safe.</title>
+    <title>KOVA</title>
+    <link rel="icon" type="image/png" href="Kova_logo_white.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Arimo:ital,wght@1,700&display=swap" rel="stylesheet">
@@ -120,15 +121,25 @@
         .instagram-qr-text .instagram-handle-link {
             color: #49b166; text-decoration: none; font-weight: 700;
         }
-        .instagram-qr-text a:hover,
-        .instagram-qr-text .instagram-handle-link:hover {
-            text-decoration: underline;
+        .reveal-section {
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            will-change: opacity, transform;
         }
-        .instagram-phone-display {
-            width: 280px; height: 450px; border-radius: 34.886px 34.886px 0 0;
-            overflow: hidden; flex-shrink: 0; box-shadow: none; filter: none;
+        .reveal-top { transform: translateY(-60px); }
+        .reveal-left { transform: translateX(-80px); }
+        .reveal-right { transform: translateX(80px); }
+        .reveal-section.visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
         }
-        .instagram-phone-display img { width: 100%; height: 100%; object-fit: cover; box-shadow: none; filter: none; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-section {
+                transition: none;
+                transform: none;
+                opacity: 1;
+            }
+        }
         @media (max-width: 768px) { .instagram-content { flex-direction: column; } }
         footer { background: #f1fff5; padding: 32px 16px; width: 100%; margin: 0 auto; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
@@ -167,7 +178,7 @@
         </div>
     </div>
 
-    <section class="hero-section">
+    <section class="hero-section reveal-section reveal-top">
         <div class="hero-background">
             <img src="unsplash_NcdG9mK3PBY.png" alt="Hero Background">
             <div class="hero-overlay"></div>
@@ -184,7 +195,7 @@
         </div>
     </section>
 
-    <section class="how-it-works-section">
+    <section class="how-it-works-section reveal-section reveal-right">
         <div class="how-it-works-title">
             <span>How</span>
             <div class="logo-inline">
@@ -194,7 +205,7 @@
         </div>
     </section>
 
-    <section class="content-section pay-less-section">
+    <section class="content-section pay-less-section reveal-section reveal-left">
         <div class="section-content">
             <div class="section-text">
                 <h2 class="section-title-green">Pay Less</h2>
@@ -206,7 +217,7 @@
         </div>
     </section>
 
-    <section class="content-section know-who-section">
+    <section class="content-section know-who-section reveal-section reveal-right">
         <div class="section-content">
             <div class="section-text">
                 <h2 class="section-title-green">Know Who You Ride With</h2>
@@ -218,7 +229,7 @@
         </div>
     </section>
 
-    <section class="content-section find-community-section">
+    <section class="content-section find-community-section reveal-section reveal-left">
         <div class="section-content">
             <div class="section-text">
                 <h2 class="section-title-green">Find Your Community</h2>
@@ -230,7 +241,7 @@
         </div>
     </section>
 
-    <section class="instagram-follow-section">
+    <section class="instagram-follow-section reveal-section reveal-right">
         <div class="instagram-box">
             <div class="instagram-header">
                 <h2>Follow Our Instagram</h2>
@@ -256,15 +267,15 @@
         </div>
     </section>
 
-    <footer>
+    <footer class="reveal-section reveal-left">
         <div class="footer-content">
             <div class="footer-logo">
                 <img src="Kova_logo_white_1.svg" alt="KOVA Logo">
             </div>
             <div class="footer-links">
                 <a href="https://www.instagram.com/ridekova/" target="_blank">Instagram</a>
-                <a href="privacy.html">Privacy</a>
-                <a href="terms.html">Terms</a>
+                <a href="privacy/privacy.html">Privacy</a>
+                <a href="terms/terms.html">Terms</a>
             </div>
             <div class="footer-divider"></div>
             <div class="footer-copyright">
@@ -280,6 +291,29 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('.reveal-section');
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (prefersReducedMotion) {
+                sections.forEach(section => section.classList.add('visible'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
 </body>
 </html>
 
