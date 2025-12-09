@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="Kova_logo_white.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Arimo:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Arimo:ital,wght@1,700&family=Andika+New+Basic:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -26,20 +26,30 @@
             display: flex; justify-content: space-between; align-items: center;
             max-width: 1400px; margin: 0 auto;
         }
-        .logo-header { height: 70px; }
+        .logo-header { height: 56px; }
         .logo-header img { height: 100%; width: auto; }
         .hero-section {
-            position: relative; width: 100%; min-height: 852px;
+            position: relative; width: 100%;
+            min-height: clamp(600px, 90vh, 950px);
+            padding: clamp(60px, 10vw, 140px) clamp(16px, 8vw, 64px);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; color: white;
         }
         .hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
         .hero-background img { width: 100%; height: 100%; object-fit: cover; }
         .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(68, 169, 96, 0.08); }
-        .hero-content { position: relative; z-index: 2; padding-top: 40px; }
-        .hero-logo { height: 150px; margin: 0 auto 10px; }
+        .hero-content {
+            position: relative; z-index: 2;
+            padding-top: clamp(20px, 4vw, 60px);
+            display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 3vw, 24px);
+        }
+        .hero-logo { height: clamp(110px, 14vw, 190px); margin: 0 auto; }
         .hero-logo img { height: 100%; width: auto; }
-        .hero-tagline { font-family: 'Arimo', sans-serif; font-size: 50px; font-weight: 700; font-style: italic; color: white; margin-bottom: 5px; }
+        .hero-tagline {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: clamp(32px, 6vw, 54px);
+            font-weight: 700; color: white; margin-bottom: 0;
+        }
         .instagram-link-btn {
             background: white; border: 1px solid #366744; border-radius: 35px; padding: 12px 24px;
             display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
@@ -49,33 +59,36 @@
         .instagram-link-btn:hover { transform: scale(1.05); }
         .instagram-link-btn img { width: 24px; height: 24px; }
         .instagram-link-btn span {
-            font-family: 'Arimo', sans-serif; font-size: 24px; font-weight: 700; font-style: italic;
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: clamp(20px, 4vw, 28px); font-weight: 700; font-style: normal;
             background: linear-gradient(90deg, #49b166 0%, #49b166 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .how-it-works-section { padding: 32px 0; text-align: center; width: 100%; opacity: 1; transform: translateX(0); }
+        .how-it-works-section { padding: clamp(32px, 7vw, 80px) clamp(16px, 6vw, 80px); }
         .how-it-works-title {
             display: flex; align-items: center; justify-content: center; gap: 15px;
-            font-family: 'Arimo', sans-serif; font-size: 85px; font-weight: 100; color: #000; line-height: 1;
-            max-width: 1200px; margin: 0 auto; white-space: nowrap;
-        }
-        .how-it-works-title span { font-weight: 700; }
-        .how-it-works-title img {
-            height: 0.8em; width: auto; margin-bottom: 0; display: block; object-fit: contain;
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: clamp(40px, 9vw, 85px); font-weight: 400; color: #000; line-height: 1.05;
+            max-width: 1200px; margin: 0 auto; text-align: center;
         }
         .how-it-works-title .logo-inline {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
         }
         .how-it-works-title .logo-inline img {
-            height: 0.90em; width: auto; display: block; object-fit: contain;
-            transform: translateY(-3px);
+            height: 0.85em; width: auto; display: block; object-fit: contain;
         }
         .content-section { padding: 32px; width: 100%; margin: 0 auto; opacity: 1; transform: translateX(0); }
         .section-content { display: flex; flex-direction: column; gap: 32px; max-width: 1200px; margin: 0 auto; }
         .section-text { display: flex; flex-direction: column; gap: 13px; }
-        .section-title-green { font-size: 65px; font-weight: 700; font-style: italic; color: #49b166; line-height: 70px; }
-        .section-description { font-size: 44px; font-weight: 700; color: #000; line-height: 56px; }
+        .section-title-green {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: clamp(40px, 6vw, 65px); font-weight: 700; color: #49b166; line-height: 1.1;
+        }
+        .section-description {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: clamp(26px, 5vw, 44px); font-weight: 700; color: #000; line-height: 1.3;
+        }
         .phone-mockup { width: 241px; height: 494px; border-radius: 40px; overflow: hidden; margin: 0 auto; }
         .phone-mockup img { width: 100%; height: 100%; object-fit: cover; border-radius: 40px; }
         .pay-less-section .section-text { align-items: flex-start; }
@@ -93,19 +106,42 @@
             display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
         .instagram-header { text-align: center; padding: 10px 0; margin-bottom: 15px; }
-        .instagram-header h2 { font-size: 48px; font-weight: 700; color: white; margin-bottom: 8px; }
-        .instagram-header p { font-size: 27px; font-weight: 700; font-style: italic; color: white; }
-        .instagram-content { display: flex; flex-direction: row; gap: 30px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+        .instagram-header h2 {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: 48px; font-weight: 700; color: white; margin-bottom: 8px;
+        }
+        .instagram-header p {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+            font-size: 27px; font-weight: 700; font-style: italic; color: white;
+        }
+        .instagram-content {
+            display: flex; flex-direction: row; gap: 30px;
+            align-items: center; justify-content: center; flex-wrap: wrap;
+        }
         .instagram-qr-box {
-            background: white; border-radius: 38.84px; padding: 25px 25px 35px;
-            display: flex; flex-direction: column; align-items: center; gap: 15px; flex-shrink: 0;
+            background: #ffffff; border-radius: 32px; padding: 32px 32px 36px;
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            flex-shrink: 0; align-self: center; width: min(360px, 92vw);
+            box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.08);
+        }
+        .instagram-qr-badge {
+            width: 100%; max-width: 304px;
+            height: auto; filter: drop-shadow(0px 8px 30px rgba(0, 0, 0, 0.12));
         }
         .instagram-qr-code {
-            width: 250px; height: 250px; background: white; border-radius: 10px; padding: 10px;
+            width: 100%; max-width: 280px; aspect-ratio: 1 / 1;
+            background: #f8f8f8; border-radius: 20px; padding: 18px;
+            border: 1px solid #e6e6e6;
         }
-        .instagram-qr-code img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; }
+        .instagram-qr-code img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+        .instagram-qr-text,
+        .instagram-qr-text a,
+        .instagram-header h2,
+        .instagram-header p {
+            font-family: 'Andika New Basic', 'Arimo', sans-serif;
+        }
         .instagram-qr-text {
-            text-align: center; font-size: 18px; font-weight: 700; color: #49b166;
+            text-align: center; font-size: 18px; font-weight: 700; color: #000;
             display: flex; flex-direction: column; align-items: center; gap: 6px; justify-content: center;
         }
         .instagram-label {
@@ -116,6 +152,12 @@
         }
         .instagram-label a {
             display: inline-flex; align-items: center; line-height: 1;
+        }
+        .instagram-phone-display {
+            display: flex; align-items: flex-end;
+        }
+        .instagram-phone-display img {
+            width: clamp(220px, 32vw, 340px); height: auto; display: block;
         }
         .instagram-qr-text a,
         .instagram-qr-text .instagram-handle-link {
@@ -140,7 +182,9 @@
                 opacity: 1;
             }
         }
-        @media (max-width: 768px) { .instagram-content { flex-direction: column; } }
+        @media (max-width: 768px) {
+            .instagram-content { flex-direction: column; align-items: center; }
+        }
         footer { background: #f1fff5; padding: 32px 16px; width: 100%; margin: 0 auto; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
         .footer-logo { height: 91px; }
@@ -253,12 +297,9 @@
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://www.instagram.com/ridekova/" alt="Instagram QR Code">
                     </div>
                     <div class="instagram-qr-text">
-                        <div class="instagram-label">
-                            <img src="instagram-icon.svg" alt="Instagram Icon">
-                            <a href="https://www.instagram.com/ridekova/" target="_blank" rel="noopener noreferrer">Instagram</a>
-                        </div>
                         <a class="instagram-handle instagram-handle-link" href="https://www.instagram.com/ridekova/" target="_blank" rel="noopener noreferrer">@ridekova</a>
                     </div>
+                    <img class="instagram-qr-badge" src="insta-box.svg" alt="Instagram badge">
                 </div>
                 <div class="instagram-phone-display">
                     <img src="insta_qrcode_and_screen.svg" alt="Instagram Phone Display">
