@@ -154,6 +154,7 @@
             border: 1px solid #e6e6e6;
         }
         .instagram-qr-code img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+        .instagram-qr-badge-link { display: flex; justify-content: center; align-items: center; text-decoration: none; }
         .instagram-qr-icon { width: 72px; height: 72px; display: none; }
         .instagram-qr-text,
         .instagram-qr-text a,
@@ -331,10 +332,9 @@
                         <img class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://www.instagram.com/ridekova/" alt="Instagram QR Code">
                         <img class="instagram-qr-icon" src="instagram-icon.svg" alt="Instagram Icon">
                     </div>
-                    <div class="instagram-qr-text">
-                        <a class="instagram-handle instagram-handle-link" href="https://www.instagram.com/ridekova/" target="_blank" rel="noopener noreferrer">@ridekova</a>
-                    </div>
-                    <img class="instagram-qr-badge" src="insta-box.svg" alt="Instagram badge">
+                    <a class="instagram-qr-badge-link" href="https://www.instagram.com/ridekova/" target="_blank" rel="noopener noreferrer">
+                        <img class="instagram-qr-badge" src="insta-box.svg" alt="Instagram badge">
+                    </a>
                 </div>
                 <div class="instagram-phone-display">
                     <img src="insta_qrcode_and_screen.svg" alt="Instagram Phone Display">
