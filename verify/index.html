@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Arimo:ital,wght@1,700&family=Andika+New+Basic:wght@400;700&display=swap" rel="stylesheet">
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -60,6 +63,8 @@
             font-weight: 700;
         }
 
+        .hidden { display: none; }
+
         @media (max-width: 600px) {
             h1 { font-size: 32px; }
             p { font-size: 16px; }
@@ -71,13 +76,70 @@
     <div class="container">
         
         <img src="../Kova_logo_white_1.svg" alt="KOVA" class="logo">
+        <div id="loading-view">
+            <h1>VERIFYING...</h1>
+            <p>Please wait while we verify your email.</ßßßp>
+        </div>
 
-        <h1>EMAIL VERIFIED</h1>
+        <div id="success-view" class="hidden">
+            <h1>EMAIL VERIFIED</h1>
+            <p>You have successfully created your KOVA account.</p>
+            <p class="bold-text">Please return to the app to continue.</p>
+        </div>
 
-        <p>You have successfully created your KOVA account.</p>
-        <p class="bold-text">Please return to the app to continue.</p>
+        <div id="error-view" class="hidden">
+            <h1 style="color: #000;">LINK EXPIRED</h1>
+            <p>This link is invalid or has already been used.</p>
+        </div>
 
     </div>
 
+    <script>
+        // 1. CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyDq9-TdWwlutxrFhXgUDwafJNFizMjZ-1Y",
+            authDomain: "REMOVED_AUTH_DOMAIN",
+            projectId: "REMOVED_PROJECT_ID",
+            storageBucket: "REMOVED_PROJECT_ID.firebasestorage.app",
+            messagingSenderId: "REMOVED_SENDER_ID",
+            appId: "1:REMOVED_SENDER_ID:web:2d2a6ab51d081fd95fe21b",
+            measurementId: "REMOVED_MEASUREMENT_ID"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+
+        // 2. VERIFICATION LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const actionCode = urlParams.get('oobCode');
+
+            if (!actionCode) {
+                // For visual testing only. 
+                // Once deployed, users without a code will see this unless you change it to 'error-view'
+                showView('success-view'); 
+                return;
+            }
+
+            auth.applyActionCode(actionCode)
+                .then(() => {
+                    showView('success-view');
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showView('error-view');
+                });
+        });
+
+        function showView(viewId) {
+            document.getElementById('loading-view').classList.add('hidden');
+            document.getElementById('success-view').classList.add('hidden');
+            document.getElementById('error-view').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
