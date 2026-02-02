@@ -32,18 +32,6 @@
         h1 { font-family: 'Andika New Basic', sans-serif; font-size: 40px; font-weight: 700; color: #49b166; margin-bottom: 24px; line-height: 1.1; }
         p { font-family: 'Arimo', sans-serif; font-size: 18px; color: #000000; line-height: 1.5; margin-bottom: 8px; }
         .bold-text { font-weight: 700; }
-        .verify-button {
-            margin-top: 30px;
-            padding: 16px 32px;
-            background-color: #49b166;
-            color: #000000;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Andika New Basic', sans-serif;
-            font-weight: 700;
-            font-size: 18px;
-            cursor: pointer;
-        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -52,15 +40,9 @@
     <div class="container">
         <img src="../Kova_logo_white_1.svg" alt="KOVA" class="logo">
 
-        <div id="ready-view" class="hidden">
-            <h1>ACTIVATE ACCOUNT</h1>
-            <p class = "bold-text">Click the button below to verify your email and finish setting up your account.</p>
-            <button id="verify-btn" class="verify-button">VERIFY EMAIL</button>
-        </div>
-
-        <div id="loading-view" class="hidden">
+        <div id="loading-view">
             <h1>VERIFYING...</h1>
-            <p>Please wait while we verify your email.</p>
+            <p>Please wait while we sync your account.</p>
         </div>
 
         <div id="success-view" class="hidden">
@@ -71,7 +53,8 @@
 
         <div id="error-view" class="hidden">
             <h1 style="color: #000;">LINK EXPIRED</h1>
-            <p>This link is invalid or has already been used.</p>
+            <p id="error-message">This link is invalid or has already been used.</p>
+            <p class="bold-text">Please request a new link from the app.</p>
         </div>
     </div>
 
@@ -90,15 +73,12 @@
         const auth = firebase.auth();
 
         function showView(viewId) {
-            console.log("Switching to view:", viewId);
-            document.getElementById('ready-view').classList.add('hidden');
             document.getElementById('loading-view').classList.add('hidden');
             document.getElementById('success-view').classList.add('hidden');
             document.getElementById('error-view').classList.add('hidden');
             document.getElementById(viewId).classList.remove('hidden');
         }
 
-        // STARTUP LOGIC
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const actionCode = urlParams.get('oobCode');
@@ -108,22 +88,36 @@
                 return;
             }
 
-            // WE STOP HERE. We do NOT call applyActionCode yet.
-            showView('ready-view');
-
-            document.getElementById('verify-btn').onclick = function() {
-                showView('loading-view');
-                
-                // ONLY NOW do we talk to Firebase
-                auth.applyActionCode(actionCode)
-                    .then(() => {
+            // Attempt verification automatically
+            auth.applyActionCode(actionCode)
+                .then(() => {
+                    // Fresh link, verification successful
+                    showView('success-view');
+                })
+                .catch((error) => {
+                    console.error("Firebase Error Code:", error.code);
+                    
+                    if (error.code === 'auth/invalid-action-code') {
+                        /** * CASE: Bot already clicked the link.
+                         * The code is "invalid" because it was used 5 minutes ago by the scanner.
+                         * We show SUCCESS because the account IS verified.
+                         */
                         showView('success-view');
-                    })
-                    .catch((error) => {
-                        console.error("Firebase Error:", error);
+                    } 
+                    else if (error.code === 'auth/expired-action-code') {
+                        /** * CASE: Real Expiry.
+                         * The link is genuinely too old (sent a long time ago).
+                         */
+                        document.getElementById('error-message').innerText = "This link has expired.";
                         showView('error-view');
-                    });
-            };
+                    }
+                    else {
+                        /**
+                         * CASE: Other errors (malformed link, network error, etc.)
+                         */
+                        showView('error-view');
+                    }
+                });
         };
     </script>
 </body>
