@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+*{
+  font-family: 'Outfit';
+}
+
+@theme {
+  @keyframes shine{
+    0%{
+      background-position: 0px;
+    }
+    100%{
+      background-position: 117.8px;
+    }
+  }
+
+  --animate-shine: shine 1.5s linear infinite normal;
+
+
+}
