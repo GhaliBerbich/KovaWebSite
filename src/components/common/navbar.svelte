@@ -20,14 +20,17 @@
       scrolled = window.scrollY > 20;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   });
 </script>
 
 <header>
   <nav
     class={`fixed top-0 left-0 right-0 z-200 flex items-center justify-between px-12 transition-[background,box-shadow,padding] duration-300
-    ${scrolled ? "bg-gray-50/10 backdrop-blur-md shadow-sm py-3 backdrop-saturate-150" : "py-4"}`}
+    ${scrolled ? "bg-white shadow-sm py-3" : "py-4"}`}
   >
     <div>
       <img
@@ -41,11 +44,11 @@
         <li>
           <a
             href={route.link}
-            class="text-[0.85rem] tracking-[0.02em] no-underline font-medium transition-colors duration-200
-              {scrolled
-              ? 'text-gray-500 hover:text-green-600'
-              : 'text-green-800 hover:text-green-600'}">{route.name}</a
-          >
+            class={`text-md tracking-wide no-underline font-medium transition-colors duration-300 hover:text-green-500 hover:underline ${
+              scrolled ? "text-gray-700" : "text-green-900"
+            }`}
+            >{route.name}
+          </a>
         </li>
       {/each}
     </ul>
