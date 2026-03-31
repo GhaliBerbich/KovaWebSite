@@ -1,4 +1,6 @@
-<footer class="bg-green-50 pt-10 flex flex-col">
+<footer
+  class="bg-green-50 pt-10 flex flex-col overflow-x-hidden w-screen max-w-[100vw]"
+>
   <div class="flex flex-row justify-between px-12">
     <div>
       <div>
@@ -12,7 +14,9 @@
         </p>
       </div>
 
-      <div class="flex flex-row gap-5 text-green-600 underline">
+      <div
+        class="flex md:flex-row gap-1 md:gap-5 text-green-600 underline text-sm md:text-base flex-col"
+      >
         <a
           href="https://www.instagram.com/ridekova/"
           target="_blank"
@@ -33,7 +37,7 @@
       <p>West Lafayette, IN - Purdue University</p>
     </div>
   </div>
-  <div class="mt-5 py-2 bg-green-50 px-12 text-sm">
+  <div class="mt-5 py-4 bg-green-50 px-12 text-sm">
     Built, with love at <img
       src="img/purdue-logo.png"
       alt="Purdue"

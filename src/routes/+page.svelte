@@ -116,23 +116,26 @@
 	];
 </script>
 
-<main class="overflow-x:clip">
+<main class="w-screen max-w-[100vw] overflox-x-clip">
+	<!-- HERO SECTION -->
 	<section
-		class="lg:h-[95vh] w-screen flex shrink-0 lg:flex-row px-12 lg:pl-12 bg-linear-to-br to-green-200 from-white via-white overflow-x-hidden flex-col py-32 overflow-y-hidden h-full"
+		class="lg:h-[85vh] flex shrink-0 lg:flex-row px-12 lg:pl-12 bg-linear-to-br to-green-200 from-white via-white relative flex-col py-32 overflow-y-hidden h-full gap-10 sm:gap-0 overflow-x-clip"
 		id="hero"
 	>
 		<!-- HERO LEFT -->
 		<div
-			class="w-full lg:w-1/2 flex flex-col justify-center content-center h-full gap-5"
+			class="w-full lg:w-1/2 flex flex-col justify-center content-center h-full gap-5 z-10 pr-5"
 		>
 			{#if mounted}
 				<!-- PILL -->
 				<div
 					in:fly={{ y: 20, duration: 500, delay: 0 }}
-					class="inline-flex flex-row content-center w-fit gap-4 items-center bg-green-200/25 px-8 py-0.5 rounded-full ring-emerald-200 ring-1 text-md select-none"
+					class="inline-flex flex-row content-center w-fit gap-4 items-center bg-green-200/25 px-4 sm:px-8 py-2 sm:py-0.5 rounded-full ring-emerald-200 ring-1 text-md select-none text-xs sm:text-base"
 				>
 					<div class="relative z-10">
-						<span class="w-2 h-2 block rounded-full bg-emerald-400 z-10"></span>
+						<span
+							class="w-1.5 h-1.5 sm:w-2 sm:h-2 block rounded-full bg-emerald-400 z-10"
+						></span>
 						<span
 							class="w-3 h-3 top-1/2 left-1/2 -translate-1/2 absolute block rounded-full bg-emerald-200 -z-10 animate-ping"
 						></span>
@@ -143,7 +146,7 @@
 				<!-- HERO TEXT -->
 				<h1
 					in:fly={{ y: 30, duration: 600, delay: 100 }}
-					class="text-7xl md:text-8xl font-black"
+					class="text-5xl sm:text-7xl md:text-8xl font-black"
 				>
 					Stop missing <br />
 					<span
@@ -153,13 +156,13 @@
 				</h1>
 				<div
 					in:fly={{ y: 20, duration: 500, delay: 200 }}
-					class="text-2xl md:text-3xl text-green-700 font-light"
+					class="text-xl sm:text-2xl md:text-3xl text-green-700 font-light"
 				>
 					Your world just got bigger
 				</div>
 				<p
 					in:fade={{ duration: 500, delay: 350 }}
-					class="md:text-lg font-light text-justify text-md"
+					class="md:text-lg font-light sm:text-justify sm:text-md text-sm text-left"
 				>
 					KOVA connects verified Boilermakers to shared rides – airport runs,
 					Indy games, Chicago weekends, concerts, career trips, and everyday
@@ -169,27 +172,28 @@
 				<!-- CTA BUTTONS -->
 				<div
 					in:fly={{ y: 20, duration: 500, delay: 450 }}
-					class="flex flex-row gap-10 lg:pr-40 text-sm md:text-base"
+					class="flex md:flex-row gap-2 sm:gap-10 lg:pr-30 text-xs sm:text-sm md:text-base flex-col"
 				>
 					<button
-						class="bg-green-500 text-gray-50 shadow-md shadow-green-200 px-8 py-2 group rounded-full hover:cursor-pointer h-fit w-full"
+						class="bg-green-500 text-gray-50 shadow-md shadow-green-200 px-8 py-2 group rounded-lg hover:cursor-pointer h-fit w-full"
 						onclick={() => {
-							console.log("Hey World");
-							return null;
+							document
+								.getElementById("how-it-works")
+								?.scrollIntoView({ behavior: "smooth" });
 						}}
 					>
 						<span
 							class="overflow-hidden bg-linear-to-r from-gray-200 via-white to-gray-200 text-white/0 bg-clip-text animate-shine group-hover:text-white group-hover:text-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-colors duration-200 ease-in-out"
 						>
-							Get Early Access
+							Download App
 						</span>
 					</button>
 					<button
 						onclick={() =>
 							document
-								.getElementById("how-it-works-interactive")
+								.getElementById("how")
 								?.scrollIntoView({ behavior: "smooth" })}
-						class="flex flex-row bg-transparent text-gray-900 shadow-md shadow-green-200 px-8 py-2 group rounded-full ring-green-500 ring-2 hover:bg-green-500/10 hover:text-green-700 transition-colors ease-in-out duration-200 hover:cursor-pointer h-fit w-full items-center justify-center content-center"
+						class="flex flex-row bg-transparent text-gray-900 shadow-md shadow-green-200 px-8 py-2 group rounded-lg ring-green-500 ring-2 hover:bg-green-500/10 hover:text-green-700 transition-colors ease-in-out duration-200 hover:cursor-pointer h-fit w-full items-center justify-center content-center text-xs sm:text-sm md:text-base"
 						>See How It Works
 						<!-- Arrow SVG -->
 						<span>
@@ -199,7 +203,7 @@
 								viewBox="0 0 24 24"
 								stroke-width="1.5"
 								stroke="currentColor"
-								class="size-6"
+								class="sm:size-6 size-4"
 							>
 								<path
 									stroke-linecap="round"
@@ -213,61 +217,60 @@
 			{/if}
 		</div>
 
-		<div class="w-full lg:w-1/2 h-full">
-			{#if mounted}
+		{#if mounted}
+			<div
+				class="w-full lg:w-1/2 h-full overflow-hidden flex items-center justify-center content-center"
+				in:fly={{ y: 100, duration: 2500, delay: 1000 }}
+			>
 				<div
-					in:fly={{ y: 100, duration: 2500, delay: 1000 }}
-					class="w-full h-[50vh] lg:h-full"
+					class="w-full h-[50vh] md:h-[50vh] lg:h-full block absolute top-1/2 -translate-y-1/2 md:static opacity-25 left-0 md:opacity-80 md:top-auto md:left-auto md:z-10 md:translate-0 cursor-grab active:cursor-grabbing pointer-events-none lg:pointer-events-auto"
 				>
 					<Globe />
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</section>
 
 	<section
-		class="flex flex-row w-full flex-1 py-5 px-12 to-green-200 from-white via-white bg-linear-to-tr gap-12"
+		class="flex md:flex-row w-full flex-1 py-5 px-12 to-green-200 from-white via-white bg-linear-to-tr gap-12 flex-col"
 	>
 		<div class="w-full gap-5 flex-col flex">
 			<div use:reveal class="deco-text">
 				<span class="deco-line" aria-hidden={true}></span>
 				<p>The Problem</p>
 			</div>
-			<h2 use:reveal={{ y: 30, delay: 100 }} class="text-5xl font-black">
+			<h2
+				use:reveal={{ y: 30, delay: 100 }}
+				class="sm:text-5xl font-black text-3xl"
+			>
 				Transportation is access. <br /> And access is
 				<span class="text-green-500">unequal.</span>
 			</h2>
 			<p
 				use:reveal={{ delay: 200 }}
-				class="text-neutral-500 text-lg font-light"
+				class="text-neutral-500 sm:text-lg font-light text-base"
 			>
 				Without a car, students regularly say no — to experiences, connections,
 				and opportunities that shape college life.
 			</p>
-			<!-- <div -->
-			<!-- 	use:reveal={{ delay: 300 }} -->
-			<!-- 	class="bg-white border-l-4 border-l-green-500 px-8 pr-18 py-6 rounded-r-2xl shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)] w-fit" -->
-			<!-- > -->
-			<!-- 	<blockquote class="font-semibold text-lg"> -->
-			<!-- 		When transportation is expensive, inconsistent, or isolating — "no" -->
-			<!-- 		becomes the default. -->
-			<!-- 	</blockquote> -->
-			<!-- 	<cite class="text-sm text-green-600 not-italic font-extralight mt-5" -->
-			<!-- 		>KOVA Research, 2024</cite -->
-			<!-- 	> -->
-			<!-- </div> -->
 		</div>
 		<ul class="w-full flex-col flex gap-3 justify-center">
 			{#each painList as pain, i}
 				<li
 					use:reveal={{ delay: i * 100 }}
-					class="rounded-2xl bg-white px-6 py-6 shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]"
+					class="rounded-2xl px-6 py-6 relative group"
 				>
-					<div>
-						<span class="mr-2">{pain.icon}</span>
+					<span
+						class="w-6 h-6 inline-block top-1/2 left-1 -translate-y-1/2 bg-white rounded-full ring-4 ring-inset ring-green-600 absolute z-10"
+					></span>
+					<div class="pl-6">
+						<!-- <span class="mr-2">{pain.icon}</span> -->
 						<span class="text-md font-semibold">{pain.name}</span>
+						<p class="font-light text-neutral-600">{pain.description}</p>
 					</div>
-					<p>{pain.description}</p>
+					<span
+						class="w-3 h-[calc(100%+1rem)] md:h-[calc(100%+1.3rem)] lg:h-[calc(100%+1.3rem)] group-last:hidden inline-block top-1/2 left-2.5 bg-green-600 absolute"
+					></span>
 				</li>
 			{/each}
 		</ul>
@@ -280,7 +283,10 @@
 				<span class="deco-line"></span>
 				<p>How it works</p>
 			</div>
-			<h2 use:reveal={{ y: 30, delay: 100 }} class="text-5xl font-black">
+			<h2
+				use:reveal={{ y: 30, delay: 100 }}
+				class="md:text-5xl font-black text-4xl"
+			>
 				Ride sharing built for <span class="text-green-500 italic"
 					>student trust.</span
 				>
@@ -291,10 +297,12 @@
 		</div>
 
 		<!-- Sticky grid -->
-		<div class="relative grid grid-cols-2 max-w-5xl mx-auto px-12 gap-16 py-48">
+		<div
+			class="relative grid grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto px-12 gap-16 py-24 md:py-48 overflow-x-clip"
+		>
 			<!-- Progress bar on far left of grid -->
 			<div
-				class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-100 rounded-full"
+				class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-100 rounded-full hidden md:block"
 			>
 				<div
 					class="w-full bg-green-500 rounded-full transition-all duration-400 ease-in-out"
@@ -304,8 +312,8 @@
 
 			<!-- Left: sticky phone -->
 			<div
-				class="self-start flex items-center justify-center"
-				style="position:sticky; top:calc(50vh - 280px); height:560px"
+				class="self-start items-center justify-center md:sticky md:flex hidden"
+				style="top:calc(50vh - 280px)"
 			>
 				<div class="relative">
 					<!-- Glow -->
@@ -315,7 +323,7 @@
 					></div>
 					<!-- Shell -->
 					<div
-						class="relative bg-[#1a1a1a] rounded-[44px] overflow-hidden"
+						class="relative bg-[#1a1a1a] rounded-[44px] overflow-hidden scale-75 md:scale-100 origin-top"
 						style="width:250px; height:520px; border:2px solid #3a3a3a; box-shadow:0 0 0 1px rgba(255,255,255,0.06), 0 40px 80px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.14), inset 0 0 0 2px #111; padding:14px 10px"
 					>
 						<div
@@ -388,7 +396,7 @@
 		</div>
 	</section>
 
-	<section class="bg-green-50 px-12 py-24">
+	<section class="bg-green-50 px-12 py-24" id="trending">
 		<div class="flex flex-col justify-center items-center content-center">
 			<div class="deco-text">
 				<span class="deco-line"></span>
@@ -404,13 +412,11 @@
 
 		<div
 			id="trending_grid"
-			class="grid grid-cols-3 auto-rows-[240px] gap-4 mt-8"
+			class="md:grid md:grid-cols-3 auto-rows-[240px] gap-4 mt-8 flex-col flex"
 		>
 			{#each Array(5) as _, i}
 				<div
-					class="bg-gray-200 rounded-xl animate-pulse"
-					class:row-span-2={i === 0}
-					class:col-span-1={i === 3}
+					class={`bg-gray-200 rounded-xl animate-pulse ${i === 0 ? "md:row-span-2" : ""} ${i === 3 ? "md:col-span-1" : ""} w-full h-30 md:w-auto md:h-auto`}
 					style="animation-delay: {i * 150}ms"
 				></div>
 			{/each}
@@ -418,7 +424,8 @@
 	</section>
 
 	<section
-		class="px-12 flex flex-col justify-center items-center content-center bg-gray-50 py-48"
+		class="px-12 flex flex-col justify-center items-center content-center bg-linear-to-b from-green-50 via-gray-50 to-green-50 md:py-48"
+		id="reviews"
 	>
 		<div class="deco-text px-12">
 			<span class="deco-line"></span>
@@ -428,10 +435,10 @@
 		<h1 class="text-5xl font-black">
 			Real rides, <span class="text-green-500">real connections.</span>
 		</h1>
-		<div class="flex flex-col md:flex-row gap-5 mt-12">
+		<div class="flex flex-col lg:flex-row gap-5 mt-12">
 			{#each reviews as review}
 				<div
-					class="bg-white flex flex-col shadow-md rounded-2xl px-8 py-10 min-h-min flex-1 gap-5 justify-between content-between"
+					class="bg-white flex flex-col shadow-md rounded-2xl px-8 py-10 min-h-min flex-1 gap-5 justify-between content-between text-sm sm:text-base"
 				>
 					<div class="flex-col flex gap-4">
 						<div class="flex gap-0.5">
@@ -489,7 +496,9 @@
 		class="bg-green-600 px-12 flex flex-col md:flex-row justify-between py-24 relative overflow-hidden z-0"
 	>
 		<h1 class="text-white font-black text-4xl md:max-w-1/4">
-			Your world gets bigger when you're not moving alone.
+			<!-- Your world gets bigger when you're not moving alone. -->
+			Not on iOS or at Purdue?
+			<br /><span class="text-white">No Worries!</span>
 		</h1>
 		<div class="mt-10 md:mt-0">
 			<div
@@ -497,12 +506,12 @@
 			>
 				<input
 					type="text"
-					placeholder="jdoe@purdue.edu"
-					class="placeholder-neutral-500 bg-white py-3 px-6 placeholder:font-extralight focus:outline-none min-w-2xs w-2/3"
+					placeholder="name@purdue.edu"
+					class="placeholder-neutral-500 bg-white py-3 px-6 placeholder:font-extralight focus:outline-none md:min-w-2xs w-2/3 placeholder:text-sm text-sm md:text-base md:placeholder:text-base"
 				/>
 				<button
 					type="button"
-					class="bg-green-700 px-3 pr-4 text-white focus:outline-none cursor-pointer w-1/3"
+					class="bg-green-700 px-3 pr-4 text-white focus:outline-none cursor-pointer w-1/3 text-xs md:text-md"
 					onclick={(event) => {
 						//@ts-ignore
 						confetti({
