@@ -46,10 +46,10 @@
       // shrinks proportionally, so we pull the camera back to avoid side-clipping.
       function updateCameraDistance(w: number, h: number) {
         const aspect = w / h;
-        const sizeFactor = Math.max(0.8, Math.min(1.8, 1440 / w));
+        const sizeFactor = Math.max(1.8, Math.min(1.8, 1440 / w));
         // 0.78 / aspect ensures the globe stays inside the horizontal frustum
-        const factor = Math.max(sizeFactor, 0.6 / aspect);
-        camera.position.set(0, 30 * factor, 80 * factor);
+        const factor = Math.max(sizeFactor, 0 / aspect);
+        camera.position.set(0, 30 * factor, 75 * factor);
       }
       updateCameraDistance(width, height);
 
@@ -113,7 +113,7 @@
       // @ts-ignore
       globeMat.color = new THREE.Color(0xfffffff);
       globeMat.transparent = true;
-      globeMat.opacity = 0.75;
+      globeMat.opacity = 0.8;
 
       scene.add(globe);
 

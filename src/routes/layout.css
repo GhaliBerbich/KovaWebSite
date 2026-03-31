@@ -6,6 +6,8 @@
 }
 
 @theme {
+  --breakpoint-xs: 24rem;
+
   @keyframes shine{
     0%{
       background-position: 0px;
@@ -19,9 +21,9 @@
 }
 
 .deco-line {
-  @apply w-5 h-0.5 block bg-green-500/90
+  @apply sm:w-5 h-0.5 block bg-green-500/90 w-3
 }
 
 .deco-text {
-  @apply flex flex-row content-center justify-start items-center gap-3 uppercase text-green-500/90 text-sm font-semibold py-5
+  @apply flex flex-row content-center justify-start items-center gap-3 uppercase text-green-500/90 sm:text-sm font-semibold py-5 text-xs
 }
