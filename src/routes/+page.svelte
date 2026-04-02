@@ -225,7 +225,7 @@
 				<div
 					class="w-full h-[50vh] md:h-[50vh] lg:h-full block absolute top-1/2 -translate-y-1/2 md:static opacity-25 left-0 md:opacity-80 md:top-auto md:left-auto md:z-10 md:translate-0 cursor-grab active:cursor-grabbing pointer-events-none lg:pointer-events-auto"
 				>
-					<Globe />
+					<!-- <Globe /> -->
 				</div>
 			</div>
 		{/if}
