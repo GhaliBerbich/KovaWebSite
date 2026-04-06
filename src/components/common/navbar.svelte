@@ -51,14 +51,14 @@
         <li>
           <a
             href={route.link}
-            class={`text-sm tracking-wide no-underline font-medium transition-colors duration-300 hover:text-green-500 ${scrolled ? "text-gray-700" : "text-green-900"}`}
+            class={`text-lg tracking-wide no-underline font-medium transition-colors duration-300 hover:text-green-500 ${scrolled ? "text-gray-700" : "text-green-900"}`}
             >{route.name}</a
           >
         </li>
       {/each}
     </ul>
     <button
-      class="border-none px-6 py-2 font-sans font-bold rounded-sm cursor-pointer transition-all duration-200 bg-green-500 text-white hover:shadow-green-200 hover:shadow-sm hover:bg-green-700"
+      class="border-none px-6 py-2 text-lg font-sans font-bold rounded-sm cursor-pointer transition-all duration-200 bg-green-500 text-white hover:shadow-green-200 hover:shadow-sm hover:bg-green-700"
     >
       Download App
     </button>

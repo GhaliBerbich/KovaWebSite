@@ -10,9 +10,19 @@
 	let activeStep = 0;
 	let scrollProgress = 0;
 	let howSection: HTMLElement;
+	let heroSection: HTMLElement;
+	let globeVisible = true;
 
 	onMount(() => {
 		mounted = true;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				globeVisible = entry.isIntersecting;
+			},
+			{ threshold: 0 },
+		);
+		if (heroSection) observer.observe(heroSection);
 
 		function onScroll() {
 			if (!howSection) return;
@@ -26,7 +36,10 @@
 		}
 
 		window.addEventListener("scroll", onScroll, { passive: true });
-		return () => window.removeEventListener("scroll", onScroll);
+		return () => {
+			window.removeEventListener("scroll", onScroll);
+			observer.disconnect();
+		};
 	});
 
 	interface Pain {
@@ -91,27 +104,59 @@
 	}
 
 	// NOTE: Change to actual reviews
-	const reviews: Review[] = [
+
+	// const reviews: Review[] = [
+	// 	{
+	// 		name: "Hassan B.",
+	// 		profession: "Professional Wrestler",
+	// 		rating: 5,
+	// 		review:
+	// 			"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
+	// 	},
+	// 	{
+	// 		name: "Vicky M.",
+	// 		profession: "Professional Poster Designer",
+	// 		rating: 4,
+	// 		review:
+	// 			"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
+	// 	},
+	// 	{
+	// 		name: "Pedro T.",
+	// 		profession: "Unemployed",
+	// 		review:
+	// 			"Works! Minim exercitation labore voluptate eiusmod ea dolor non proident Lorem. Veniam consectetur aliqua pariatur magna magna ad. Aliquip fugiat labore non aliquip pariatur laborum aliquip occaecat nostrud. Est anim enim mollit qui eiusmod velit in voluptate quis adipisicing aliquip reprehenderit.",
+	// 		rating: 2,
+	// 	},
+	// ];
+
+	const reviews: Review[] = [];
+
+	interface Destination {
+		origin: string;
+		destination: string;
+		imgSrc: string;
+	}
+
+	const destinations: Destination[] = [
 		{
-			name: "Hassan B.",
-			profession: "Professional Wrestler",
-			rating: 5,
-			review:
-				"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
+			origin: "Purdue University",
+			destination: "Chicago",
+			imgSrc: "/img/destinations/Chicago.jpg",
 		},
 		{
-			name: "Vicky M.",
-			profession: "Professional Poster Designer",
-			rating: 4,
-			review:
-				"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
+			origin: "Purdue University",
+			destination: "Indianapolis",
+			imgSrc: "/img/destinations/Indy.jpg",
 		},
 		{
-			name: "Pedro T.",
-			profession: "Unemployed",
-			review:
-				"Works! Minim exercitation labore voluptate eiusmod ea dolor non proident Lorem. Veniam consectetur aliqua pariatur magna magna ad. Aliquip fugiat labore non aliquip pariatur laborum aliquip occaecat nostrud. Est anim enim mollit qui eiusmod velit in voluptate quis adipisicing aliquip reprehenderit.",
-			rating: 2,
+			origin: "Purdue University",
+			destination: "University of Illinois Urbana-Champaign",
+			imgSrc: "/img/destinations/UIUC.jpg",
+		},
+		{
+			origin: "Purdue University",
+			destination: "Indiana University Bloomington",
+			imgSrc: "/img/destinations/IU.jpg",
 		},
 	];
 </script>
@@ -121,6 +166,7 @@
 	<section
 		class="lg:h-[85vh] flex shrink-0 lg:flex-row px-12 lg:pl-12 bg-linear-to-br to-green-200 from-white via-white relative flex-col py-32 overflow-y-hidden h-full gap-10 sm:gap-0 overflow-x-clip"
 		id="hero"
+		bind:this={heroSection}
 	>
 		<!-- HERO LEFT -->
 		<div
@@ -217,7 +263,7 @@
 			{/if}
 		</div>
 
-		{#if mounted}
+		{#if mounted && globeVisible}
 			<div
 				class="w-full lg:w-1/2 h-full overflow-hidden flex items-center justify-center content-center"
 				in:fly={{ y: 100, duration: 2500, delay: 1000 }}
@@ -225,7 +271,7 @@
 				<div
 					class="w-full h-[50vh] md:h-[50vh] lg:h-full block absolute top-1/2 -translate-y-1/2 md:static opacity-25 left-0 md:opacity-80 md:top-auto md:left-auto md:z-10 md:translate-0 cursor-grab active:cursor-grabbing pointer-events-none lg:pointer-events-auto"
 				>
-					<!-- <Globe /> -->
+					<Globe />
 				</div>
 			</div>
 		{/if}
@@ -412,13 +458,43 @@
 
 		<div
 			id="trending_grid"
-			class="md:grid md:grid-cols-3 auto-rows-[240px] gap-4 mt-8 flex-col flex"
+			class="md:grid md:grid-cols-2 auto-rows-[20em] gap-4 mt-8 flex-col flex flex-1"
 		>
-			{#each Array(5) as _, i}
+			{#each destinations as destination, i}
+				<!-- <div -->
+				<!-- 	class={`bg-gray-200 rounded-xl animate-pulse ${i === 0 ? "md:row-span-2" : ""} ${i === 3 ? "md:col-span-1" : ""} w-full h-30 md:w-auto md:h-auto`} -->
+				<!-- 	style="animation-delay: {i * 150}ms" -->
+				<!-- ></div> -->
 				<div
-					class={`bg-gray-200 rounded-xl animate-pulse ${i === 0 ? "md:row-span-2" : ""} ${i === 3 ? "md:col-span-1" : ""} w-full h-30 md:w-auto md:h-auto`}
-					style="animation-delay: {i * 150}ms"
-				></div>
+					class="relative overflow-clip rounded-2xl shadow-sm group cursor-pointer md:h-auto md:w-auto w-full h-50"
+				>
+					<div
+						style={`background-image:url(${destination.imgSrc})`}
+						class="w-full h-full block bg-cover bg-center bg-no-repeat absolute after:bg-black/0 after:w-full after:h-full after:block after:absolute after:top-0 after:left-0 group-hover:scale-105 transition-transform duration-500 scale-100"
+					></div>
+					<div
+						class="z-10 absolute text-lg text-green-700 bottom-0 left-0 px-10 py-5 w-full font-bold backdrop-blur-3xl bg-white/90 rounded-b-2xl overflow-hidden"
+					>
+						<span class="text-xl align-middle">{destination.origin}</span>
+						<span class="text-green-900 mx-2 inline w-auto h-auto">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="3"
+								stroke="currentColor"
+								class="size-5 inline align-middle"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H0.1"
+								/>
+							</svg>
+						</span>
+						<span class="text-xl align-middle">{destination.destination}</span>
+					</div>
+				</div>
 			{/each}
 		</div>
 	</section>
