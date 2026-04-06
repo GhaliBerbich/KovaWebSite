@@ -18,6 +18,27 @@
   }
 
   --animate-shine: shine 2s linear infinite normal;
+
+
+  /* ── Greens ─────────────────────────── */
+  --color-kova-green:     #00D46A; /* CTAs, logo, badges       */
+  --color-kova-green-mid: #00A854; /* Hover, heading accents   */
+  --color-kova-forest:    #003820; /* Text on green            */
+  --color-kova-abyss:     #001A0E; /* Problem section bg       */
+
+  /* ── Darks ──────────────────────────── */
+  --color-kova-void:      #0A0A0A; /* Navbar, footer           */
+  --color-kova-dark:      #111111; /* Hero, trending section   */
+  --color-kova-dark-2:    #1A1A1A; /* Cards on dark            */
+  --color-kova-dark-3:    #2A2A2A; /* Borders on dark          */
+
+  /* ── Lights ─────────────────────────── */
+  --color-kova-warm:      #FAFAF8; /* Light sections, page bg  */
+  --color-kova-off-white: #F2F1ED; /* Reviews, card surfaces   */
+
+  /* ── Text ───────────────────────────── */
+  --color-kova-muted:     #888888; /* Body on dark sections    */
+  --color-kova-dim:       #444444; /* Body on light sections   */
 }
 
 .deco-line {
