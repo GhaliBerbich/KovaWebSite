@@ -57,11 +57,13 @@
         </li>
       {/each}
     </ul>
-    <button
+    <a
       class="border-none px-6 py-2 text-lg font-sans font-bold rounded-sm cursor-pointer transition-all duration-200 bg-green-500 text-white hover:shadow-green-200 hover:shadow-sm hover:bg-green-700"
+      href="https://apps.apple.com/us/app/ridekova/id6757269118"
+      target="_blank"
     >
       Download App
-    </button>
+    </a>
   </nav>
 
   <button

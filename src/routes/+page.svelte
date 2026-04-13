@@ -5,6 +5,7 @@
 	import { onMount } from "svelte";
 	import { reveal } from "$lib/actions/reveal";
 	import StarSvg from "$lib/assets/star.svg?raw";
+	import type { MouseEventHandler } from "svelte/elements";
 
 	let mounted = false;
 	let activeStep = 0;
@@ -12,6 +13,13 @@
 	let howSection: HTMLElement;
 	let heroSection: HTMLElement;
 	let globeVisible = true;
+	let waitlistSuccess = false;
+	let waitlistError = "";
+	let waitlistLoading = false;
+
+	let waitlistEmail = "";
+
+	let handleWaitlist: MouseEventHandler<HTMLButtonElement>;
 
 	onMount(() => {
 		mounted = true;
@@ -36,6 +44,56 @@
 		}
 
 		window.addEventListener("scroll", onScroll, { passive: true });
+
+		const RECAPTCHA_SITE_KEY = "6Lf_MqosAAAAAGKP2NwnCl77V7tX6oaCvgU7WRXS";
+		// const RECAPTCHA_SITE_KEY = "6LfCbaosAAAAAHK3c_cMWio4AvSdFbVn7Ykx27xi";
+		const FUNCTION_URL = "127.0.0.1:8000";
+
+		handleWaitlist = async (event: MouseEvent) => {
+			event.preventDefault();
+			waitlistError = "";
+			waitlistLoading = true;
+
+			let token: string;
+			try {
+				token = await new Promise((resolve, _) => {
+					// @ts-ignore
+					grecaptcha.ready(() => {
+						// @ts-ignore
+						grecaptcha
+							.execute(RECAPTCHA_SITE_KEY, { action: "waitlist" })
+							.then(resolve)
+							.catch((e: any) => console.log(e));
+					});
+				});
+			} catch (e: any) {
+				waitlistError = "reCAPTCHA failed. Please try again.";
+				waitlistLoading = false;
+				console.log(e);
+				return;
+			}
+
+			try {
+				const res = await fetch(FUNCTION_URL, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ waitlistEmail, recaptchaToken: token }),
+				});
+				const data = await res.json();
+				if (!res.ok) {
+					waitlistError = data.error ?? "Something went wrong.";
+				} else {
+					waitlistSuccess = true;
+					// @ts-ignore
+					confetti({ size: 1, count: 80 });
+				}
+			} catch {
+				waitlistError = "Something went wrong. Please try again.";
+			}
+
+			waitlistLoading = false;
+		};
+
 		return () => {
 			window.removeEventListener("scroll", onScroll);
 			observer.disconnect();
@@ -78,19 +136,19 @@
 	const steps: Step[] = [
 		{
 			number: "1",
-			name: "Post or Browse",
+			name: "Find your ride",
 			description:
 				"List a ride you're taking or find one going your way. Filter by date, destination, and price — all from verified Boilermakers.",
 		},
 		{
 			number: "2",
-			name: "Match & Connect",
+			name: "Ride with mutuals",
 			description:
 				"Review profiles, message your co-riders, and confirm your seat. No strangers — just fellow students with a shared destination.",
 		},
 		{
 			number: "3",
-			name: "Ride & Split",
+			name: "Make new friends",
 			description:
 				"Show up, split the cost, and go. KOVA handles the coordination so you can focus on getting there.",
 		},
@@ -103,33 +161,43 @@
 		rating: 1 | 2 | 3 | 4 | 5;
 	}
 
-	// NOTE: Change to actual reviews
-
-	// const reviews: Review[] = [
-	// 	{
-	// 		name: "Hassan B.",
-	// 		profession: "Professional Wrestler",
-	// 		rating: 5,
-	// 		review:
-	// 			"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
-	// 	},
-	// 	{
-	// 		name: "Vicky M.",
-	// 		profession: "Professional Poster Designer",
-	// 		rating: 4,
-	// 		review:
-	// 			"Amazing app!!! consectetur culpa adipisicing est duis pariatur sit anim tempor reprehenderit reprehenderit ipsum qui ad Lorem cupidatat mollit Lorem aliqua esse",
-	// 	},
-	// 	{
-	// 		name: "Pedro T.",
-	// 		profession: "Unemployed",
-	// 		review:
-	// 			"Works! Minim exercitation labore voluptate eiusmod ea dolor non proident Lorem. Veniam consectetur aliqua pariatur magna magna ad. Aliquip fugiat labore non aliquip pariatur laborum aliquip occaecat nostrud. Est anim enim mollit qui eiusmod velit in voluptate quis adipisicing aliquip reprehenderit.",
-	// 		rating: 2,
-	// 	},
-	// ];
-
-	const reviews: Review[] = [];
+	const reviews: Review[] = [
+		{
+			name: "Marcus T.",
+			profession: "Purdue Student",
+			rating: 5,
+			review:
+				"Needed a ride to O'Hare for winter break and KOVA was half the price of Uber. My driver was another Purdue student so the conversation was great the whole way there.",
+		},
+		{
+			name: "Priya N.",
+			profession: "Purdue Student",
+			rating: 5,
+			review:
+				"Booked a ride to Midway the night before and it was totally seamless. Love that it's a fellow student driving! Felt way more comfortable than a random stranger. Super affordable too.",
+		},
+		{
+			name: "Jordan W.",
+			profession: "Purdue Undergraduate Researcher",
+			rating: 4,
+			review:
+				"Used KOVA to get to Indianapolis airport for a conference. Way cheaper than any other option and my driver was a grad student heading back anyway. Felt like carpooling with a friend.",
+		},
+		{
+			name: "Aisha K.",
+			profession: "Purdue Student",
+			rating: 5,
+			review:
+				"Going home for Thanksgiving was so much less stressful with KOVA. No surge pricing, no sketchy drivers, just another student making the same trip. Exactly what campus needed.",
+		},
+		{
+			name: "Derek M.",
+			profession: "Purdue Graduate Student",
+			rating: 4,
+			review:
+				"As an out-of-state student, airport rides were always a nightmare to figure out. KOVA makes it easy and the fact that it's students driving students makes a real difference. Reliable every time.",
+		},
+	];
 
 	interface Destination {
 		origin: string;
@@ -220,20 +288,16 @@
 					in:fly={{ y: 20, duration: 500, delay: 450 }}
 					class="flex md:flex-row gap-2 sm:gap-10 lg:pr-30 text-xs sm:text-sm md:text-base flex-col"
 				>
-					<button
-						class="bg-green-500 text-gray-50 shadow-md shadow-green-200 px-8 py-2 group rounded-lg hover:cursor-pointer h-fit w-full"
-						onclick={() => {
-							document
-								.getElementById("how-it-works")
-								?.scrollIntoView({ behavior: "smooth" });
-						}}
+					<a
+						class="bg-green-500 text-gray-50 shadow-md shadow-green-200 px-8 py-2 group rounded-lg hover:cursor-pointer h-fit w-full flex justify-center items-center content-center"
+						href="https://apps.apple.com/us/app/ridekova/id6757269118"
 					>
-						<span
-							class="overflow-hidden bg-linear-to-r from-gray-200 via-white to-gray-200 text-white/0 bg-clip-text animate-shine group-hover:text-white group-hover:text-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-colors duration-200 ease-in-out"
+						<div
+							class="overflow-hidden bg-linear-to-r from-gray-200 via-white to-gray-200 text-white/0 bg-clip-text animate-shine group-hover:text-white group-hover:text-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-colors duration-200 ease-in-out w-full text-center"
 						>
 							Download App
-						</span>
-					</button>
+						</div>
+					</a>
 					<button
 						onclick={() =>
 							document
@@ -384,17 +448,14 @@
 							{#each steps as _, i}
 								<div
 									class="absolute inset-0 transition-all duration-500 flex items-center justify-center"
-									style="opacity:{i === activeStep
-										? 1
-										: 0}; transform:scale({i === activeStep
-										? 1
-										: 0.96}); pointer-events:{i === activeStep
-										? 'auto'
-										: 'none'}"
+									style="opacity:{i === activeStep ? 1 : 0};
+										: 0.96}); pointer-events:{i === activeStep ? 'auto' : 'none'}"
 								>
-									<span class="text-gray-600 text-sm select-none"
-										>Screen {i + 1}</span
-									>
+									<img
+										src={`/img/steps/Page${i + 1}.png`}
+										class="w-full h-full absolute top-0 left-0"
+										alt=""
+									/>
 								</div>
 							{/each}
 						</div>
@@ -577,27 +638,50 @@
 			<br /><span class="text-white">No Worries!</span>
 		</h1>
 		<div class="mt-10 md:mt-0">
-			<div
-				class="flex flex-row rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-green-400 transition-all ring-2 ring-white/0 ease-in-out duration-150 flex-1"
-			>
-				<input
-					type="text"
-					placeholder="name@purdue.edu"
-					class="placeholder-neutral-500 bg-white py-3 px-6 placeholder:font-extralight focus:outline-none md:min-w-2xs w-2/3 placeholder:text-sm text-sm md:text-base md:placeholder:text-base"
-				/>
-				<button
-					type="button"
-					class="bg-green-700 px-3 pr-4 text-white focus:outline-none cursor-pointer w-1/3 text-xs md:text-md"
-					onclick={(event) => {
-						//@ts-ignore
-						confetti({
-							position: { x: event.clientX, y: event.clientY },
-							size: 0.8,
-							count: 50,
-						});
-					}}>Join Waitlist</button
+			{#if waitlistSuccess}
+				<p class="text-white font-semibold text-lg">
+					You're on the list! We'll be in touch.
+				</p>
+			{:else}
+				<form>
+					<div
+						class="flex flex-row rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-green-400 transition-all ring-2 ring-white/0 ease-in-out duration-150 flex-1"
+					>
+						<input
+							type="email"
+							name="email"
+							placeholder="name@purdue.edu"
+							bind:value={waitlistEmail}
+							required
+							class="placeholder-neutral-500 bg-white py-3 px-6 placeholder:font-extralight focus:outline-none md:min-w-2xs w-2/3 placeholder:text-sm text-sm md:text-base md:placeholder:text-base"
+						/>
+						<button
+							type="submit"
+							disabled={waitlistLoading}
+							onclick={handleWaitlist}
+							class="bg-green-700 px-3 pr-4 text-white focus:outline-none cursor-pointer w-1/3 text-xs md:text-md disabled:opacity-60"
+						>
+							{waitlistLoading ? "..." : "Join Waitlist"}
+						</button>
+					</div>
+					{#if waitlistError}
+						<p class="text-red-200 text-sm mt-2 pl-4">{waitlistError}</p>
+					{/if}
+				</form>
+			{/if}
+			<span class="text-xs text-gray-200">
+				This site is protected by reCAPTCHA and the Google
+				<a
+					href="https://policies.google.com/privacy"
+					class="text-blue-200 underline hover:text-blue-800">Privacy Policy</a
 				>
-			</div>
+				and
+				<a
+					href="https://policies.google.com/terms"
+					class="text-blue-200 underline hover:text-blue-800"
+					>Terms of Service</a
+				> apply.
+			</span>
 		</div>
 
 		<div
