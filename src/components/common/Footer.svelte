@@ -24,12 +24,10 @@
         >
           Instagram
         </a>
-        <a href="" target="_blank" class="hover:text-green-500">
+        <a href="/docs/privacy" class="hover:text-green-500">
           Privacy Policy
         </a>
-        <a href="" target="_blank" class="hover:text-green-500">
-          Terms of Service
-        </a>
+        <a href="/docs/tos" class="hover:text-green-500"> Terms of Service </a>
       </div>
     </div>
     <div class="text-xs text-neutral-400 text-end">

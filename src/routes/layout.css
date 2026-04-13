@@ -27,3 +27,7 @@
 .deco-text {
   @apply flex flex-row content-center justify-start items-center gap-3 uppercase text-green-500/90 sm:text-sm font-semibold py-5 text-xs
 }
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
