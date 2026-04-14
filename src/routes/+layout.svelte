@@ -23,9 +23,11 @@
 	<script
 		src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
 	></script>
-	<script
-		src="https://www.google.com/recaptcha/api.js?render=6Lf_MqosAAAAAGKP2NwnCl77V7tX6oaCvgU7WRXS"
-	></script>
+	<!-- <script -->
+	<!-- 	src="https://www.google.com/recaptcha/api.js?render=6Lf_MqosAAAAAGKP2NwnCl77V7tX6oaCvgU7WRXS" -->
+	<!-- ></script> -->
+
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lcm47UsAAAAAGB-9bRVExnq0f6axYSXkEdRI8C5"></script>
 
 	<!-- <script -->
 	<!-- 	src="https://www.google.com/recaptcha/enterprise.js?render=6LfCbaosAAAAAHK3c_cMWio4AvSdFbVn7Ykx27xi" -->

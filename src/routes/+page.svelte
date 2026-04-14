@@ -45,7 +45,7 @@
 
 		window.addEventListener("scroll", onScroll, { passive: true });
 
-		const RECAPTCHA_SITE_KEY = "6Lf_MqosAAAAAGKP2NwnCl77V7tX6oaCvgU7WRXS";
+		const RECAPTCHA_SITE_KEY = "6Lcm47UsAAAAAGB-9bRVExnq0f6axYSXkEdRI8C5";
 		// const RECAPTCHA_SITE_KEY = "6LfCbaosAAAAAHK3c_cMWio4AvSdFbVn7Ykx27xi";
 		const FUNCTION_URL = "127.0.0.1:8000";
 
@@ -60,7 +60,7 @@
 					// @ts-ignore
 					grecaptcha.ready(() => {
 						// @ts-ignore
-						grecaptcha
+						grecaptcha.enterprise
 							.execute(RECAPTCHA_SITE_KEY, { action: "waitlist" })
 							.then(resolve)
 							.catch((e: any) => console.log(e));
