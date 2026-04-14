@@ -1,0 +1,344 @@
+<script>
+  import { showLayout } from "$lib/stores/ui";
+  import { onDestroy } from "svelte";
+
+  showLayout.set(false);
+  onDestroy(() => showLayout.set(true));
+</script>
+
+<main>
+  <div class="container">
+    <button
+      class="back-button"
+      onclick={() => window.history.back()}
+      aria-label="Go back"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+        <path d="M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z" />
+      </svg>
+    </button>
+
+    <h1>Terms of Service</h1>
+    <p class="last-updated">Last Updated: November 28, 2024</p>
+
+    <p class="paragraph">
+      Welcome to Kova! These Terms of Service ("Terms") govern your use of the
+      Kova mobile application and services. By creating an account or using
+      Kova, you agree to these Terms.
+    </p>
+
+    <h2 class="section-title">1. Acceptance of Terms</h2>
+    <p class="paragraph">
+      By accessing or using Kova, you agree to be bound by these Terms and our
+      Privacy Policy. If you do not agree to these Terms, you may not use our
+      services.
+    </p>
+
+    <h2 class="section-title">2. Eligibility</h2>
+    <p class="paragraph">To use Kova, you must:</p>
+    <p class="bullet">Be at least 18 years of age</p>
+    <p class="bullet">
+      Have the legal capacity to enter into a binding contract
+    </p>
+    <p class="bullet">
+      Not be prohibited from using our services under applicable law
+    </p>
+    <p class="bullet">
+      Provide accurate and complete information during registration
+    </p>
+
+    <h2 class="section-title">3. Account Registration</h2>
+
+    <h3 class="subsection-title">3.1 Student Accounts</h3>
+    <p class="paragraph">
+      Students must register with a valid university email address and verify
+      their email to access the platform.
+    </p>
+
+    <h3 class="subsection-title">3.2 Driver Accounts</h3>
+    <p class="paragraph">Drivers (both students and professionals) must:</p>
+    <p class="bullet">Complete driver verification process</p>
+    <p class="bullet">Provide valid driver's license</p>
+    <p class="bullet">Provide proof of insurance</p>
+    <p class="bullet">Truthfully answer all safety questionnaire questions</p>
+    <p class="bullet">
+      Maintain valid credentials throughout their use of the platform
+    </p>
+
+    <h3 class="subsection-title">3.3 Account Security</h3>
+    <p class="paragraph">You are responsible for:</p>
+    <p class="bullet">
+      Maintaining the confidentiality of your account credentials
+    </p>
+    <p class="bullet">All activities that occur under your account</p>
+    <p class="bullet">Notifying us immediately of any unauthorized access</p>
+
+    <h2 class="section-title">4. Driver Verification and Safety</h2>
+    <p class="paragraph">Kova takes safety seriously. Drivers must:</p>
+    <p class="bullet">Have no history of DUIs</p>
+    <p class="bullet">Have no history of serious accidents</p>
+    <p class="bullet">Have no suspended or revoked licenses</p>
+    <p class="bullet">Have no violent criminal offenses</p>
+    <p class="paragraph">
+      Providing false information during verification may result in immediate
+      account termination and potential legal action.
+    </p>
+
+    <h2 class="section-title">5. User Conduct</h2>
+    <p class="paragraph">You agree NOT to:</p>
+    <p class="bullet">Provide false or misleading information</p>
+    <p class="bullet">Impersonate another person or entity</p>
+    <p class="bullet">Harass, threaten, or harm other users</p>
+    <p class="bullet">Use the platform for any illegal purpose</p>
+    <p class="bullet">Attempt to gain unauthorized access to our systems</p>
+    <p class="bullet">Interfere with the proper functioning of the platform</p>
+    <p class="bullet">Share your account with others</p>
+
+    <h2 class="section-title">6. Ridesharing Services</h2>
+
+    <h3 class="subsection-title">6.1 Driver Responsibilities</h3>
+    <p class="paragraph">As a driver, you agree to:</p>
+    <p class="bullet">Maintain a valid driver's license and insurance</p>
+    <p class="bullet">Ensure your vehicle is safe and roadworthy</p>
+    <p class="bullet">Follow all traffic laws and regulations</p>
+    <p class="bullet">Treat passengers with respect and professionalism</p>
+    <p class="bullet">Honor confirmed ride commitments</p>
+
+    <h3 class="subsection-title">6.2 Passenger Responsibilities</h3>
+    <p class="paragraph">As a passenger, you agree to:</p>
+    <p class="bullet">Be ready at the agreed pickup location and time</p>
+    <p class="bullet">Treat drivers with respect</p>
+    <p class="bullet">Follow the driver's reasonable rules</p>
+    <p class="bullet">Pay the agreed fare</p>
+
+    <h3 class="subsection-title">6.3 Platform Role</h3>
+    <p class="paragraph">
+      Kova is a technology platform that connects riders and drivers. We are not
+      a transportation carrier and do not provide transportation services.
+      Drivers are independent contractors, not employees or agents of Kova.
+    </p>
+
+    <h2 class="section-title">7. Referral Program</h2>
+    <p class="paragraph">
+      Users can refer friends using their unique referral code. Referral rewards
+      and benefits are subject to change and may be modified or discontinued at
+      any time.
+    </p>
+
+    <h2 class="section-title">8. Intellectual Property</h2>
+    <p class="paragraph">
+      All content, features, and functionality of Kova, including but not
+      limited to text, graphics, logos, and software, are owned by Kova and
+      protected by copyright, trademark, and other intellectual property laws.
+    </p>
+    <p class="paragraph">You may not:</p>
+    <p class="bullet">
+      Copy, modify, or distribute our content without permission
+    </p>
+    <p class="bullet">Reverse engineer or decompile the app</p>
+    <p class="bullet">Remove any copyright or proprietary notices</p>
+
+    <h2 class="section-title">9. Limitation of Liability</h2>
+    <p class="paragraph">TO THE MAXIMUM EXTENT PERMITTED BY LAW:</p>
+    <p class="bullet">
+      Kova is provided "AS IS" without warranties of any kind
+    </p>
+    <p class="bullet">
+      We are not liable for any damages arising from your use of the platform
+    </p>
+    <p class="bullet">
+      We are not responsible for the actions of drivers or passengers
+    </p>
+    <p class="bullet">
+      We are not liable for accidents, injuries, or property damage that may
+      occur during rides
+    </p>
+    <p class="paragraph">Users participate in ridesharing at their own risk.</p>
+
+    <h2 class="section-title">10. Indemnification</h2>
+    <p class="paragraph">
+      You agree to indemnify and hold Kova harmless from any claims, damages, or
+      expenses arising from:
+    </p>
+    <p class="bullet">Your use of the platform</p>
+    <p class="bullet">Your violation of these Terms</p>
+    <p class="bullet">Your violation of any rights of another person</p>
+    <p class="bullet">Your provision of false information</p>
+
+    <h2 class="section-title">11. Account Termination</h2>
+    <p class="paragraph">
+      We reserve the right to suspend or terminate your account at any time if:
+    </p>
+    <p class="bullet">You violate these Terms</p>
+    <p class="bullet">You provide false information</p>
+    <p class="bullet">Your actions pose a safety risk to others</p>
+    <p class="bullet">We are required to do so by law</p>
+    <p class="paragraph">
+      You may delete your account at any time through the app settings.
+    </p>
+
+    <h2 class="section-title">12. Modifications to Terms</h2>
+    <p class="paragraph">
+      We may modify these Terms at any time. We will notify you of material
+      changes by:
+    </p>
+    <p class="bullet">Updating the "Last Updated" date</p>
+    <p class="bullet">Sending you an in-app notification</p>
+    <p class="bullet">Emailing you (for significant changes)</p>
+    <p class="paragraph">
+      Your continued use of Kova after changes constitutes acceptance of the new
+      Terms.
+    </p>
+
+    <h2 class="section-title">13. Dispute Resolution</h2>
+    <p class="paragraph">
+      Any disputes arising from these Terms or your use of Kova will be resolved
+      through binding arbitration rather than in court, except where prohibited
+      by law.
+    </p>
+
+    <h2 class="section-title">14. Governing Law</h2>
+    <p class="paragraph">
+      These Terms are governed by the laws of the United States and the State of
+      Indiana, without regard to conflict of law principles.
+    </p>
+
+    <h2 class="section-title">15. Severability</h2>
+    <p class="paragraph">
+      If any provision of these Terms is found to be unenforceable, the
+      remaining provisions will remain in full force and effect.
+    </p>
+
+    <h2 class="section-title">16. Contact Information</h2>
+    <p class="paragraph">
+      For questions about these Terms, please contact us at:
+    </p>
+    <p class="contact-info">Email: help@ridekova.com</p>
+
+    <h2 class="section-title">17. Entire Agreement</h2>
+    <p class="paragraph">
+      These Terms, together with our Privacy Policy, constitute the entire
+      agreement between you and Kova regarding your use of our services.
+    </p>
+
+    <div class="footer-box">
+      <p class="footer-text">
+        By using Kova, you acknowledge that you have read, understood, and agree
+        to be bound by these Terms of Service.
+      </p>
+    </div>
+  </div>
+</main>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Arimo", sans-serif;
+    background-color: #f1fff5;
+    color: #000;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    background: #ecfdf5;
+    color: #15803d;
+    text-decoration: none;
+    margin-bottom: 24px;
+    border: none;
+    cursor: pointer;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #49b166;
+    margin-bottom: 10px;
+  }
+
+  .last-updated {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 30px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 40px;
+    margin-bottom: 16px;
+  }
+
+  .subsection-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  .paragraph {
+    font-size: 16px;
+    line-height: 28px;
+    color: #374151;
+    margin-bottom: 16px;
+  }
+
+  .bullet {
+    font-size: 16px;
+    line-height: 28px;
+    color: #374151;
+    margin-bottom: 8px;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .bullet::before {
+    content: "•";
+    position: absolute;
+    left: 8px;
+    color: #49b166;
+    font-weight: bold;
+  }
+
+  .contact-info {
+    font-size: 16px;
+    line-height: 28px;
+    color: #2563eb;
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+
+  .footer-box {
+    margin-top: 48px;
+    padding: 24px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    border-left: 4px solid #22c55e;
+  }
+
+  .footer-text {
+    font-size: 15px;
+    line-height: 24px;
+    color: #4b5563;
+    font-style: italic;
+  }
+</style>

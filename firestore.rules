@@ -1,0 +1,252 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function validReferralDefaults(data, userId) {
+      return (!('referralsCount' in data) || data.referralsCount == 0)
+        && (!('referralCredited' in data) || data.referralCredited == false)
+        && (!('referralRewardUnlocked' in data) || data.referralRewardUnlocked == false)
+        && (!('referralRewardRedeemed' in data) || data.referralRewardRedeemed == false)
+        && (!('referralRewardPercent' in data) || data.referralRewardPercent == 15)
+        && (!('referralRewardMaxUses' in data) || data.referralRewardMaxUses == 3)
+        && (!('referralCode' in data) || data.referralCode == userId);
+    }
+
+    function validPreProfileCreate(userId) {
+      let data = request.resource.data;
+      return data.id == userId
+        && data.keys().hasOnly([
+          'id',
+          'phoneNumber',
+          'phoneVerified',
+          'emailVerified',
+          'notificationsEnabled',
+          'updatedAt',
+          'email',
+          'referralCode',
+          'referralsCount',
+          'referralCredited',
+          'referralRewardUnlocked',
+          'referralRewardRedeemed',
+          'referralRewardPercent',
+          'referralRewardMaxUses'
+        ]);
+    }
+
+    function validFullUserCreate(userId) {
+      let data = request.resource.data;
+      let isDriverAllowed = !('isDriver' in data)
+        || data.isDriver == false
+        || (data.isDriver == true && data.driverVerificationStatus == 'submitted');
+      return data.id == userId
+        && isDriverAllowed
+        && (!('totalEarnings' in data) || data.totalEarnings == 0)
+        && validReferralDefaults(data, userId);
+    }
+
+    function validUserCreate(userId) {
+      return validPreProfileCreate(userId) || validFullUserCreate(userId);
+    }
+
+    function validUserUpdate() {
+      let allowed = [
+        'id',
+        'name',
+        'surname',
+        'university',
+        'graduationYear',
+        'gender',
+        'picture',
+        'phoneNumber',
+        'email',
+        'isStudent',
+        'isDriver',
+        'driverType',
+        'driverVerificationStatus',
+        'driverProfile',
+        'futureRides',
+        'previousRides',
+        'requests',
+        'conversations',
+        'followers',
+        'following',
+        'license',
+        'updatedAt',
+        'referredBy',
+        'referralCode',
+        'pushTokens',
+        'pushTokenLast',
+        'pushTokenUpdatedAt',
+        'notificationsEnabled',
+        'emailVerified',
+        'phoneVerified',
+        'isWaitlisted',
+        'waitlistJoinedAt',
+        'referralsCount',
+        'referralCredited',
+        'referralRewardUnlocked',
+        'referralRewardRedeemed',
+        'referralRewardPercent',
+        'referralRewardMaxUses',
+        'totalEarnings',
+        'driverTripsCompleted',
+        'driverRating',
+        'driverRatingCount',
+        'ambassadorCodeUsed',
+        'ambassadorCredited',
+        'ambassadorReferralCount',
+        'rewardCreditUsd',
+        'rewardPoints',
+        'rewardEarnedTaskIds',
+        'rewardRedeemedTierIds',
+        'stripeAccountId',
+        'stripeAccountStatus',
+        'stripePayoutsEnabled',
+        'stripeChargesEnabled',
+        'stripeDetailsSubmitted',
+        'stripeAvailableBalanceUsd',
+        'stripePendingBalanceUsd',
+        'stripeLastSyncedAt',
+        'stripeCustomerId',
+        'stripeDefaultPaymentMethodId',
+        'hasPaymentMethod'
+      ];
+
+      let changes = request.resource.data.diff(resource.data);
+      let keys = changes.changedKeys();
+
+      let idLocked = !('id' in request.resource.data) || request.resource.data.id == request.auth.uid;
+
+      let isDriverLocked = !keys.hasAny(['isDriver', 'driverVerificationStatus'])
+        || (
+          request.resource.data.isDriver == true
+          && request.resource.data.driverVerificationStatus == 'submitted'
+        )
+        || (
+          request.resource.data.isDriver == resource.data.isDriver
+          && request.resource.data.driverVerificationStatus == resource.data.driverVerificationStatus
+        );
+
+      return keys.hasOnly(allowed) && isDriverLocked && idLocked;
+    }
+
+    function isRideDriver() {
+      return isSignedIn() && resource.data.driverId == request.auth.uid;
+    }
+
+    function isRiderPendingUpdate() {
+      let keys = request.resource.data.diff(resource.data).changedKeys();
+      let before = resource.data.participantsThatApplied;
+      let after = request.resource.data.participantsThatApplied;
+
+      return isSignedIn()
+        && keys.hasOnly(['participantsThatApplied', 'updatedAt'])
+        && request.resource.data.driverId == resource.data.driverId
+        && request.resource.data.origin == resource.data.origin
+        && request.resource.data.destination == resource.data.destination
+        && request.resource.data.date == resource.data.date
+        && request.resource.data.departureTime == resource.data.departureTime
+        && request.resource.data.availableSeats == resource.data.availableSeats
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.passengers == resource.data.passengers
+        && (
+          before.hasAny([request.auth.uid])
+          || after.hasAny([request.auth.uid])
+        );
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && validUserCreate(userId);
+      allow update: if isOwner(userId) && validUserUpdate();
+      allow delete: if isOwner(userId);
+    }
+
+    match /students/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && validFullUserCreate(userId);
+      allow update: if isOwner(userId) && validUserUpdate();
+      allow delete: if isOwner(userId);
+    }
+
+    match /drivers/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && validFullUserCreate(userId);
+      allow update: if isOwner(userId) && validUserUpdate();
+      allow delete: if isOwner(userId);
+    }
+
+    match /appConfig/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /rideDestinations/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /rides/{rideId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.driverId == request.auth.uid;
+      allow update: if isRideDriver() || isRiderPendingUpdate();
+      allow delete: if isRideDriver();
+    }
+
+    match /rides/{rideId}/{document=**} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /rideRequests/{requestId} {
+  		allow read: if true;
+  		allow create: if isSignedIn() && request.resource.data.passengerId == request.auth.uid;
+  		allow update, delete: if isSignedIn() && resource.data.passengerId == request.auth.uid;
+		}
+
+
+    match /notifications/{notificationId} {
+      allow create: if false;
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && (resource == null || request.auth.uid in resource.data.participants);
+      allow create: if isSignedIn()
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants is list;
+      allow update: if isSignedIn()
+        && request.auth.uid in resource.data.participants
+        && request.auth.uid in request.resource.data.participants;
+      allow delete: if false;
+    }
+
+    match /conversations/{conversationId}/messages/{messageId} {
+      allow read: if isSignedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+      allow create: if isSignedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+      allow update: if isSignedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+      allow delete: if false;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.riderId == request.auth.uid
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update, delete: if false;
+    }
+  }
+}

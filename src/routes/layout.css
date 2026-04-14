@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+*{
+  font-family: 'Outfit';
+}
+
+@theme {
+  --breakpoint-xs: 24rem;
+
+  @keyframes shine{
+    0%{
+      background-position: 0px;
+    }
+    100%{
+      background-position: 117.8px;
+    }
+  }
+
+  --animate-shine: shine 2s linear infinite normal;
+}
+
+.deco-line {
+  @apply sm:w-5 h-0.5 block bg-green-500/90 w-3
+}
+
+.deco-text {
+  @apply flex flex-row content-center justify-start items-center gap-3 uppercase text-green-500/90 sm:text-sm font-semibold py-5 text-xs
+}
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
