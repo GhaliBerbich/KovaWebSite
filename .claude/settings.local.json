@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(find /Users/pedro/Desktop/Code/Projects/Kova/ridekova.com -name *theme* -o -name *config*)",
-      "Bash(grep -v \"^$\")"
-    ]
-  }
-}
