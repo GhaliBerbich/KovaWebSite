@@ -1,17 +1,17 @@
-//v2
-
 import { onRequest } from "firebase-functions/v2/https";
-import { defineSecret } from "firebase-functions/params";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { RecaptchaEnterpriseServiceClient } from "@google-cloud/recaptcha-enterprise";
 
 initializeApp();
 const db = getFirestore();
+const recaptchaClient = new RecaptchaEnterpriseServiceClient();
 
-const RECAPTCHA_SECRET_KEY = defineSecret("RECAPTCHA_SECRET_KEY");
+const RECAPTCHA_SITE_KEY = "REMOVED_RECAPTCHA_KEY";
+const MIN_SCORE = 0.5;
 
 export const website_joinWaitlist = onRequest(
-  { cors: true, secrets: [RECAPTCHA_SECRET_KEY.name] },
+  { cors: true },
   async (req, res) => {
     if (req.method !== "POST") {
       res.status(405).json({ error: "Method not allowed." });
@@ -25,19 +25,37 @@ export const website_joinWaitlist = onRequest(
       return;
     }
 
-    // Verify reCAPTCHA v3 token
-    const verifyRes = await fetch(
-      "https://www.google.com/recaptcha/api/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `secret=${RECAPTCHA_SECRET_KEY.value()}&response=${recaptchaToken}`,
-      }
-    );
-    const { success, score } = await verifyRes.json();
+    if (!recaptchaToken) {
+      res.status(400).json({ error: "Missing reCAPTCHA token." });
+      return;
+    }
 
-    if (!success || score < 0.5) {
-      res.status(400).json({ error: "Bot check failed." });
+    const projectId = process.env.GCLOUD_PROJECT;
+    const projectPath = recaptchaClient.projectPath(projectId!);
+
+    const [assessment] = await recaptchaClient.createAssessment({
+      parent: projectPath,
+      assessment: {
+        event: {
+          token: recaptchaToken,
+          siteKey: RECAPTCHA_SITE_KEY,
+          expectedAction: "waitlist",
+        },
+      },
+    });
+
+    if (!assessment.tokenProperties?.valid) {
+      res.status(400).json({ error: "Bot check failed: invalid token." });
+      return;
+    }
+
+    if (assessment.tokenProperties?.action !== "waitlist") {
+      res.status(400).json({ error: "Bot check failed: action mismatch." });
+      return;
+    }
+
+    if ((assessment.riskAnalysis?.score ?? 0) < MIN_SCORE) {
+      res.status(400).json({ error: "Bot check failed: low score." });
       return;
     }
 

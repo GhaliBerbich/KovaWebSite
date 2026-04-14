@@ -46,7 +46,6 @@
 		window.addEventListener("scroll", onScroll, { passive: true });
 
 		const RECAPTCHA_SITE_KEY = "REMOVED_RECAPTCHA_KEY";
-		// const RECAPTCHA_SITE_KEY = "6LfCbaosAAAAAHK3c_cMWio4AvSdFbVn7Ykx27xi";
 		const FUNCTION_URL = "127.0.0.1:8000";
 
 		handleWaitlist = async (event: MouseEvent) => {
