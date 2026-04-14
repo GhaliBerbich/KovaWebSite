@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "./layout.css";
-	import Globe from "../components/landing/Globe.svelte";
+	import Globe from "$components/landing/Globe.svelte";
 	import { fly, fade } from "svelte/transition";
 	import { onMount } from "svelte";
 	import { reveal } from "$lib/actions/reveal";
