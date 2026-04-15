@@ -7,7 +7,7 @@ initializeApp();
 const db = getFirestore();
 const recaptchaClient = new RecaptchaEnterpriseServiceClient();
 
-const RECAPTCHA_SITE_KEY = "REMOVED_RECAPTCHA_KEY";
+const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY ?? "";
 const MIN_SCORE = 0.5;
 
 export const website_joinWaitlist = onRequest(
