@@ -5,6 +5,7 @@
 	import { onMount } from "svelte";
 	import { reveal } from "$lib/actions/reveal";
 	import StarSvg from "$lib/assets/star.svg?raw";
+	import { PUBLIC_RECAPTCHA_SITE_KEY, PUBLIC_WAITLIST_FUNCTION_URL } from "$env/static/public";
 	import type { MouseEventHandler } from "svelte/elements";
 
 	let mounted = false;
@@ -45,8 +46,8 @@
 
 		window.addEventListener("scroll", onScroll, { passive: true });
 
-		const RECAPTCHA_SITE_KEY = "REMOVED_RECAPTCHA_KEY";
-		const FUNCTION_URL = "127.0.0.1:8000";
+		const RECAPTCHA_SITE_KEY = PUBLIC_RECAPTCHA_SITE_KEY;
+		const FUNCTION_URL = PUBLIC_WAITLIST_FUNCTION_URL;
 
 		handleWaitlist = async (event: MouseEvent) => {
 			event.preventDefault();

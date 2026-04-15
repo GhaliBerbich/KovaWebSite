@@ -1,6 +1,7 @@
 <script lang="ts">
 	import "./layout.css";
 	import { page } from "$app/state";
+	import { PUBLIC_RECAPTCHA_SITE_KEY } from "$env/static/public";
 
 	let { children } = $props();
 
@@ -29,7 +30,7 @@
 		src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
 	></script>
 	<script
-		src="https://www.google.com/recaptcha/enterprise.js?render=REMOVED_RECAPTCHA_KEY"
+		src={`https://www.google.com/recaptcha/enterprise.js?render=${PUBLIC_RECAPTCHA_SITE_KEY}`}
 	></script>
 </svelte:head>
 
