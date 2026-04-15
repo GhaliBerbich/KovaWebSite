@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/png" href="/img/KovaLogo.png" />
+	<link rel="icon" type="image/svg+xml" href="/kova-logo.svg" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link
 		rel="preconnect"
