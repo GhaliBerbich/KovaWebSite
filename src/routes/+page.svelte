@@ -56,14 +56,14 @@
 
 			let token: string;
 			try {
-				token = await new Promise((resolve, _) => {
+				token = await new Promise((resolve, reject) => {
 					// @ts-ignore
 					grecaptcha.ready(() => {
 						// @ts-ignore
 						grecaptcha.enterprise
 							.execute(RECAPTCHA_SITE_KEY, { action: "waitlist" })
 							.then(resolve)
-							.catch((e: any) => console.log(e));
+							.catch(reject);
 					});
 				});
 			} catch (e: any) {

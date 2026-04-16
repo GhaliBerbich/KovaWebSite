@@ -15,7 +15,14 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/svg+xml" href="/kova-logo.svg" />
+	<link rel="icon" type="image/png" href="/Kova_Square_logo_photopea.png" />
+	<meta property="og:title" content="Kova" />
+	<meta property="og:description" content="The ridesharing app for college students." />
+	<meta property="og:image" content="https://www.ridekova.com/Kova_Square_logo_photopea.png" />
+	<meta property="og:url" content="https://www.ridekova.com" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:image" content="https://www.ridekova.com/Kova_Square_logo_photopea.png" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link
 		rel="preconnect"
