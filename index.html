@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KOVA — Your world just got bigger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Tokens ─────────────────────────────────────────────── */
+    :root {
+      --dark-green:   #2E6B4A;
+      --bright-green: #28C45A;
+      --white:        #FFFFFF;
+      --near-black:   #0D1117;
+      --light-bg:     #F4F9F6;
+      --muted-green:  #4A8C65;
+      --glass-bg:     rgba(255, 255, 255, 0.10);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --iphone-shell: #1C1C1E;
+      --iphone-screen:#E8F5EE;
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--near-black);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.15; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── Navbar ─────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(82vw, 860px);
+      padding: 10px 18px 10px 24px;
+      /* always glass — never solid */
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 100px;
+      transition: border-color 0.35s ease;
+      white-space: nowrap;
+    }
+    .nav-logo {
+      height: 28px;
+      width: auto;
+      flex-shrink: 0;
+      /* On dark sections: invert makes text white; hue-rotate(180deg) brings green back to green */
+      filter: invert(1) hue-rotate(180deg);
+      transition: filter 0.35s ease;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.88);
+      padding: 8px 26px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.35s ease;
+      border: none;
+      background: transparent;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .nav-btn.primary {
+      background: var(--bright-green);
+      color: var(--near-black);
+      font-weight: 600;
+    }
+    .nav-btn.primary:hover { background: #34d468; }
+
+    /* Over light sections — adapt text + logo, keep glass */
+    .nav.over-light {
+      border-color: rgba(0,0,0,0.12);
+    }
+    .nav.over-light .nav-logo {
+      filter: none; /* restore original black + green logo */
+    }
+    .nav.over-light .nav-btn {
+      color: rgba(0,0,0,0.75);
+    }
+    .nav.over-light .nav-btn:hover {
+      background: rgba(0,0,0,0.06);
+      color: var(--near-black);
+    }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background: var(--near-black);
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1920&q=85&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 30%;
+      background-repeat: no-repeat;
+      /* fallback while image loads */
+      background-color: #122a1c;
+    }
+    /* Dark overlay: strong at top/bottom, lighter in middle — keeps image visible */
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom,
+          rgba(10,20,14,0.72) 0%,
+          rgba(10,20,14,0.40) 40%,
+          rgba(10,20,14,0.55) 70%,
+          rgba(10,20,14,0.85) 100%),
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(40,196,90,0.20) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 15% 25%, rgba(46,107,74,0.18) 0%, transparent 55%);
+    }
+    /* Subtle dot grid on top */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      padding: 0 24px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bright-green);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out 0.2s forwards;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--bright-green);
+      opacity: 0.6;
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.2rem);
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.4s forwards;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--bright-green) 0%, #6be99a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.60);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.6s forwards;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.8s forwards;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 32px;
+      background: var(--bright-green);
+      color: var(--near-black);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none;
+      box-shadow: 0 4px 24px rgba(40,196,90,0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(40,196,90,0.45);
+      background: #34d468;
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      background: transparent;
+      color: rgba(255,255,255,0.80);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 100px;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.50);
+      color: #fff;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 1.2s forwards;
+    }
+    .scroll-line {
+      width: 1.5px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    .scroll-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--bright-green);
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    /* ─── Section chrome ─────────────────────────────────────── */
+    .section { padding: 110px 32px; }
+    .section-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--bright-green);
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 2px;
+      background: var(--bright-green);
+      border-radius: 2px;
+    }
+    .section-title {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--near-black);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      color: #5a6672;
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 80px;
+    }
+
+    /* ─── How it Works ───────────────────────────────────────── */
+    #how-it-works {
+      position: relative;
+      overflow: hidden;
+      /* Layered mesh gradient — multiple green spots over a tinted base */
+      background:
+        radial-gradient(ellipse 55% 40% at 92% 12%, rgba(40,196,90,0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 8%  58%, rgba(46,107,74,0.13) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 72% 88%, rgba(40,196,90,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 35% 30% at 38% 22%, rgba(46,107,74,0.08) 0%, transparent 45%),
+        linear-gradient(155deg, #f6fdf9 0%, #eaf6ee 40%, #f3fbf6 75%, #f9fefb 100%);
+    }
+    /* Decorative large ring — top right */
+    #how-it-works::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      right: -160px;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(40,196,90,0.16);
+      pointer-events: none;
+    }
+    /* Green dot grid overlay */
+    #how-it-works::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(46,107,74,0.10) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 104px;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 88px;
+    }
+    .step-row.reverse { flex-direction: row-reverse; }
+
+    /* iPhone slide-in animation setup */
+    .step-phone-wrap {
+      flex: 0 0 auto;
+      opacity: 0;
+      transform: translateX(-110px);
+      transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .step-row.reverse .step-phone-wrap {
+      transform: translateX(110px);
+    }
+    .step-text-col {
+      flex: 1;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s,
+                  transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s;
+    }
+    .step-row.reverse .step-text-col {
+      transform: translateX(-60px);
+    }
+    .step-row.in-view .step-phone-wrap,
+    .step-row.in-view .step-text-col {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Soft green halo behind each phone */
+    .step-phone-wrap {
+      position: relative;
+    }
+    .step-phone-wrap::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(40,196,90,0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .step-phone-wrap > .iphone { position: relative; z-index: 1; }
+
+    /* ── iPhone frame ── */
+    .iphone {
+      position: relative;
+      width: 290px;
+      height: 628px;
+      background: var(--iphone-shell);
+      border-radius: 56px;
+      box-shadow:
+        0 0 0 1.5px #3a3a3c,
+        0 28px 72px rgba(0,0,0,0.20),
+        0 6px 16px rgba(0,0,0,0.15),
+        0 0 60px rgba(40,196,90,0.12),
+        inset 0 0 0 1px rgba(255,255,255,0.07);
+    }
+    /* Volume buttons */
+    .iphone::before {
+      content: '';
+      position: absolute;
+      left: -3.5px;
+      top: 116px;
+      width: 3.5px;
+      height: 36px;
+      background: #3a3a3c;
+      border-radius: 2px 0 0 2px;
+      box-shadow: 0 52px 0 #3a3a3c, 0 100px 0 #3a3a3c;
+    }
+    /* Power button */
+    .iphone::after {
+      content: '';
+      position: absolute;
+      right: -3.5px;
+      top: 148px;
+      width: 3.5px;
+      height: 68px;
+      background: #3a3a3c;
+      border-radius: 0 2px 2px 0;
+    }
+    .iphone-screen {
+      position: absolute;
+      inset: 12px;
+      background: var(--iphone-screen);
+      border-radius: 46px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .iphone-island {
+      width: 110px;
+      height: 30px;
+      background: var(--iphone-shell);
+      border-radius: 0 0 20px 20px;
+      flex-shrink: 0;
+    }
+    .iphone-screen-content {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+    }
+    .iphone-placeholder-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(46,107,74,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .iphone-placeholder-icon svg {
+      width: 30px;
+      height: 30px;
+      opacity: 0.55;
+    }
+    .iphone-placeholder-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .iph-line {
+      height: 9px;
+      border-radius: 5px;
+      background: rgba(46,107,74,0.15);
+    }
+    .iph-line.short { width: 60%; }
+    .iph-line.shorter { width: 40%; }
+    .iphone-step-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-green);
+      opacity: 0.7;
+    }
+
+    /* Step text */
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bright-green);
+      color: var(--near-black);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 22px;
+    }
+    .step-heading {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--near-black);
+      margin-bottom: 16px;
+    }
+    .step-desc {
+      font-size: 1.1rem;
+      color: #5a6672;
+      line-height: 1.75;
+      max-width: 440px;
+    }
+
+    /* ─── Ambassador ─────────────────────────────────────────── */
+    #ambassador {
+      background: var(--dark-green);
+      text-align: center;
+    }
+    #ambassador .section-label { color: rgba(255,255,255,0.60); justify-content: center; }
+    #ambassador .section-label::before { background: rgba(255,255,255,0.40); }
+    #ambassador .section-title { color: var(--white); margin-bottom: 20px; }
+    #ambassador .section-sub {
+      color: rgba(255,255,255,0.65);
+      margin: 0 auto 40px;
+      max-width: 540px;
+    }
+    .amb-features {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-bottom: 52px;
+    }
+    .amb-feat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.85);
+    }
+    .amb-feat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .amb-feat-icon svg { width: 24px; height: 24px; }
+    .amb-feat-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-amb {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 40px;
+      background: var(--white);
+      color: var(--dark-green);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 100px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .btn-amb:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.20); }
+
+    /* ─── Download ───────────────────────────────────────────── */
+    #download {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 50% 45% at 95% 10%, rgba(40,196,90,0.15) 0%, transparent 58%),
+        radial-gradient(ellipse 45% 40% at 5%  80%, rgba(46,107,74,0.12) 0%, transparent 55%),
+        var(--light-bg);
+    }
+    /* Decorative ring — bottom right */
+    #download::before {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -140px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(40,196,90,0.15);
+      pointer-events: none;
+    }
+    /* Dot grid overlay */
+    #download::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(46,107,74,0.09) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+    .download-grid {
+      display: flex;
+      align-items: center;
+      gap: 88px;
+    }
+    .download-phone-wrap { flex: 0 0 auto; }
+    .download-text { flex: 1; }
+    .download-text .section-title { margin-bottom: 16px; }
+    .download-text .section-sub { margin-bottom: 36px; }
+    .store-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 28px;
+      background: var(--near-black);
+      border-radius: 16px;
+      color: var(--white);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+    }
+    .store-badge:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.20); }
+    .store-badge-text { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+    .store-badge-sub {
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.70);
+      letter-spacing: 0.04em;
+    }
+    .store-badge-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    /* Download iPhone — larger */
+    .iphone.large {
+      width: 320px;
+      height: 693px;
+      border-radius: 60px;
+    }
+    .iphone.large .iphone-screen { border-radius: 50px; }
+
+    /* ─── Footer ─────────────────────────────────────────────── */
+    footer {
+      background: var(--near-black);
+      padding: 48px 32px;
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-logo { height: 30px; width: auto; filter: brightness(0) invert(1); }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.35); }
+
+    /* ─── Animations ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .step-phone-wrap, .step-text-col {
+        transition: opacity 0.4s ease-out !important;
+        transform: none !important;
+      }
+      .step-row.in-view .step-phone-wrap,
+      .step-row.in-view .step-text-col { transform: none !important; }
+      .hero-eyebrow, .hero-title, .hero-sub, .hero-ctas, .hero-scroll {
+        animation: none !important; opacity: 1 !important;
+      }
+      .reveal { transition: opacity 0.4s ease-out; transform: none; }
+      .scroll-line, .scroll-dot { animation: none; }
+    }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .step-row { gap: 56px; }
+      .iphone { width: 250px; height: 540px; border-radius: 50px; }
+      .iphone::before { top: 100px; height: 32px; box-shadow: 0 44px 0 #3a3a3c, 0 86px 0 #3a3a3c; }
+      .iphone::after { top: 128px; height: 58px; }
+      .iphone-screen { border-radius: 40px; }
+      .iphone-island { width: 96px; height: 28px; }
+      .iphone.large { width: 280px; height: 607px; border-radius: 54px; }
+      .iphone.large .iphone-screen { border-radius: 44px; }
+      .step-heading { font-size: 1.9rem; }
+      .section-title { font-size: clamp(2rem, 4vw, 3rem); }
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        width: calc(100vw - 28px);
+        padding: 8px 12px 8px 16px;
+      }
+      .nav-logo { height: 24px; }
+      .nav-btn { font-size: 12px; padding: 7px 12px; }
+
+      .section { padding: 80px 20px; }
+      .steps-list { gap: 72px; }
+      .step-row, .step-row.reverse {
+        flex-direction: column;
+        gap: 36px;
+        align-items: center;
+        text-align: center;
+      }
+      .step-text-col { align-items: center; }
+      .step-phone-wrap { transform: translateY(40px) !important; }
+      .step-row.reverse .step-phone-wrap { transform: translateY(40px) !important; }
+      .step-text-col { transform: translateY(20px) !important; }
+      .step-row.reverse .step-text-col { transform: translateY(20px) !important; }
+      .step-row.in-view .step-phone-wrap,
+      .step-row.in-view .step-text-col { transform: translateY(0) !important; }
+      .step-desc { margin: 0 auto; }
+      .iphone { width: 220px; height: 476px; border-radius: 44px; }
+      .iphone::before { top: 88px; height: 28px; box-shadow: 0 40px 0 #3a3a3c, 0 76px 0 #3a3a3c; }
+      .iphone::after { top: 112px; height: 52px; }
+      .iphone-screen { border-radius: 36px; inset: 10px; }
+      .iphone-island { width: 90px; height: 26px; border-radius: 0 0 18px 18px; }
+      .iphone.large { width: 240px; height: 520px; border-radius: 48px; }
+      .iphone.large .iphone-screen { border-radius: 40px; }
+
+      .download-grid { flex-direction: column; gap: 48px; text-align: center; }
+      .download-phone-wrap { order: -1; }
+      .download-text .section-sub { margin: 0 auto 32px; }
+      .store-badge { margin: 0 auto; }
+
+      .amb-features { gap: 28px; }
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-ctas { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-ghost { width: 100%; max-width: 280px; justify-content: center; }
+      .iphone { width: 190px; height: 412px; border-radius: 40px; }
+      .iphone::before { top: 76px; height: 24px; box-shadow: 0 34px 0 #3a3a3c, 0 66px 0 #3a3a3c; }
+      .iphone::after { top: 96px; height: 44px; }
+      .iphone-screen { border-radius: 32px; inset: 8px; }
+      .iphone-island { width: 80px; height: 22px; border-radius: 0 0 14px 14px; }
+      .iphone.large { width: 210px; height: 455px; border-radius: 44px; }
+      .iphone.large .iphone-screen { border-radius: 36px; }
+      .step-heading { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Navbar ───────────────────────────────────────────────── -->
+  <nav class="nav" id="navbar" aria-label="Main navigation">
+    <img class="nav-logo" src="KOVA logo.png" alt="KOVA" />
+    <div class="nav-links">
+      <button class="nav-btn" onclick="scrollTo('how-it-works')">How it works</button>
+      <button class="nav-btn" onclick="scrollTo('ambassador')">Ambassador Program</button>
+      <button class="nav-btn primary" onclick="scrollTo('download')">Download</button>
+    </div>
+  </nav>
+
+  <!-- ─── Hero ─────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Discover · Connect · Explore</div>
+      <h1 class="hero-title">Your world just<br /><span>got bigger.</span></h1>
+      <p class="hero-sub">KOVA connects you with people who share your journey — whether you're heading across town or across the world.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="scrollTo('download')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
+          Download the app
+        </button>
+        <button class="btn-ghost" onclick="scrollTo('how-it-works')">
+          Learn more
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <div class="scroll-dot"></div>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── How it Works ─────────────────────────────────────────── -->
+  <section id="how-it-works" class="section">
+    <div class="section-inner">
+      <div class="section-label">Simple by design</div>
+      <h2 class="section-title">How it works</h2>
+      <p class="section-sub">Getting started takes less than a minute. Here's how KOVA brings people together.</p>
+
+      <div class="steps-list">
+
+        <!-- Step 1 — iPhone from left -->
+        <div class="step-row">
+          <div class="step-phone-wrap">
+            <div class="iphone" aria-label="App screenshot placeholder, step 1">
+              <div class="iphone-screen">
+                <div class="iphone-island"></div>
+                <div class="iphone-screen-content">
+                  <div class="iphone-placeholder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  </div>
+                  <div class="iphone-placeholder-lines">
+                    <div class="iph-line"></div>
+                    <div class="iph-line short"></div>
+                    <div class="iph-line shorter"></div>
+                  </div>
+                  <div class="iphone-step-label">Step 1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-text-col">
+            <div class="step-number">1</div>
+            <h3 class="step-heading">Create your profile</h3>
+            <p class="step-desc">Sign up in seconds. Tell KOVA a little about yourself — your interests, your travel style, and the experiences you're looking for.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 — iPhone from right -->
+        <div class="step-row reverse">
+          <div class="step-phone-wrap">
+            <div class="iphone" aria-label="App screenshot placeholder, step 2">
+              <div class="iphone-screen">
+                <div class="iphone-island"></div>
+                <div class="iphone-screen-content">
+                  <div class="iphone-placeholder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+                  </div>
+                  <div class="iphone-placeholder-lines">
+                    <div class="iph-line"></div>
+                    <div class="iph-line short"></div>
+                    <div class="iph-line shorter"></div>
+                  </div>
+                  <div class="iphone-step-label">Step 2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-text-col">
+            <div class="step-number">2</div>
+            <h3 class="step-heading">Discover your people</h3>
+            <p class="step-desc">Browse events, trips, and gatherings near you — or anywhere in the world. KOVA surfaces the moments that match who you are.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 — iPhone from left -->
+        <div class="step-row">
+          <div class="step-phone-wrap">
+            <div class="iphone" aria-label="App screenshot placeholder, step 3">
+              <div class="iphone-screen">
+                <div class="iphone-island"></div>
+                <div class="iphone-screen-content">
+                  <div class="iphone-placeholder-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="iphone-placeholder-lines">
+                    <div class="iph-line"></div>
+                    <div class="iph-line short"></div>
+                    <div class="iph-line shorter"></div>
+                  </div>
+                  <div class="iphone-step-label">Step 3</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-text-col">
+            <div class="step-number">3</div>
+            <h3 class="step-heading">Go together</h3>
+            <p class="step-desc">Join the experience, meet new faces, and build memories that last. The world is better when you explore it with others.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Ambassador Program ────────────────────────────────────── -->
+  <section id="ambassador" class="section">
+    <div class="section-inner">
+      <div class="section-label reveal">Join the team</div>
+      <h2 class="section-title reveal">Become an Ambassador</h2>
+      <p class="section-sub reveal">Help KOVA grow in your city. As an ambassador, you'll be the face of a movement — hosting events, welcoming new members, and shaping the culture of your local community.</p>
+
+      <div class="amb-features reveal">
+        <div class="amb-feat">
+          <div class="amb-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <span class="amb-feat-label">Exclusive perks</span>
+        </div>
+        <div class="amb-feat">
+          <div class="amb-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <span class="amb-feat-label">Build community</span>
+        </div>
+        <div class="amb-feat">
+          <div class="amb-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <span class="amb-feat-label">Global network</span>
+        </div>
+      </div>
+
+      <a href="#" class="btn-amb reveal" aria-label="Apply for the Ambassador Program">
+        Apply Now
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── Download ──────────────────────────────────────────────── -->
+  <section id="download" class="section">
+    <div class="section-inner">
+      <div class="download-grid">
+        <div class="download-phone-wrap reveal">
+          <div class="iphone large" aria-label="App screenshot placeholder for download section">
+            <div class="iphone-screen">
+              <div class="iphone-island"></div>
+              <div class="iphone-screen-content">
+                <div class="iphone-placeholder-icon" style="width:60px;height:60px;border-radius:18px;">
+                  <svg style="width:32px;height:32px;" viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 7.07 17.07"/><path d="M4.93 4.93A10 10 0 0 0 12 22"/></svg>
+                </div>
+                <div class="iphone-placeholder-lines" style="gap:9px;">
+                  <div class="iph-line"></div>
+                  <div class="iph-line"></div>
+                  <div class="iph-line short"></div>
+                  <div class="iph-line shorter"></div>
+                </div>
+                <div class="iphone-step-label">KOVA App</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="download-text reveal">
+          <div class="section-label">Available now</div>
+          <h2 class="section-title">Take KOVA<br />everywhere.</h2>
+          <p class="section-sub">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
+          <a href="#" class="store-badge" aria-label="Download KOVA on the App Store">
+            <svg width="24" height="28" viewBox="0 0 814 1000" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.3-167.2-41.6L118 976.6C45.1 912.3-.4 803.1-.4 699.4c0-218.5 145.4-334.7 288.4-334.7 74.9 0 137.4 49.6 184.7 49.6 44.3 0 114.8-52.4 201.9-52.4.5 0 1 0 1.5.1zm-188.6-77.2c35.7-42.5 59.5-100.6 59.5-158.7 0-8.1-.6-16.3-2-23.8-56.8 2.1-123.1 37.9-163.6 85-33.1 38.4-61.5 96.8-61.5 156 0 9.1 1.5 18 2.1 21.2 3.6.5 9.5 1.5 15.5 1.5 50.9 0 114.6-34.2 150-81.2z"/></svg>
+            <div class="store-badge-text">
+              <span class="store-badge-sub">Download on the</span>
+              <span class="store-badge-title">App Store</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ───────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <img class="footer-logo" src="KOVA logo.png" alt="KOVA" />
+      <p class="footer-copy">© 2025 KOVA. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ─── JS ───────────────────────────────────────────────────── -->
+  <script>
+    function scrollTo(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const navH = document.getElementById('navbar').offsetHeight + 24;
+      const top = el.getBoundingClientRect().top + window.scrollY - navH;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    const navbar = document.getElementById('navbar');
+    const darkSectionIds = new Set(['hero', 'ambassador']);
+
+    function updateNavTheme() {
+      const probe = navbar.getBoundingClientRect().bottom + 10;
+      let overLight = false;
+      document.querySelectorAll('section[id]').forEach(section => {
+        const r = section.getBoundingClientRect();
+        if (r.top <= probe && r.bottom > probe) {
+          overLight = !darkSectionIds.has(section.id);
+        }
+      });
+      navbar.classList.toggle('over-light', overLight);
+    }
+
+    window.addEventListener('scroll', updateNavTheme, { passive: true });
+    updateNavTheme();
+
+    const stepObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); stepObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.step-row').forEach(el => stepObs.observe(el));
+
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+  </script>
+</body>
+</html>

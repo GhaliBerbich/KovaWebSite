@@ -1,0 +1,8 @@
+# Development screenshots
+*.png
+*.jpg
+!KOVA logo.png
+!color palette.png
+
+# Playwright artifacts
+.playwright-mcp/
