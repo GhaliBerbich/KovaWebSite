@@ -81,3 +81,56 @@ Footer (`<footer>`) is dark (`--near-black`) with three columns via `flex` + `sp
 3. **Right** — `.footer-right`: Instagram icon → `https://www.instagram.com/ridekova/`, copyright line, location line
 
 Copyright reads: `© 2026 KOVA Group, Inc. All rights reserved.` with a secondary `West Lafayette, IN · Purdue University` in `.footer-location`.
+
+---
+
+## Scroll Animations (added session 2)
+
+Two animation systems live in the inline `<script>`:
+
+**Reveal animations** — `.reveal` elements start `opacity:0` + `translateX(±60px)`. `IntersectionObserver` (`revealObs`, threshold 0.12) adds `.in-view` to trigger the CSS transition. `.from-left` variant starts from the left. `--reveal-delay` custom property staggers related elements.
+
+**Letter-by-letter headings** — `.letter-reveal` elements have their text nodes split into `<span class="char" style="--i:N">` before the observer is attached. Each char transitions `opacity` + `translateY(18px)` with delay `calc(var(--i) * 0.028s)`. `<br />` nodes are preserved as literal `<br />` in the output. `.letter-reveal.in-view .char` triggers the reveal.
+
+Applied to: section labels, h2 titles, section-sub paragraphs, amb-feat cards, ambassador CTA, download phone wrap, download text, footer columns.
+
+---
+
+## Road Animation (added session 2)
+
+A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div class="road-wrap">` containing `.road-svg` with three `<path>` elements (`.road-border`, `.road-surface`, `.road-center`).
+
+**How it works:**
+- Path `d` is built dynamically in JS by measuring DOM positions with `getLayoutRect()` (uses `offsetTop`/`offsetLeft` chain up to `.light-zone` — transform-immune, unlike `getBoundingClientRect`)
+- After setting `d`, `getTotalLength()` is called on each path; `strokeDasharray = len` and initial `strokeDashoffset = len` (fully hidden)
+- On scroll: `strokeDashoffset` decreases toward 0 as the user scrolls through the light-zone — road tip advances like a pen drawing
+- **High-water mark** (`maxProg`): road tip never retreats when scrolling back up — only advances. `roadDone = true` when `maxProg >= 1` stops all further updates.
+- On resize: `buildRoad()` resets and rebuilds the path + lengths
+
+**Path geometry (desktop ≥ 768px):**
+- Starts at `M cx 0` (top-center of light-zone)
+- For each `.step-phone-wrap` in `#how-it-works`: road peaks in the **gap between phone and text column** (`phone.right + 44` for left-side phones, `phone.left - 44` for right-side phones), creating an S-snake. Cubic beziers use vertical tangents at entry, peak, and exit for G1 smoothness.
+- Through testimonials + ambassador: gentle S via `cx ± W*0.16`
+- Ends beside the download phone: `dp.right + 32, dp.cy`
+- Mobile (< 768px): simple 6-segment S-wave fallback
+
+**Visual** (thin, premium):
+- `.road-border`: 28px, `rgba(46,107,74,0.32)`
+- `.road-surface`: 16px, `rgba(255,255,255,0.15)`
+- `.road-center`: 1.5px solid, `rgba(255,255,255,0.28)` — no dashes
+
+`.road-wrap` z-index 0; all section content z-index 1 via `.section-inner`.
+
+---
+
+## TODO — Road Animation Improvements (next session)
+
+The following issues were identified and need to be fixed:
+
+1. **Jittery extension** — road extension isn't smooth as you scroll; needs `requestAnimationFrame` throttling or a lerp/easing so the tip glides rather than jumps.
+
+2. **Tip not at viewport midline** — the road tip should stay near the vertical center of the screen as the user scrolls. Fix: recalculate scroll progress so `prog=0.5` corresponds to the road tip being at `vh/2` from the top of the viewport, not at the bottom edge. Formula: `prog = (scrollY + vh * 0.5 - lzTop) / lzH`.
+
+3. **Smoothness breaks** — there are kinks in the road at certain transitions (likely the connecting cubic between step-row exit and the next entry, where control points create a non-smooth join). Audit each cubic segment junction and ensure G1 continuity (reflected control points around each shared endpoint).
+
+4. **Road ending** — currently the road ends mid-screen beside the download phone. Instead it should extend to the **top of the `<footer>`**, as if it disappears underneath it. Change the path endpoint: `endY = footer.offsetTop` (relative to light-zone), `endX = cx` (road returns to center and runs into the footer edge).

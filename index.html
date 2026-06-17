@@ -323,6 +323,7 @@
 
     /* ─── Shared light zone (how-it-works → download) ──────────── */
     .light-zone {
+      position: relative;
       background:
         radial-gradient(ellipse 55% 40% at 92% 12%, rgba(40,196,90,0.16) 0%, transparent 60%),
         radial-gradient(ellipse 50% 40% at 8%  58%, rgba(46,107,74,0.13) 0%, transparent 55%),
@@ -330,6 +331,16 @@
         radial-gradient(ellipse 35% 30% at 38% 22%, rgba(46,107,74,0.08) 0%, transparent 45%),
         linear-gradient(155deg, #f6fdf9 0%, #eaf6ee 40%, #f3fbf6 75%, #f9fefb 100%);
     }
+
+    /* ─── Scroll-driven road ─────────────────────────────────── */
+    .road-wrap {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .road-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .road-border  { fill: none; stroke: rgba(46,107,74,0.32); stroke-width: 28; stroke-linecap: round; stroke-linejoin: round; }
+    .road-surface { fill: none; stroke: rgba(255,255,255,0.15); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+    .road-center  { fill: none; stroke: rgba(255,255,255,0.28); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ─── How it Works ───────────────────────────────────────── */
     #how-it-works {
@@ -711,6 +722,7 @@
 
     /* ─── Testimonials ──────────────────────────────────────── */
     #testimonials {
+      position: relative; z-index: 1;
       padding: 120px 0 100px;
       overflow: hidden;
     }
@@ -794,10 +806,21 @@
     }
     .reveal {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+      transform: translateX(60px);
+      transition: opacity 0.7s ease-out var(--reveal-delay, 0s),
+                  transform 0.7s ease-out var(--reveal-delay, 0s);
     }
-    .reveal.in-view { opacity: 1; transform: translateY(0); }
+    .reveal.from-left { transform: translateX(-60px); }
+    .reveal.in-view   { opacity: 1; transform: translateX(0); }
+
+    .letter-reveal .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s ease-out calc(var(--i) * 0.028s),
+                  transform 0.45s ease-out calc(var(--i) * 0.028s);
+    }
+    .letter-reveal.in-view .char { opacity: 1; transform: translateY(0); }
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
@@ -810,8 +833,11 @@
       .hero-eyebrow, .hero-title, .hero-sub, .hero-ctas, .hero-scroll {
         animation: none !important; opacity: 1 !important;
       }
-      .reveal { transition: opacity 0.4s ease-out; transform: none; }
+      .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
+      .letter-reveal .char { transition: opacity 0.3s ease-out; transform: none !important; }
+      .letter-reveal.in-view .char { opacity: 1; }
       .scroll-line, .scroll-dot { animation: none; }
+      .road-wrap { display: none; }
     }
 
     /* ─── Responsive ─────────────────────────────────────────── */
@@ -924,12 +950,21 @@
 
   <div class="light-zone">
 
+  <!-- ─── Road background ──────────────────────────────────────── -->
+  <div class="road-wrap" aria-hidden="true">
+    <svg class="road-svg" xmlns="http://www.w3.org/2000/svg">
+      <path class="road-border"/>
+      <path class="road-surface"/>
+      <path class="road-center"/>
+    </svg>
+  </div>
+
   <!-- ─── How it Works ─────────────────────────────────────────── -->
   <section id="how-it-works" class="section">
     <div class="section-inner">
-      <div class="section-label">Simple by design</div>
-      <h2 class="section-title">How it works</h2>
-      <p class="section-sub">Getting started takes less than a minute. Here's how KOVA brings people together.</p>
+      <div class="section-label reveal from-left">Simple by design</div>
+      <h2 class="section-title letter-reveal">How it works</h2>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">Getting started takes less than a minute. Here's how KOVA brings people together.</p>
 
       <div class="steps-list">
 
@@ -1021,9 +1056,9 @@
   <!-- ─── Testimonials ────────────────────────────────────────── -->
   <section id="testimonials">
     <div class="testimonials-inner">
-      <div class="section-label reveal">What people say</div>
-      <h2 class="section-title reveal">Riders love KOVA</h2>
-      <p class="section-sub reveal">Real reviews from real people who've connected, explored, and made memories through KOVA.</p>
+      <div class="section-label reveal from-left">What people say</div>
+      <h2 class="section-title letter-reveal">Riders love KOVA</h2>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">Real reviews from real people who've connected, explored, and made memories through KOVA.</p>
     </div>
     <div class="testimonials-track-wrap">
       <div class="testimonials-track">
@@ -1186,24 +1221,24 @@
   <!-- ─── Ambassador Program ────────────────────────────────────── -->
   <section id="ambassador" class="section">
     <div class="section-inner">
-      <div class="section-label reveal">Join the team</div>
-      <h2 class="section-title reveal">Become an Ambassador</h2>
-      <p class="section-sub reveal">Help KOVA grow in your city. As an ambassador, you'll be the face of a movement — hosting events, welcoming new members, and shaping the culture of your local community.</p>
+      <div class="section-label reveal from-left">Join the team</div>
+      <h2 class="section-title letter-reveal">Become an Ambassador</h2>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">Help KOVA grow in your city. As an ambassador, you'll be the face of a movement — hosting events, welcoming new members, and shaping the culture of your local community.</p>
 
-      <div class="amb-features reveal">
-        <div class="amb-feat">
+      <div class="amb-features">
+        <div class="amb-feat reveal from-left" style="--reveal-delay:0s">
           <div class="amb-feat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
           <span class="amb-feat-label">Exclusive perks</span>
         </div>
-        <div class="amb-feat">
+        <div class="amb-feat reveal" style="--reveal-delay:0.12s">
           <div class="amb-feat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <span class="amb-feat-label">Build community</span>
         </div>
-        <div class="amb-feat">
+        <div class="amb-feat reveal" style="--reveal-delay:0.24s">
           <div class="amb-feat-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
@@ -1211,7 +1246,7 @@
         </div>
       </div>
 
-      <a href="#" class="btn-amb reveal" aria-label="Apply for the Ambassador Program">
+      <a href="#" class="btn-amb reveal from-left" style="--reveal-delay:0.15s" aria-label="Apply for the Ambassador Program">
         Apply Now
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
@@ -1222,7 +1257,7 @@
   <section id="download" class="section">
     <div class="section-inner">
       <div class="download-grid">
-        <div class="download-phone-wrap reveal">
+        <div class="download-phone-wrap reveal from-left">
           <div class="iphone large" aria-label="App screenshot placeholder for download section">
             <div class="iphone-screen">
               <div class="iphone-island"></div>
@@ -1241,11 +1276,11 @@
             </div>
           </div>
         </div>
-        <div class="download-text reveal">
-          <div class="section-label">Available now</div>
-          <h2 class="section-title">Take KOVA<br />everywhere.</h2>
-          <p class="section-sub">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
-          <a href="https://apps.apple.com/us/app/ridekova/id6757269118" class="appstore-btn" target="_blank" rel="noopener noreferrer" aria-label="Download KOVA on the App Store">
+        <div class="download-text">
+          <div class="section-label reveal" style="--reveal-delay:0.05s">Available now</div>
+          <h2 class="section-title letter-reveal">Take KOVA<br />everywhere.</h2>
+          <p class="section-sub reveal" style="--reveal-delay:0.15s">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
+          <a href="https://apps.apple.com/us/app/ridekova/id6757269118" class="appstore-btn reveal" style="--reveal-delay:0.25s" target="_blank" rel="noopener noreferrer" aria-label="Download KOVA on the App Store">
             <img src="download_appstore_svg.png" alt="Download on the App Store" class="appstore-img" />
           </a>
         </div>
@@ -1258,14 +1293,14 @@
   <!-- ─── Footer ───────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
-      <img class="footer-logo" src="KOVA logo.png" alt="KOVA" />
+      <img class="footer-logo reveal from-left" src="KOVA logo.png" alt="KOVA" />
 
-      <div class="footer-links">
+      <div class="footer-links reveal">
         <a href="terms.html" class="footer-link">Terms of Service</a>
         <a href="privacy.html" class="footer-link">Privacy Policy</a>
       </div>
 
-      <div class="footer-right">
+      <div class="footer-right reveal" style="--reveal-delay:0.1s">
         <a href="https://www.instagram.com/ridekova/" class="footer-social" aria-label="KOVA on Instagram" target="_blank" rel="noopener noreferrer">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -1313,12 +1348,129 @@
     }, { threshold: 0.15 });
     document.querySelectorAll('.step-row').forEach(el => stepObs.observe(el));
 
+    document.querySelectorAll('.letter-reveal').forEach(el => {
+      let charIndex = 0;
+      const parts = [];
+      el.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent.split('').forEach(ch => {
+            parts.push(`<span class="char" style="--i:${charIndex++}">${ch === ' ' ? '&nbsp;' : ch}</span>`);
+          });
+        } else if (node.nodeName === 'BR') {
+          parts.push('<br />');
+        }
+      });
+      el.innerHTML = parts.join('');
+    });
+
     const revealObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
       });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+    document.querySelectorAll('.reveal, .letter-reveal').forEach(el => revealObs.observe(el));
+
+    /* ── Road animation ── */
+    (function () {
+      const lz     = document.querySelector('.light-zone');
+      const rSvg   = document.querySelector('.road-svg');
+      const rPaths = document.querySelectorAll('.road-border, .road-surface, .road-center');
+      let roadDone = false;
+      let maxProg  = 0;
+
+      function getLayoutRect(el) {
+        let top = 0, left = 0, node = el;
+        while (node && node !== lz) {
+          top  += node.offsetTop;
+          left += node.offsetLeft;
+          node  = node.offsetParent;
+        }
+        return {
+          left, top,
+          right:  left + el.offsetWidth,
+          bottom: top  + el.offsetHeight,
+          cx: left + el.offsetWidth  / 2,
+          cy: top  + el.offsetHeight / 2,
+          w: el.offsetWidth, h: el.offsetHeight,
+        };
+      }
+
+      function buildRoad() {
+        roadDone = false;
+        maxProg  = 0;
+        const W = lz.offsetWidth, H = lz.offsetHeight;
+        rSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        const cx = W / 2;
+        let d;
+
+        if (W < 768) {
+          const amp = W * 0.22, segs = 6;
+          d = `M ${cx} 0`;
+          for (let i = 0; i < segs; i++) {
+            const sH = H / segs, y0 = i * sH, y1 = y0 + sH, dir = i % 2 === 0 ? 1 : -1;
+            d += ` C ${cx + dir*amp} ${y0 + sH*0.35} ${cx + dir*amp} ${y0 + sH*0.65} ${cx} ${y1}`;
+          }
+        } else {
+          const phones = [...document.querySelectorAll('#how-it-works .step-phone-wrap')];
+          d = `M ${cx} 0`;
+          let curY = 0;
+
+          phones.forEach(phone => {
+            const pr     = getLayoutRect(phone);
+            const isLeft = pr.cx < cx;
+            /* Peak in the gap between phone and text column */
+            const peakX  = isLeft ? pr.right + 44 : pr.left - 44;
+            const peakY  = pr.cy;
+            const entryY = pr.top  - 100;
+            const exitY  = pr.bottom + 80;
+
+            /* Down to entry point */
+            d += ` C ${cx} ${curY + (entryY - curY) * 0.4} ${cx} ${entryY} ${cx} ${entryY}`;
+            /* Approach center→peak: vertical tangents at both ends */
+            d += ` C ${cx} ${peakY} ${peakX} ${entryY} ${peakX} ${peakY}`;
+            /* Exit peak→center: vertical tangents at both ends */
+            d += ` C ${peakX} ${exitY} ${cx} ${peakY} ${cx} ${exitY}`;
+            curY = exitY;
+          });
+
+          /* Gentle S through testimonials + ambassador */
+          const ambR = getLayoutRect(document.querySelector('#ambassador'));
+          d += ` C ${cx + W*0.16} ${ambR.top + 80} ${cx - W*0.16} ${ambR.cy} ${cx} ${ambR.bottom}`;
+
+          /* End beside right edge of download phone */
+          const dlR = getLayoutRect(document.querySelector('#download'));
+          const dp  = getLayoutRect(document.querySelector('.download-phone-wrap'));
+          const endX = dp.right + 32, endY = dp.cy;
+          d += ` C ${cx} ${dlR.top + 100} ${endX} ${dlR.top + 140} ${endX} ${endY}`;
+        }
+
+        rPaths.forEach(p => {
+          p.setAttribute('d', d);
+          const len = p.getTotalLength();
+          p._len = len;
+          p.style.strokeDasharray  = len;
+          p.style.strokeDashoffset = len;
+        });
+
+        updateRoad();
+      }
+
+      function updateRoad() {
+        if (roadDone) return;
+        const lzH   = lz.offsetHeight;
+        const vh    = window.innerHeight;
+        const lzTop = lz.getBoundingClientRect().top + window.scrollY;
+        const prog  = Math.max(0, Math.min(1, (window.scrollY + vh - lzTop) / lzH));
+        if (prog <= maxProg) return; // road tip never retreats
+        maxProg = prog;
+        rPaths.forEach(p => { p.style.strokeDashoffset = p._len * (1 - maxProg); });
+        if (maxProg >= 1) roadDone = true;
+      }
+
+      window.addEventListener('scroll', updateRoad, { passive: true });
+      window.addEventListener('resize', buildRoad);
+      buildRoad();
+    })();
   </script>
 </body>
 </html>
