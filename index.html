@@ -37,6 +37,19 @@
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
 
+    /* ─── Bottom blur overlay ───────────────────────────────── */
+    .bottom-blur {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 140px;
+      pointer-events: none;
+      z-index: 9999;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+    }
+
     /* ─── Navbar ─────────────────────────────────────────────── */
     .nav {
       position: fixed;
@@ -53,9 +66,9 @@
       background: rgba(255,255,255,0.10);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 100px;
-      transition: border-color 0.35s ease;
+      border: none;
+      border-radius: 16px;
+      transition: none;
       white-space: nowrap;
     }
     .nav-logo {
@@ -89,11 +102,11 @@
       color: var(--near-black);
       font-weight: 600;
     }
+    .nav-btn.primary { border-radius: 10px; }
     .nav-btn.primary:hover { background: #34d468; }
 
     /* Over light sections — adapt text + logo, keep glass */
     .nav.over-light {
-      border-color: rgba(0,0,0,0.12);
     }
     .nav.over-light .nav-logo {
       filter: none; /* restore original black + green logo */
@@ -127,20 +140,8 @@
       /* fallback while image loads */
       background-color: #122a1c;
     }
-    /* Dark overlay: strong at top/bottom, lighter in middle — keeps image visible */
-    .hero-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to bottom,
-          rgba(10,20,14,0.72) 0%,
-          rgba(10,20,14,0.40) 40%,
-          rgba(10,20,14,0.55) 70%,
-          rgba(10,20,14,0.85) 100%),
-        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(40,196,90,0.20) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 40% at 15% 25%, rgba(46,107,74,0.18) 0%, transparent 55%);
-    }
+    /* Dark overlay — disabled to show raw image */
+    .hero-bg::before { display: none; }
     /* Subtle dot grid on top */
     .hero-bg::after {
       content: '';
@@ -221,7 +222,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      border-radius: 100px;
+      border-radius: 10px;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
       border: none;
@@ -231,26 +232,6 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 32px rgba(40,196,90,0.45);
       background: #34d468;
-    }
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 30px;
-      background: transparent;
-      color: rgba(255,255,255,0.80);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 100px;
-      cursor: pointer;
-      border: 1.5px solid rgba(255,255,255,0.22);
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-    }
-    .btn-ghost:hover {
-      border-color: rgba(255,255,255,0.50);
-      color: #fff;
-      background: rgba(255,255,255,0.06);
     }
     .hero-scroll {
       position: absolute;
@@ -614,7 +595,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      border-radius: 100px;
+      border-radius: 10px;
       cursor: pointer;
       border: none;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -908,7 +889,7 @@
 
     @media (max-width: 480px) {
       .hero-ctas { flex-direction: column; align-items: center; }
-      .btn-primary, .btn-ghost { width: 100%; max-width: 280px; justify-content: center; }
+      .btn-primary { width: 100%; max-width: 280px; justify-content: center; }
       .iphone { width: 190px; height: 412px; border-radius: 40px; }
       .iphone::before { top: 76px; height: 24px; box-shadow: 0 34px 0 #3a3a3c, 0 66px 0 #3a3a3c; }
       .iphone::after { top: 96px; height: 44px; }
@@ -944,10 +925,6 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
           Download the app
         </a>
-        <button class="btn-ghost" onclick="scrollToSection('how-it-works')">
-          Learn more
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
       </div>
     </div>
     <div class="hero-scroll" aria-hidden="true">
@@ -1529,5 +1506,6 @@
       buildRoad();
     })();
   </script>
+  <div class="bottom-blur" aria-hidden="true"></div>
 </body>
 </html>
