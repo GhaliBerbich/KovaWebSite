@@ -108,27 +108,34 @@ Copyright: `© 2026 KOVA Group, Inc. All rights reserved.` / `West Lafayette, IN
 
 ## Road Animation
 
-A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div class="road-wrap">` containing `.road-svg` with three `<path>` elements (`.road-border`, `.road-surface`, `.road-center`).
+A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div class="road-wrap">` containing `.road-svg`. The road is rendered as **static visual layers revealed by an animated SVG `<mask>`** (mask-wipe), not by per-path dashoffset.
 
-**How it works:**
-- Path `d` is built via Catmull-Rom spline through waypoints measured with `getLayoutRect()` (offsetTop/offsetLeft chain — transform-immune)
-- `strokeDasharray = totalLength`, initial `strokeDashoffset = totalLength` (fully hidden)
-- CSS transition `stroke-dashoffset 0.2s ease-out` is set on the next rAF after `buildRoad()` so the initial reset has no animation
-- On scroll (rAF-throttled): binary search via `getPointAtLength()` finds the arc length whose Y coordinate equals `scrollY + vh * scrollK - lzTop` (desired viewport position). This keeps the road tip at a consistent screen position regardless of path curvature
-- **`scrollK`** is computed dynamically in `buildRoad()` so the tip lands inside the bottom mask zone at max scroll — road always fully completes before running out of scrollable distance
-- **High-water mark** (`maxProg`): road never retreats when scrolling back up
-- On resize: `buildRoad()` resets and rebuilds
+**SVG structure** (`.road-svg`):
+- `<defs>`: `<mask id="road-mask">` containing one `.road-reveal` path (white, thick stroke), plus `<filter id="brush-tex">` (`feTurbulence`+`feDisplacementMap`) for the brush's bristly edge
+- `<g mask="url(#road-mask)">`: the static visual layers — `.road-sheen`, `.road-base`, `.road-center` (all share the same `d`)
+- `.road-brush`: a `<g>` holding a paint-daub sprite, repositioned at the tip every frame
+
+**Reveal model (mask-wipe + rAF lerp):**
+- Path `d` built via Catmull-Rom spline through waypoints from `getLayoutRect()` (offsetTop/offsetLeft chain — transform-immune). The same `d` is set on every visual layer **and** `.road-reveal`.
+- `.road-reveal` has `strokeDasharray = totalLength`; animating its `strokeDashoffset` from `totalLength`→`0` wipes the mask open, progressively revealing the static layers beneath. This is why the center line can be a static green dash pattern *and* still draw on.
+- **Smoothness**: a continuous `requestAnimationFrame` loop eases the rendered length toward a scroll-driven target each frame — `drawnLen += (targetLen − drawnLen) * SMOOTH` (`SMOOTH ≈ 0.14`). Decoupled from scroll-event timing, so the draw is fluid at any scroll speed (no CSS transition on dashoffset). The loop stops when settled and restarts on scroll.
+- **Target**: on scroll (rAF-throttled), binary search via `getPointAtLength()` finds the arc length whose Y equals `scrollY + vh * scrollK − lzTop` (consistent tip screen position). `targetLen` is a high-water mark — the road never retreats when scrolling up. Within ~8px of page bottom, the target snaps to `totalLength` so the road always completes.
+- **`scrollK`** is computed dynamically in `buildRoad()` so the tip reaches `footerY + OVERLAP` (under the footer) exactly at max scroll.
+- On resize: `buildRoad()` resets and rebuilds.
+
+**Brush tip** — each frame, the brush `<g>` is `translate`d to `reveal.getPointAtLength(drawnLen)` and `rotate`d to the path tangent (point 6px behind). It fades out (`opacity 0`) at the very start and once the road is essentially complete, so no brush floats under the footer.
 
 **Path geometry (desktop ≥ 768px):**
 - Starts at `[cx, 0]` (top-center of light-zone, hidden by top mask fade)
 - S-snake through each `.step-phone-wrap`: peaks in the gap between phone and text column
 - Gentle S through testimonials and ambassador sections
-- Ends at `[cx, footerY]` (footer top edge, hidden by bottom mask fade — appears to slide under footer)
-- Mobile (< 768px): simple 6-segment S-wave fallback
+- Ends at `[cx, footerY + OVERLAP]` — continues *under* the opaque footer (`z-index:10000`), which occludes the seam so the road appears to slide under it (mirrors the top emergence). `OVERLAP = 40` in JS **must equal** the `.road-wrap` bottom inset (`-40px`) so the SVG scales 1:1.
+- Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`
 
-**Visual** (thin, premium):
-- `.road-border`: 28px, `rgba(46,107,74,0.32)`
-- `.road-surface`: 16px, `rgba(255,255,255,0.15)`
-- `.road-center`: 1.5px, `rgba(255,255,255,0.28)`
+**Visual** (thicker, premium):
+- `.road-base`: 34px, `var(--near-black)` @ 0.92 opacity (solid road body)
+- `.road-sheen`: 40px, `rgba(255,255,255,0.06)` (faint lift under the base)
+- `.road-center`: 3px, `var(--bright-green)`, `stroke-dasharray: 26 22` (green dashed marking)
+- `.road-reveal`: 46px white (mask only — never visible)
 
-**`.road-wrap` mask** — 100px top fade (hides origin stub) + 120px bottom fade (road dissolves into footer). `maskBottom = 120` constant in JS must match the CSS value.
+**`.road-wrap` mask** — only a 100px **top** fade (hides the origin stub at the hero seam). The bottom is no longer faded; the road is occluded by the footer instead.

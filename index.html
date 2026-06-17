@@ -314,22 +314,23 @@
     }
 
     /* ─── Scroll-driven road ─────────────────────────────────── */
+    /* .road-wrap extends 40px below the light-zone (must equal OVERLAP in JS so
+       the SVG scales 1:1) so the road can paint over the footer's top edge and be
+       occluded by it (footer z-index:10000), mirroring how the road emerges from
+       under the hero at the top. */
     .road-wrap {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0 0 -40px 0;
       pointer-events: none; z-index: 0; overflow: hidden;
-      -webkit-mask-image: linear-gradient(
-        to bottom, transparent 0px, black 100px,
-        black calc(100% - 120px), transparent 100%
-      );
-      mask-image: linear-gradient(
-        to bottom, transparent 0px, black 100px,
-        black calc(100% - 120px), transparent 100%
-      );
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 100px);
+      mask-image: linear-gradient(to bottom, transparent 0px, black 100px);
     }
     .road-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .road-border  { fill: none; stroke: rgba(46,107,74,0.32); stroke-width: 28; stroke-linecap: round; stroke-linejoin: round; }
-    .road-surface { fill: none; stroke: rgba(255,255,255,0.15); stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
-    .road-center  { fill: none; stroke: rgba(255,255,255,0.28); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    /* Static visual layers — revealed progressively by #road-mask (mask-wipe). */
+    .road-base   { fill: none; stroke: var(--near-black); stroke-opacity: 0.92; stroke-width: 34; stroke-linecap: round; stroke-linejoin: round; }
+    .road-sheen  { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; }
+    .road-center { fill: none; stroke: var(--bright-green); stroke-width: 3; stroke-dasharray: 26 22; stroke-linecap: round; stroke-linejoin: round; }
+    .road-reveal { fill: none; stroke: #fff; stroke-width: 46; stroke-linecap: round; stroke-linejoin: round; }
+    .road-brush  { transition: opacity 0.25s ease-out; }
 
     /* ─── How it Works ───────────────────────────────────────── */
     #how-it-works {
@@ -940,9 +941,21 @@
   <!-- ─── Road background ──────────────────────────────────────── -->
   <div class="road-wrap" aria-hidden="true">
     <svg class="road-svg" xmlns="http://www.w3.org/2000/svg">
-      <path class="road-border"/>
-      <path class="road-surface"/>
-      <path class="road-center"/>
+      <defs>
+        <mask id="road-mask" maskUnits="userSpaceOnUse">
+          <path class="road-reveal"/>
+        </mask>
+        <filter id="brush-tex" x="-50%" y="-50%" width="200%" height="200%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9 0.18" numOctaves="2" seed="7" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <g mask="url(#road-mask)">
+        <path class="road-sheen"/>
+        <path class="road-base"/>
+        <path class="road-center"/>
+      </g>
+      <g class="road-brush"></g>
     </svg>
   </div>
 
@@ -1359,13 +1372,31 @@
 
     /* ── Road animation ── */
     (function () {
-      const lz     = document.querySelector('.light-zone');
-      const rSvg   = document.querySelector('.road-svg');
-      const rPaths = document.querySelectorAll('.road-border, .road-surface, .road-center');
-      let roadDone = false;
-      let maxProg  = 0;
-      let rafId    = null;
-      let scrollK  = 0.65; // updated dynamically in buildRoad
+      const lz       = document.querySelector('.light-zone');
+      const rSvg     = document.querySelector('.road-svg');
+      const vPaths   = document.querySelectorAll('.road-base, .road-sheen, .road-center');
+      const reveal   = document.querySelector('.road-reveal');
+      const brushG   = document.querySelector('.road-brush');
+      const OVERLAP  = 40;             // px the road extends under the footer (match .road-wrap inset)
+      const SMOOTH   = 0.14;           // per-frame easing toward target (frame-rate-smooth draw)
+      let totalLen   = 0;
+      let targetLen  = 0;              // scroll-driven, high-water (never retreats)
+      let drawnLen   = 0;              // what's currently rendered
+      let animating  = false;
+      let scrollRaf  = null;
+      let scrollK    = 0.65;           // updated dynamically in buildRoad
+
+      const nb = (getComputedStyle(document.documentElement)
+                    .getPropertyValue('--near-black').trim()) || '#0D1117';
+      brushG.innerHTML = `
+        <g filter="url(#brush-tex)">
+          <path d="M 11 0 C 7 -14 -10 -18 -18 -12 C -22 -8 -22 8 -18 12 C -10 18 7 14 11 0 Z" fill="${nb}"/>
+          <line x1="-3" y1="-9" x2="-21" y2="-12" stroke="${nb}" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-3" y1="0"  x2="-23" y2="0"   stroke="${nb}" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-3" y1="9"  x2="-21" y2="12"  stroke="${nb}" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="1" cy="-5" rx="5" ry="2.4" fill="rgba(255,255,255,0.16)"/>`;
+      brushG.style.opacity = '0';
 
       function getLayoutRect(el) {
         let top = 0, left = 0, node = el;
@@ -1401,26 +1432,23 @@
         return path;
       }
 
-      /* Binary search: arc length s where path.getPointAtLength(s).y ≈ targetY.
+      /* Binary search: arc length s on the reveal path where its Y ≈ targetY.
          Valid only when path Y is monotonically increasing (true for our waypoints). */
-      function arcLengthForY(path, targetY) {
+      function arcLengthForY(targetY) {
         if (targetY <= 0) return 0;
-        const total = path._len;
-        if (path.getPointAtLength(total).y <= targetY) return total;
-        let lo = 0, hi = total;
+        if (reveal.getPointAtLength(totalLen).y <= targetY) return totalLen;
+        let lo = 0, hi = totalLen;
         for (let i = 0; i < 20; i++) {
           const mid = (lo + hi) / 2;
-          if (path.getPointAtLength(mid).y < targetY) lo = mid;
+          if (reveal.getPointAtLength(mid).y < targetY) lo = mid;
           else hi = mid;
         }
         return (lo + hi) / 2;
       }
 
       function buildRoad() {
-        roadDone = false;
-        maxProg  = 0;
         const W = lz.offsetWidth, H = lz.offsetHeight;
-        rSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        rSvg.setAttribute('viewBox', `0 0 ${W} ${H + OVERLAP}`);
         const cx = W / 2;
         let d;
 
@@ -1431,6 +1459,7 @@
             const sH = H / segs, y0 = i * sH, y1 = y0 + sH, dir = i % 2 === 0 ? 1 : -1;
             d += ` C ${cx + dir*amp} ${y0 + sH*0.35} ${cx + dir*amp} ${y0 + sH*0.65} ${cx} ${y1}`;
           }
+          d += ` L ${cx} ${H + OVERLAP}`;
         } else {
           const phones   = [...document.querySelectorAll('#how-it-works .step-phone-wrap')];
           const pRects   = phones.map(p => getLayoutRect(p));
@@ -1439,12 +1468,11 @@
           const footerEl = document.querySelector('footer');
           const footerY  = footerEl.offsetTop - lz.offsetTop;
 
-          /* Compute scrollK so the road tip lands inside the bottom mask zone at max scroll,
-             ensuring the road fully completes before running out of scrollable distance. */
-          const maskBottom = 120;
+          /* Compute scrollK so the road tip reaches footerY+OVERLAP (fully under the
+             footer) exactly at max scroll — the draw completes as the page bottoms out. */
           const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
-          scrollK = Math.max(0.45, Math.min(0.88,
-            (footerY - maskBottom - maxScrollY + lz.offsetTop) / window.innerHeight
+          scrollK = Math.max(0.45, Math.min(0.90,
+            (footerY + OVERLAP - maxScrollY + lz.offsetTop) / window.innerHeight
           ));
 
           const waypoints = [[cx, 0]];
@@ -1463,44 +1491,68 @@
           waypoints.push([cx + W * 0.10, testR.cy]);
           waypoints.push([cx - W * 0.10, ambR.cy]);
           waypoints.push([cx, footerY - 60]);
-          waypoints.push([cx, footerY]);
+          waypoints.push([cx, footerY + OVERLAP]);   // continue under the footer
 
           d = catmullRomPath(waypoints);
         }
 
-        rPaths.forEach(p => {
-          p.setAttribute('d', d);
-          const len = p.getTotalLength();
-          p._len = len;
-          p.style.transition       = 'none';
-          p.style.strokeDasharray  = len;
-          p.style.strokeDashoffset = len;
-        });
+        vPaths.forEach(p => p.setAttribute('d', d));
+        reveal.setAttribute('d', d);
+        totalLen = reveal.getTotalLength();
+        reveal.style.strokeDasharray  = totalLen;
+        reveal.style.strokeDashoffset = totalLen;   // start fully hidden
 
-        /* Enable CSS transition after initial values paint, then do first position update */
-        requestAnimationFrame(() => {
-          rPaths.forEach(p => { p.style.transition = 'stroke-dashoffset 0.2s ease-out'; });
-          updateRoad();
-        });
+        /* Reset draw state; first target comes from current scroll position */
+        drawnLen  = 0;
+        targetLen = 0;
+        brushG.style.opacity = '0';
+        requestAnimationFrame(updateTarget);
       }
 
-      function updateRoad() {
-        if (roadDone) return;
-        const vh    = window.innerHeight;
-        const lzTop = lz.getBoundingClientRect().top + window.scrollY;
-        /* desiredY: SVG Y that should appear at scrollK fraction of viewport height */
-        const desiredY = window.scrollY + vh * scrollK - lzTop;
-        const arcLen   = arcLengthForY(rPaths[0], desiredY);
-        const prog     = arcLen / rPaths[0]._len;
-        if (prog <= maxProg) return;
-        maxProg = prog;
-        rPaths.forEach(p => { p.style.strokeDashoffset = p._len * (1 - maxProg); });
-        if (maxProg >= 1) roadDone = true;
+      /* Recompute the scroll-driven target length (high-water — never retreats). */
+      function updateTarget() {
+        const vh         = window.innerHeight;
+        const lzTop      = lz.getBoundingClientRect().top + window.scrollY;
+        const desiredY   = window.scrollY + vh * scrollK - lzTop;
+        let   arcLen     = arcLengthForY(desiredY);
+        /* Snap to full within ~8px of the page bottom so the road always completes
+           & tucks under the footer regardless of sub-pixel rounding. */
+        const atBottom = (window.scrollY + vh) >= (document.documentElement.scrollHeight - 8);
+        if (atBottom) arcLen = totalLen;
+        if (arcLen > targetLen) targetLen = arcLen;
+        startLoop();
+      }
+
+      /* Continuous rAF loop: ease drawnLen → targetLen every frame, independent of
+         scroll-event timing, so the draw is smooth at any scroll speed. */
+      function tick() {
+        const diff = targetLen - drawnLen;
+        if (Math.abs(diff) < 0.5) { drawnLen = targetLen; }
+        else                      { drawnLen += diff * SMOOTH; }
+
+        reveal.style.strokeDashoffset = totalLen - drawnLen;
+
+        if (drawnLen > 4 && drawnLen < totalLen - 2) {
+          const tip  = reveal.getPointAtLength(drawnLen);
+          const back = reveal.getPointAtLength(Math.max(0, drawnLen - 6));
+          const ang  = Math.atan2(tip.y - back.y, tip.x - back.x) * 180 / Math.PI;
+          brushG.setAttribute('transform', `translate(${tip.x} ${tip.y}) rotate(${ang})`);
+          brushG.style.opacity = '1';
+        } else {
+          brushG.style.opacity = '0';
+        }
+
+        if (Math.abs(targetLen - drawnLen) < 0.5) { animating = false; return; }
+        requestAnimationFrame(tick);
+      }
+
+      function startLoop() {
+        if (!animating) { animating = true; requestAnimationFrame(tick); }
       }
 
       window.addEventListener('scroll', () => {
-        if (rafId === null) {
-          rafId = requestAnimationFrame(() => { updateRoad(); rafId = null; });
+        if (scrollRaf === null) {
+          scrollRaf = requestAnimationFrame(() => { updateTarget(); scrollRaf = null; });
         }
       }, { passive: true });
 
