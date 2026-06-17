@@ -24,18 +24,18 @@ Everything is in `index.html`, organized top-to-bottom:
 
 1. **CSS custom properties** (`:root`) — all color tokens, do not use raw hex outside this block
 2. **Navbar CSS + JS** — glassmorphism pill, always transparent, section-aware theme switching
-3. **Section CSS** — each section (`#hero`, `#how-it-works`, `#ambassador`, `#download`) has its own block
-4. **HTML sections** — same order as nav: Hero → How it works → Ambassador → Download → Footer
+3. **Section CSS** — each section has its own block; light sections share `.light-zone` background
+4. **HTML sections** — Hero → `<div class="light-zone">` wrapping (How it works → Testimonials → Ambassador → Download) → Footer
 5. **JS** — IntersectionObserver for scroll animations + navbar theme detection, at bottom of `<body>`
 
 ## Color Tokens
 
 | Token | Hex | Used for |
 |---|---|---|
-| `--dark-green` | `#2E6B4A` | Ambassador section bg, dark accents |
+| `--dark-green` | `#2E6B4A` | Ambassador button, dark accents, icon strokes |
 | `--bright-green` | `#28C45A` | CTAs, highlights, step badges |
-| `--near-black` | `#0D1117` | Body text, hero bg |
-| `--light-bg` | `#F4F9F6` | Download section bg |
+| `--near-black` | `#0D1117` | Body text, hero bg, footer bg |
+| `--light-bg` | `#F4F9F6` | Fallback only — active background is `.light-zone` gradient |
 
 ## Key Patterns
 
@@ -52,6 +52,12 @@ Everything is in `index.html`, organized top-to-bottom:
 **App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` image in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`. The download section badge uses `download_appstore_svg.png` as an `<img>` with CSS hover lift (`translateY(-4px) scale(1.02)` + shadow).
 
 **Hero background** — local file `hero_image.png` + layered dark overlay gradients in `.hero-bg::before` + dot grid in `.hero-bg::after`.
+
+**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, and `#download` are wrapped in `<div class="light-zone">`. The shared layered radial gradient (`rgba(40,196,90,…)` spots over `linear-gradient(155deg, #f6fdf9 … #f9fefb)`) is applied once to `.light-zone` so the background is continuous with no visible seam between sections. Do not add a `background` property to any of these four sections individually.
+
+**Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. The track contains 12 cards (6 originals + 6 duplicates). Arch layout uses `nth-child(6n+N)` with `translateY` + `rotate` so the pattern repeats seamlessly across duplicated cards. No hover-pause. Edge fade via `mask-image` linear-gradient on `.testimonials-track-wrap`.
+
+**darkSectionIds** — only `'hero'` is in the set. All other sections use the light background and do not need navbar inversion.
 
 ## Assets
 

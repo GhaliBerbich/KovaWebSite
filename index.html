@@ -321,17 +321,20 @@
       margin-bottom: 80px;
     }
 
-    /* ─── How it Works ───────────────────────────────────────── */
-    #how-it-works {
-      position: relative;
-      overflow: hidden;
-      /* Layered mesh gradient — multiple green spots over a tinted base */
+    /* ─── Shared light zone (how-it-works → download) ──────────── */
+    .light-zone {
       background:
         radial-gradient(ellipse 55% 40% at 92% 12%, rgba(40,196,90,0.16) 0%, transparent 60%),
         radial-gradient(ellipse 50% 40% at 8%  58%, rgba(46,107,74,0.13) 0%, transparent 55%),
         radial-gradient(ellipse 40% 35% at 72% 88%, rgba(40,196,90,0.12) 0%, transparent 50%),
         radial-gradient(ellipse 35% 30% at 38% 22%, rgba(46,107,74,0.08) 0%, transparent 45%),
         linear-gradient(155deg, #f6fdf9 0%, #eaf6ee 40%, #f3fbf6 75%, #f9fefb 100%);
+    }
+
+    /* ─── How it Works ───────────────────────────────────────── */
+    #how-it-works {
+      position: relative;
+      overflow: hidden;
     }
     /* Decorative large ring — top right */
     #how-it-works::before {
@@ -545,14 +548,11 @@
 
     /* ─── Ambassador ─────────────────────────────────────────── */
     #ambassador {
-      background: var(--dark-green);
       text-align: center;
     }
-    #ambassador .section-label { color: rgba(255,255,255,0.60); justify-content: center; }
-    #ambassador .section-label::before { background: rgba(255,255,255,0.40); }
-    #ambassador .section-title { color: var(--white); margin-bottom: 20px; }
+    #ambassador .section-label { justify-content: center; }
+    #ambassador .section-title { margin-bottom: 20px; }
     #ambassador .section-sub {
-      color: rgba(255,255,255,0.65);
       margin: 0 auto 40px;
       max-width: 540px;
     }
@@ -568,13 +568,13 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      color: rgba(255,255,255,0.85);
+      color: var(--near-black);
     }
     .amb-feat-icon {
       width: 52px;
       height: 52px;
       border-radius: 16px;
-      background: rgba(255,255,255,0.10);
+      background: rgba(46,107,74,0.10);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -590,8 +590,8 @@
       align-items: center;
       gap: 8px;
       padding: 16px 40px;
-      background: var(--white);
-      color: var(--dark-green);
+      background: var(--dark-green);
+      color: var(--white);
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px;
       font-weight: 700;
@@ -599,18 +599,14 @@
       cursor: pointer;
       border: none;
       transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 20px rgba(46,107,74,0.30);
     }
-    .btn-amb:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.20); }
+    .btn-amb:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(46,107,74,0.40); }
 
     /* ─── Download ───────────────────────────────────────────── */
     #download {
       position: relative;
       overflow: hidden;
-      background:
-        radial-gradient(ellipse 50% 45% at 95% 10%, rgba(40,196,90,0.15) 0%, transparent 58%),
-        radial-gradient(ellipse 45% 40% at 5%  80%, rgba(46,107,74,0.12) 0%, transparent 55%),
-        var(--light-bg);
     }
     /* Decorative ring — bottom right */
     #download::before {
@@ -713,7 +709,79 @@
     .footer-social:hover { color: rgba(255,255,255,0.85); }
     .footer-location { font-size: 11px; color: rgba(255,255,255,0.25); }
 
+    /* ─── Testimonials ──────────────────────────────────────── */
+    #testimonials {
+      padding: 120px 0 100px;
+      overflow: hidden;
+    }
+    .testimonials-inner {
+      text-align: center;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    #testimonials .section-sub { margin: 0 auto 64px; }
+    .testimonials-track-wrap {
+      mask-image: linear-gradient(to right, transparent, black 180px, black calc(100% - 180px), transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 180px, black calc(100% - 180px), transparent);
+    }
+    .testimonials-track {
+      display: flex;
+      gap: 24px;
+      width: max-content;
+      padding: 20px 0 80px;
+      animation: testimonialScroll 40s linear infinite;
+    }
+    .testimonial-card {
+      flex-shrink: 0;
+      width: 300px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(46,107,74,0.13);
+      border-radius: 20px;
+      padding: 28px 26px 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+    .testimonial-card:hover { box-shadow: 0 12px 36px rgba(46,107,74,0.14); }
+    /* Arch — 6-card repeating pattern, peak at position 3 */
+    .testimonial-card:nth-child(6n+1) { transform: translateY(48px) rotate(-2deg); }
+    .testimonial-card:nth-child(6n+2) { transform: translateY(20px) rotate(-1deg); }
+    .testimonial-card:nth-child(6n+3) { transform: translateY(0px)  rotate(0deg); }
+    .testimonial-card:nth-child(6n+4) { transform: translateY(12px) rotate(0.8deg); }
+    .testimonial-card:nth-child(6n+5) { transform: translateY(36px) rotate(1.6deg); }
+    .testimonial-card:nth-child(6n)   { transform: translateY(56px) rotate(2.2deg); }
+    /* Hover lifts each card 8px from its arch position */
+    .testimonial-card:nth-child(6n+1):hover { transform: translateY(40px) rotate(-2deg); }
+    .testimonial-card:nth-child(6n+2):hover { transform: translateY(12px) rotate(-1deg); }
+    .testimonial-card:nth-child(6n+3):hover { transform: translateY(-8px) rotate(0deg); }
+    .testimonial-card:nth-child(6n+4):hover { transform: translateY(4px)  rotate(0.8deg); }
+    .testimonial-card:nth-child(6n+5):hover { transform: translateY(28px) rotate(1.6deg); }
+    .testimonial-card:nth-child(6n):hover   { transform: translateY(48px) rotate(2.2deg); }
+    .testimonial-stars { color: #FFB800; font-size: 13px; letter-spacing: 3px; margin-bottom: 14px; }
+    .testimonial-quote {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: #3d4d57;
+      margin-bottom: 20px;
+    }
+    .testimonial-author-row { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .testimonial-name     { font-size: 13px; font-weight: 600; color: var(--near-black); }
+    .testimonial-location { font-size: 11.5px; color: #8a9aaa; margin-top: 2px; }
+
     /* ─── Animations ─────────────────────────────────────────── */
+    @keyframes testimonialScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -854,6 +922,8 @@
     </div>
   </section>
 
+  <div class="light-zone">
+
   <!-- ─── How it Works ─────────────────────────────────────────── -->
   <section id="how-it-works" class="section">
     <div class="section-inner">
@@ -948,6 +1018,171 @@
     </div>
   </section>
 
+  <!-- ─── Testimonials ────────────────────────────────────────── -->
+  <section id="testimonials">
+    <div class="testimonials-inner">
+      <div class="section-label reveal">What people say</div>
+      <h2 class="section-title reveal">Riders love KOVA</h2>
+      <p class="section-sub reveal">Real reviews from real people who've connected, explored, and made memories through KOVA.</p>
+    </div>
+    <div class="testimonials-track-wrap">
+      <div class="testimonials-track">
+
+        <!-- Card 1 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Met my travel buddy for South America through KOVA. She's one of my best friends now."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#28C45A;">S</div>
+            <div>
+              <div class="testimonial-name">Sarah M.</div>
+              <div class="testimonial-location">Chicago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Finally an app that actually connects you with people who share your vibe. Love it."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
+            <div>
+              <div class="testimonial-name">Jordan K.</div>
+              <div class="testimonial-location">Austin</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Game changer."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
+            <div>
+              <div class="testimonial-name">Alex R.</div>
+              <div class="testimonial-location">Nashville</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Used KOVA before my Europe trip and now I have a whole crew to explore with. 10/10."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
+            <div>
+              <div class="testimonial-name">Maya T.</div>
+              <div class="testimonial-location">New York</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Every trip is more memorable because of the people I've met through KOVA."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
+            <div>
+              <div class="testimonial-name">Chris L.</div>
+              <div class="testimonial-location">Denver</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Spontaneous road trip with three strangers from KOVA. Best weekend of the year."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
+            <div>
+              <div class="testimonial-name">Priya S.</div>
+              <div class="testimonial-location">Los Angeles</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duplicates for seamless infinite loop -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Met my travel buddy for South America through KOVA. She's one of my best friends now."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#28C45A;">S</div>
+            <div>
+              <div class="testimonial-name">Sarah M.</div>
+              <div class="testimonial-location">Chicago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Finally an app that actually connects you with people who share your vibe. Love it."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
+            <div>
+              <div class="testimonial-name">Jordan K.</div>
+              <div class="testimonial-location">Austin</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Game changer."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
+            <div>
+              <div class="testimonial-name">Alex R.</div>
+              <div class="testimonial-location">Nashville</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Used KOVA before my Europe trip and now I have a whole crew to explore with. 10/10."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
+            <div>
+              <div class="testimonial-name">Maya T.</div>
+              <div class="testimonial-location">New York</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Every trip is more memorable because of the people I've met through KOVA."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
+            <div>
+              <div class="testimonial-name">Chris L.</div>
+              <div class="testimonial-location">Denver</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Spontaneous road trip with three strangers from KOVA. Best weekend of the year."</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
+            <div>
+              <div class="testimonial-name">Priya S.</div>
+              <div class="testimonial-location">Los Angeles</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ─── Ambassador Program ────────────────────────────────────── -->
   <section id="ambassador" class="section">
     <div class="section-inner">
@@ -958,19 +1193,19 @@
       <div class="amb-features reveal">
         <div class="amb-feat">
           <div class="amb-feat-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
           <span class="amb-feat-label">Exclusive perks</span>
         </div>
         <div class="amb-feat">
           <div class="amb-feat-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <span class="amb-feat-label">Build community</span>
         </div>
         <div class="amb-feat">
           <div class="amb-feat-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2E6B4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
           <span class="amb-feat-label">Global network</span>
         </div>
@@ -1018,6 +1253,8 @@
     </div>
   </section>
 
+  </div><!-- /.light-zone -->
+
   <!-- ─── Footer ───────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
@@ -1052,7 +1289,7 @@
     }
 
     const navbar = document.getElementById('navbar');
-    const darkSectionIds = new Set(['hero', 'ambassador']);
+    const darkSectionIds = new Set(['hero']);
 
     function updateNavTheme() {
       const probe = navbar.getBoundingClientRect().bottom + 10;
