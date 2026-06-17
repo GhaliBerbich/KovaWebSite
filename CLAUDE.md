@@ -13,7 +13,7 @@ Single-file static landing page for the **KOVA** social/travel app. All HTML, CS
 python -m http.server 8080
 # then open http://localhost:8080
 ```
-Use a server (not `file://`) because some browsers block Unsplash CDN images on file:// origins.
+Use a server (not `file://`) because some browsers block local-file CDN requests on file:// origins.
 
 **Taking screenshots for review:**
 Playwright MCP is available — navigate to `http://localhost:<port>`, resize to 1440×900, inject `.in-view` on `.step-row` elements before screenshotting (IntersectionObserver won't fire in headless), then call `updateNavTheme()` to set the correct navbar state.
@@ -47,10 +47,31 @@ Everything is in `index.html`, organized top-to-bottom:
 
 **Scroll animations** — `.step-row` starts `opacity:0` with `translateX(±80px)`. `IntersectionObserver` adds `.in-view` to trigger the CSS transition. Left-entry rows use `.from-left`, right-entry use `.from-right`.
 
-**Hero background** — Unsplash CDN image (`photo-1511632765486-a01980e01a18`) + layered dark overlay gradients in `.hero-bg::before` + dot grid in `.hero-bg::after`.
+**Smooth scroll helper** — `scrollToSection(id)` in the inline `<script>` scrolls a section to the top of the viewport. Named `scrollToSection` (not `scrollTo`) to avoid shadowing `window.scrollTo`, which would cause infinite recursion.
+
+**App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` image in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`. The download section badge uses `download_appstore_svg.png` as an `<img>` with CSS hover lift (`translateY(-4px) scale(1.02)` + shadow).
+
+**Hero background** — local file `hero_image.png` + layered dark overlay gradients in `.hero-bg::before` + dot grid in `.hero-bg::after`.
 
 ## Assets
 
 - `KOVA logo.png` — black "KOVA" text + bright green steering wheel replacing the O
+- `hero_image.png` — hero section background photo (people in a car, travel/social vibe)
+- `download_appstore_svg.png` — official App Store badge image used in the download section
 - `color palette.png` — reference swatches (white / `#2E6B4A` / `#28C45A`)
 - Screenshot PNGs/JPGs in root — development previews only, not served to users
+
+## Pages
+
+- `index.html` — main landing page
+- `terms.html` — Terms of Service placeholder (links back to index)
+- `privacy.html` — Privacy Policy placeholder (links back to index)
+
+## Footer
+
+Footer (`<footer>`) is dark (`--near-black`) with three columns via `flex` + `space-between`:
+1. **Left** — KOVA logo (inverted to white via `filter: brightness(0) invert(1)`)
+2. **Center** — `.footer-links`: Terms of Service → `terms.html`, Privacy Policy → `privacy.html`
+3. **Right** — `.footer-right`: Instagram icon → `https://www.instagram.com/ridekova/`, copyright line, location line
+
+Copyright reads: `© 2026 KOVA Group, Inc. All rights reserved.` with a secondary `West Lafayette, IN · Purdue University` in `.footer-location`.
