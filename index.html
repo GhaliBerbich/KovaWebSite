@@ -1377,6 +1377,7 @@
       const rPaths = document.querySelectorAll('.road-border, .road-surface, .road-center');
       let roadDone = false;
       let maxProg  = 0;
+      let rafId    = null;
 
       function getLayoutRect(el) {
         let top = 0, left = 0, node = el;
@@ -1395,6 +1396,25 @@
         };
       }
 
+      /* Catmull-Rom interpolating spline → SVG cubic bezier segments.
+         Guarantees G1 continuity at every waypoint automatically. */
+      function catmullRomPath(pts) {
+        if (pts.length < 2) return '';
+        let path = `M ${pts[0][0]} ${pts[0][1]}`;
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[Math.max(i - 1, 0)];
+          const p1 = pts[i];
+          const p2 = pts[i + 1];
+          const p3 = pts[Math.min(i + 2, pts.length - 1)];
+          const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+          const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+          const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+          const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+          path += ` C ${c1x} ${c1y} ${c2x} ${c2y} ${p2[0]} ${p2[1]}`;
+        }
+        return path;
+      }
+
       function buildRoad() {
         roadDone = false;
         maxProg  = 0;
@@ -1411,37 +1431,38 @@
             d += ` C ${cx + dir*amp} ${y0 + sH*0.35} ${cx + dir*amp} ${y0 + sH*0.65} ${cx} ${y1}`;
           }
         } else {
-          const phones = [...document.querySelectorAll('#how-it-works .step-phone-wrap')];
-          d = `M ${cx} 0`;
-          let curY = 0;
+          const phones   = [...document.querySelectorAll('#how-it-works .step-phone-wrap')];
+          const pRects   = phones.map(p => getLayoutRect(p));
+          const testR    = getLayoutRect(document.querySelector('#testimonials'));
+          const ambR     = getLayoutRect(document.querySelector('#ambassador'));
+          const footerEl = document.querySelector('footer');
+          const footerY  = footerEl.offsetTop - lz.offsetTop;
 
-          phones.forEach(phone => {
-            const pr     = getLayoutRect(phone);
+          const waypoints = [[cx, 0]];
+
+          pRects.forEach((pr, i) => {
             const isLeft = pr.cx < cx;
-            /* Peak in the gap between phone and text column */
             const peakX  = isLeft ? pr.right + 44 : pr.left - 44;
-            const peakY  = pr.cy;
-            const entryY = pr.top  - 100;
-            const exitY  = pr.bottom + 80;
-
-            /* Down to entry point */
-            d += ` C ${cx} ${curY + (entryY - curY) * 0.4} ${cx} ${entryY} ${cx} ${entryY}`;
-            /* Approach center→peak: vertical tangents at both ends */
-            d += ` C ${cx} ${peakY} ${peakX} ${entryY} ${peakX} ${peakY}`;
-            /* Exit peak→center: vertical tangents at both ends */
-            d += ` C ${peakX} ${exitY} ${cx} ${peakY} ${cx} ${exitY}`;
-            curY = exitY;
+            /* Center waypoint between consecutive phone rows */
+            if (i > 0) {
+              const midY = (pRects[i - 1].bottom + pr.top) / 2;
+              waypoints.push([cx, midY]);
+            }
+            /* Peak in the gap between phone and text column */
+            waypoints.push([peakX, pr.cy]);
           });
 
-          /* Gentle S through testimonials + ambassador */
-          const ambR = getLayoutRect(document.querySelector('#ambassador'));
-          d += ` C ${cx + W*0.16} ${ambR.top + 80} ${cx - W*0.16} ${ambR.cy} ${cx} ${ambR.bottom}`;
+          /* Return to center below last phone */
+          waypoints.push([cx, pRects[pRects.length - 1].bottom + 80]);
+          /* Gentle bow through testimonials */
+          waypoints.push([cx + W * 0.10, testR.cy]);
+          /* Gentle bow through ambassador (opposite side) */
+          waypoints.push([cx - W * 0.10, ambR.cy]);
+          /* Phantom point + footer endpoint so road arrives straight down */
+          waypoints.push([cx, footerY - 60]);
+          waypoints.push([cx, footerY]);
 
-          /* End beside right edge of download phone */
-          const dlR = getLayoutRect(document.querySelector('#download'));
-          const dp  = getLayoutRect(document.querySelector('.download-phone-wrap'));
-          const endX = dp.right + 32, endY = dp.cy;
-          d += ` C ${cx} ${dlR.top + 100} ${endX} ${dlR.top + 140} ${endX} ${endY}`;
+          d = catmullRomPath(waypoints);
         }
 
         rPaths.forEach(p => {
@@ -1460,14 +1481,21 @@
         const lzH   = lz.offsetHeight;
         const vh    = window.innerHeight;
         const lzTop = lz.getBoundingClientRect().top + window.scrollY;
-        const prog  = Math.max(0, Math.min(1, (window.scrollY + vh - lzTop) / lzH));
+        /* vh * 0.5 keeps the road tip near the viewport midline */
+        const prog  = Math.max(0, Math.min(1, (window.scrollY + vh * 0.5 - lzTop) / lzH));
         if (prog <= maxProg) return; // road tip never retreats
         maxProg = prog;
         rPaths.forEach(p => { p.style.strokeDashoffset = p._len * (1 - maxProg); });
         if (maxProg >= 1) roadDone = true;
       }
 
-      window.addEventListener('scroll', updateRoad, { passive: true });
+      /* rAF-throttled scroll handler: at most one DOM write per paint frame */
+      window.addEventListener('scroll', () => {
+        if (rafId === null) {
+          rafId = requestAnimationFrame(() => { updateRoad(); rafId = null; });
+        }
+      }, { passive: true });
+
       window.addEventListener('resize', buildRoad);
       buildRoad();
     })();
