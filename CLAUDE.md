@@ -58,7 +58,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Green buttons** — All use `border-radius: 10px` for a rectangular look: `.btn-primary` (hero), `.btn-amb` (ambassador), `.nav-btn.primary` (nav).
 
-**iPhone frames** — CSS-only, no images. Structure: `.step-phone-wrap > .iphone > (.iphone-screen > .iphone-island + content)`. Side buttons via `::before`/`::after`. Add `.large` modifier for the Download section phone.
+**iPhone frames** — CSS-only shell; screens now show real app screenshots. Structure: `.step-phone-wrap > .iphone > (.iphone-screen > .iphone-island + .iphone-screen-img)`. `.iphone-screen-img` uses `position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill` to fill edge-to-edge; `.iphone-island` has `position: relative; z-index: 1` to overlay the image. Side buttons via `::before`/`::after`. Add `.large` modifier for the Download section phone.
 
 **Scroll animations** — `.step-row` starts `opacity:0` with `translateX(±80px)`. `IntersectionObserver` adds `.in-view` to trigger the CSS transition. Left-entry rows use `.from-left`, right-entry use `.from-right`.
 
@@ -67,6 +67,8 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 **Letter-by-letter headings** — `.letter-reveal` elements have text nodes split into `<span class="char" style="--i:N">`. Each char transitions `opacity` + `translateY(18px)` with delay `calc(var(--i) * 0.028s)`.
 
 **Smooth scroll helper** — `scrollToSection(id)` scrolls a section to the top of the viewport. Named `scrollToSection` (not `scrollTo`) to avoid shadowing `window.scrollTo`.
+
+**Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a green "New" badge (`.btn-purdue-new`) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text; the "New" badge inverts to dark bg + green text so it stays visible. The `href` links to the Purdue article (currently `#` — update before launch).
 
 **App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
 
@@ -86,8 +88,9 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 - `hero_image.png` — hero section background photo (people in a car, travel/social vibe)
 - `download_appstore_svg.png` — official App Store badge image used in the download section
 - `color palette.png` — reference swatches (white / `#2E6B4A` / `#28C45A`)
+- `step1.png`, `step2.png`, `step3.png` — app screenshots displayed inside the "How it works" iPhone frames
 - `Agrandir - Free For Personal Use/` — PP Agrandir font files, **personal use only**, not wired up
-- Screenshot PNGs/JPGs in root — development previews only, not served to users
+- Other PNGs/JPGs in root — development preview screenshots only, not served to users
 
 ## Pages
 
