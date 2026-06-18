@@ -54,7 +54,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 ## Key Patterns
 
-**Navbar** — `position: fixed`, glassmorphism (`backdrop-filter: blur(24px)`), no border, `border-radius: 16px` (rectangular pill). `.over-light` class adapts text/logo color for light sections. `.nav-btn.primary` has `border-radius: 10px`.
+**Navbar** — `position: fixed`, glassmorphism (`backdrop-filter: blur(24px)`), no border, `border-radius: 16px`, `width: min(92vw, 1060px)`. Layout is a **3-column CSS grid** (`grid-template-columns: 1fr auto 1fr`): logo in col 1 (left-aligned), `.nav-links` in col 2 (centered), Get KOVA button in col 3 (`justify-self: end`). Nav links: How it works → `#how-it-works`, Testimonials → `#testimonials`, Ambassador Program → `#ambassador`. `.nav-btn.primary` has `border-radius: 10px`.
 
 **Navbar theme detection** — JS probes `navbar.getBoundingClientRect().bottom + 10` against each `section[id]` rect to determine which section the navbar overlaps, then toggles `.over-light` class. Add new dark-background sections to the `darkSectionIds` Set.
 
@@ -74,7 +74,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Smooth scrolling (Lenis)** — Lenis (CDN, `lenis@1.1.18`) gives the page a weighted-but-smooth glide. Initialized at the top of the inline `<script>` with `lerp: 0.06` (lower = heavier), `wheelMultiplier: 0.9`, driven by a `requestAnimationFrame` loop. Lenis updates the *native* scroll position (not a transform), so `window.scrollY` and `window` `scroll` events stay accurate — the road animation and `updateNavTheme` listeners need no changes. Skipped entirely when `prefers-reduced-motion: reduce` (falls back to native scroll). Tune free-scroll feel via `lerp` (~0.08 lighter / ~0.05 heavier). The CSS `html { scroll-behavior: smooth }` was removed because it double-eases against Lenis; minimal Lenis reset CSS lives in the Reset block.
 
-**Smooth scroll helpers** — `scrollToSection(id)` and `scrollToTop()` both route nav-triggered scrolls through `lenis.scrollTo(..., NAV_SCROLL)`, where `NAV_SCROLL = { duration: 1.6, easing: easeInOutCubic }` gives a deliberate, slow glide (distinct from — and slower than — the free-scroll `lerp`). Both fall back to `window.scrollTo({ behavior: 'smooth' })` when Lenis is inactive. `scrollToSection` is named so (not `scrollTo`) to avoid shadowing `window.scrollTo`. Used by: nav links (How it works, Ambassador), "Get KOVA" + hero "Download the app" (→ `download`), and the nav logo (→ `scrollToTop`). Tune auto-scroll pace via `NAV_SCROLL.duration`.
+**Smooth scroll helpers** — `scrollToSection(id)` and `scrollToTop()` both route nav-triggered scrolls through `lenis.scrollTo(..., NAV_SCROLL)`, where `NAV_SCROLL = { duration: 1.6, easing: easeInOutCubic }` gives a deliberate, slow glide (distinct from — and slower than — the free-scroll `lerp`). Both fall back to `window.scrollTo({ behavior: 'smooth' })` when Lenis is inactive. `scrollToSection` is named so (not `scrollTo`) to avoid shadowing `window.scrollTo`. Used by: nav links (How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`), "Get KOVA" + hero "Download the app" (→ `download`), and the nav logo (→ `scrollToTop`). Tune auto-scroll pace via `NAV_SCROLL.duration`.
 
 **Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a white "New" badge (`.btn-purdue-new`, black text on white background, stays white on hover) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text. Links to the live Purdue article URL.
 
@@ -97,7 +97,9 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 
 **Hero scroll indicator** — `.hero-scroll` / `.scroll-dot` / `.scroll-line` elements have been removed from the hero HTML. The CSS classes remain but are unused.
 
-**How it works step layout** — `.step-row` has `max-width: 1120px; margin: 0 auto` to keep phone/text pairs centered rather than edge-to-edge. `.step-heading` is `2.5rem`, `.step-desc` is `1.2rem`.
+**How it works step layout** — `.step-row` has `max-width: 1120px; margin: 0 auto; gap: 120px` to keep phone/text pairs centered with generous breathing room. `.step-heading` is `2.5rem`, `.step-desc` is `1.2rem`.
+
+**Decorative iPhone frames** — Each `.step-phone-wrap` contains two absolutely-positioned frames before the `.iphone`: `.iphone-deco-back` (dark green `var(--dark-green)`, 386×676px) and `.iphone-deco-mid` (bright green `var(--bright-green)`, 344×648px). Both use `bottom: 0; right: 0` so their bottom and inner-side edges align flush with the iPhone; the extra width/height extends toward the outer screen edge and upward. `border-radius: 38px` on the outer corners; the bottom-inner corner is `56px` to match the iPhone (`border-radius: 38px 38px 56px 38px` for left phones, `38px 38px 38px 56px` for `.step-row.reverse`). Each frame has a layered `box-shadow` for depth and a `1.5px solid rgba(255,255,255,…)` outline stroke. Frames inherit the parent `.step-phone-wrap` opacity animation so they fade in with the phone. `.iphone` has `z-index: 1`; deco frames sit at `z-index: 0` behind it.
 
 **Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. Hidden (`opacity: 0`) when `scrollY < 50` via `updateBottomBlur()` scroll listener (prevents it from blurring the hero stat bar on initial load). The footer has `position: relative; z-index: 10000` to render above it. `updateBottomBlur()` uses a lazy `querySelector('.bottom-blur')` call inside the function — do not hoist it to the top-level script scope, because `.bottom-blur` lives after the `<script>` tag in the DOM and would be `null` at parse time (crashes all animations).
 
@@ -125,6 +127,7 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 - `color palette.png` — reference swatches (white / `#2E6B4A` / `#28C45A`)
 - `step1.png`, `step2.png`, `step3.png` — app screenshots displayed inside the "How it works" iPhone frames
 - `final_ss.png` — app screenshot displayed inside the Download section's large iPhone frame
+- `purdue.png` — Purdue University logo, displayed in original colors in the footer ("Built with love, at [logo]")
 - `Agrandir - Free For Personal Use/` — PP Agrandir font files, **personal use only**, not wired up
 
 ## Pages
@@ -137,10 +140,10 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 
 Footer (`<footer>`) is dark (`--near-black`) with `position: relative; z-index: 10000` (sits above the bottom blur overlay). Three columns via `flex` + `space-between`:
 1. **Left** — KOVA logo (inverted to white via `filter: brightness(0) invert(1)`)
-2. **Center** — `.footer-links`: Terms of Service → `terms.html`, Privacy Policy → `privacy.html`
-3. **Right** — `.footer-right`: Instagram icon → `https://www.instagram.com/ridekova/`, copyright line, location line
+2. **Center** — `.footer-links`: Terms of Service → `terms.html`, Privacy Policy → `privacy.html`, `help@ridekova.com` → `mailto:help@ridekova.com`
+3. **Right** — `.footer-right`: Instagram icon → `https://www.instagram.com/ridekova/`, copyright line, "Built with love, at [purdue.png]" line
 
-Copyright: `© 2026 KOVA Group, Inc. All rights reserved.` / `West Lafayette, IN · Purdue University`
+Copyright: `© 2026 KOVA Group, Inc. All rights reserved.` The Purdue logo in the footer uses `.footer-purdue` (`display: inline; height: 13px; vertical-align: middle`) in original colors (no filter) — `display: inline` overrides the global `img { display: block }` reset to keep it on the same line as the text.
 
 ---
 
