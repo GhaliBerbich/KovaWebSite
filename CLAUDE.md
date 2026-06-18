@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Planning
+
+**Every plan must include a plain-English explanation** of what will change — a short, jargon-free summary (in addition to any technical detail) describing what the user will see/experience. The user always wants this, for every plan.
+
 ## Project Overview
 
 Single-file static landing page for the **KOVA** social/travel app. All HTML, CSS, and JS live in `index.html`. No build tools, no framework, no dependencies beyond Google Fonts (loaded via CDN).
@@ -115,9 +119,9 @@ Copyright: `© 2026 KOVA Group, Inc. All rights reserved.` / `West Lafayette, IN
 A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div class="road-wrap">` containing `.road-svg`. The road is rendered as **static visual layers revealed by an animated SVG `<mask>`** (mask-wipe), not by per-path dashoffset.
 
 **SVG structure** (`.road-svg`):
-- `<defs>`: `<mask id="road-mask">` containing one `.road-reveal` path (white, thick stroke), plus `<filter id="brush-tex">` (`feTurbulence`+`feDisplacementMap`) for the brush's bristly edge
+- `<defs>`: `<mask id="road-mask">` containing one `.road-reveal` path (white, thick stroke)
 - `<g mask="url(#road-mask)">`: the static visual layers — `.road-sheen`, `.road-base`, `.road-center` (all share the same `d`)
-- `.road-brush`: a `<g>` holding a paint-daub sprite, repositioned at the tip every frame
+- `.road-brush`: a `<g>` holding a **top-down car sprite** (built once in JS via `brushG.innerHTML`), repositioned at the tip every frame. Despite the `brush` name, the sprite is a car, not a paintbrush
 
 **Reveal model (mask-wipe + rAF lerp):**
 - Path `d` built via Catmull-Rom spline through waypoints from `getLayoutRect()` (offsetTop/offsetLeft chain — transform-immune). The same `d` is set on every visual layer **and** `.road-reveal`.
@@ -127,7 +131,7 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 - **`scrollK`** is computed dynamically in `buildRoad()` so the tip reaches `footerY + OVERLAP` (under the footer) exactly at max scroll.
 - On resize: `buildRoad()` resets and rebuilds.
 
-**Brush tip** — each frame, the brush `<g>` is `translate`d to `reveal.getPointAtLength(drawnLen)` and `rotate`d to the path tangent (point 6px behind). It fades out (`opacity 0`) at the very start and once the road is essentially complete, so no brush floats under the footer.
+**Car tip** — each frame, the `.road-brush` `<g>` is `translate`d to `reveal.getPointAtLength(drawnLen)` and `rotate`d to the path tangent (point 6px behind), so the car drives along the leading edge and the road appears to roll out behind it. It fades out (`opacity 0`) at the very start and once the road is essentially complete, so no car floats under the footer. The sprite is authored **nose-toward +x** (so `rotate(ang)` points it in the direction of travel): a dark `#20262e` body (`64×36`, `rx 11`) with a `var(--bright-green)` outline, green-tinted glass greenhouse, green headlights at the +x nose, red taillights at the rear, and dark wheels poking out the sides. Sized to roughly span the 46px road.
 
 **Path geometry (desktop ≥ 768px):**
 - Starts at `[cx, -OVERLAP]` (40px above the light-zone top — inside the hero's covered area)
@@ -147,7 +151,7 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 - Mask: `transparent 0px, black 50px` — hero covers the first 40px, leaving only a ~10px fade visible just below the hero edge
 
 **Visual** (thicker, premium):
-- `.road-base`: 34px, `var(--near-black)` @ 0.92 opacity (solid road body)
-- `.road-sheen`: 40px, `rgba(255,255,255,0.06)` (faint lift under the base)
-- `.road-center`: 3px, `var(--bright-green)`, `stroke-dasharray: 26 22` (green dashed marking)
-- `.road-reveal`: 46px white (mask only — never visible)
+- `.road-base`: 46px, `var(--near-black)` @ 0.92 opacity (solid road body)
+- `.road-sheen`: 54px, `rgba(255,255,255,0.06)` (faint lift under the base)
+- `.road-center`: 6px, `var(--bright-green)`, `stroke-dasharray: 24 20`, `stroke-linecap: butt` (thick rectangular green dashes — flat ends, not rounded)
+- `.road-reveal`: 62px white (mask only — never visible)
