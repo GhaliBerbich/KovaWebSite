@@ -20,7 +20,7 @@ python -m http.server 8080
 Use a server (not `file://`) because some browsers block local-file CDN requests on file:// origins.
 
 **Taking screenshots for review:**
-Playwright MCP is available — navigate to `http://localhost:<port>`, resize to 1440×900, inject `.in-view` on `.step-row` and `.reveal` / `.letter-reveal` elements before screenshotting (IntersectionObserver won't fire in headless), then call `updateNavTheme()` to set the correct navbar state.
+Playwright MCP is available — navigate to `http://localhost:<port>`, resize to 1440×900, inject `.in-view` on `.step-row` and `.reveal` / `.letter-reveal` / `.word-reveal` elements before screenshotting (IntersectionObserver won't fire in headless), then call `updateNavTheme()` to set the correct navbar state.
 
 ## Architecture
 
@@ -30,7 +30,7 @@ Everything is in `index.html`, organized top-to-bottom:
 2. **Bottom blur overlay CSS** — `.bottom-blur` fixed element
 3. **Navbar CSS + JS** — glassmorphism rectangle (no border), section-aware theme switching
 4. **Section CSS** — each section has its own block; light sections share `.light-zone` background
-5. **HTML sections** — Hero → `<div class="light-zone">` wrapping (How it works → Testimonials → Ambassador → Download) → Footer
+5. **HTML sections** — Hero (+ `#stat-bar` pinned at bottom) → `<div class="light-zone">` wrapping (How it works → Testimonials → Ambassador → FAQ → Download) → Footer
 6. **JS** — IntersectionObserver for scroll animations + navbar theme detection + road animation, at bottom of `<body>`
 7. **`<div class="bottom-blur">`** — last element before `</body>`
 
@@ -66,9 +66,11 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Scroll animations** — `.step-row` starts `opacity:0` with `translateX(±80px)`. `IntersectionObserver` adds `.in-view` to trigger the CSS transition. Left-entry rows use `.from-left`, right-entry use `.from-right`.
 
-**Reveal animations** — `.reveal` elements start `opacity:0` + `translateX(±60px)`. `IntersectionObserver` (`revealObs`, threshold 0.12) adds `.in-view`. `--reveal-delay` custom property staggers related elements.
+**Reveal animations** — `.reveal` elements start `opacity:0` + `translateX(±60px)`. `IntersectionObserver` (`revealObs`, threshold 0.12) adds `.in-view`. `--reveal-delay` custom property staggers related elements. Used for UI components (stat items, ambassador features, footer, dl-card) — not body text.
 
-**Letter-by-letter headings** — `.letter-reveal` elements have text nodes split into `<span class="char" style="--i:N">`. Each char transitions `opacity` + `translateY(18px)` with delay `calc(var(--i) * 0.028s)`.
+**Letter-by-letter headings** — `.letter-reveal` elements have text nodes split into `<span class="char" style="--i:N">`. Each char transitions `opacity` + `translateY(5px)` with delay `calc(var(--i) * 0.016s)`, duration `0.3s`. Fast ripple (~0.5s total for a 12-char heading), barely perceptible lift. Used on: all `.section-title` h2s, `.step-heading` h3s, `.faq-q` paragraphs.
+
+**Word-by-word body text** — `.word-reveal` elements have text nodes split into `<span class="word" style="--wi:N">`. Each word transitions `opacity` only (no transform) with delay `calc(var(--wi) * 0.06s)`, duration `0.45s`. Pure fade in reading order — second visual line starts only after the first is mostly visible. Used on: `.section-sub`, `.step-desc`, `.faq-a`. The `revealObs` IntersectionObserver observes `.reveal, .letter-reveal, .word-reveal` all together.
 
 **Smooth scrolling (Lenis)** — Lenis (CDN, `lenis@1.1.18`) gives the page a weighted-but-smooth glide. Initialized at the top of the inline `<script>` with `lerp: 0.06` (lower = heavier), `wheelMultiplier: 0.9`, driven by a `requestAnimationFrame` loop. Lenis updates the *native* scroll position (not a transform), so `window.scrollY` and `window` `scroll` events stay accurate — the road animation and `updateNavTheme` listeners need no changes. Skipped entirely when `prefers-reduced-motion: reduce` (falls back to native scroll). Tune free-scroll feel via `lerp` (~0.08 lighter / ~0.05 heavier). The CSS `html { scroll-behavior: smooth }` was removed because it double-eases against Lenis; minimal Lenis reset CSS lives in the Reset block.
 
@@ -87,7 +89,7 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 
 **Hero background** — local file `hero_image.png` + dot grid in `.hero-bg::after`. The dark overlay (`.hero-bg::before`) is set to `display: none` — the raw image shows through. To restore the tint, remove `display: none` from `.hero-bg::before`.
 
-**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, and `#download` are wrapped in `<div class="light-zone">`. Background is a flat `var(--light-bg)` (`#F4F9F6`) — no gradient blobs or decorative radial layers. Do not add a `background` property to any of these four sections individually. The decorative rings and dot grids on `#how-it-works` and `#download` are present in CSS but set to `display: none`.
+**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, and `#download` are wrapped in `<div class="light-zone">`. Background is a flat `var(--light-bg)` (`#F4F9F6`) — no gradient blobs or decorative radial layers. Do not add a `background` property to any of these five sections individually. The decorative rings and dot grids on `#how-it-works` and `#download` are present in CSS but set to `display: none`.
 
 **Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. 12 cards (6 originals + 6 duplicates). Edge fade via `mask-image` on `.testimonials-track-wrap`. Card background: `rgba(255,255,255,0.95)` (95% opaque).
 
@@ -97,9 +99,17 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 
 **How it works step layout** — `.step-row` has `max-width: 1120px; margin: 0 auto` to keep phone/text pairs centered rather than edge-to-edge. `.step-heading` is `2.5rem`, `.step-desc` is `1.2rem`.
 
-**Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. The footer has `position: relative; z-index: 10000` to render above it.
+**Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. Hidden (`opacity: 0`) when `scrollY < 50` via `updateBottomBlur()` scroll listener (prevents it from blurring the hero stat bar on initial load). The footer has `position: relative; z-index: 10000` to render above it.
+
+**Button hover transitions** — all interactive buttons use `0.6s` transitions. `.btn-purdue` transitions `background`, `border-color`, `color`. `.btn-primary`, `.btn-amb` transition `transform`, `box-shadow`, `background`. `.appstore-btn` hover: `translateY(-2px)` only (no scale) — subtle lift.
 
 **darkSectionIds** — only `'hero'` is in the set. All other sections use the light background.
+
+**Stat bar** — `<div id="stat-bar">` is `position: absolute; bottom: 0` inside `#hero`. Three `.stat-item` columns (flex, `justify-content: center`, `gap: 80px`), separated from the hero content by a `1px solid rgba(255,255,255,0.10)` top border. Numbers: Plus Jakarta Sans, `2rem`, `rgba(255,255,255,0.95)`. Labels: Manrope, `0.85rem`, `rgba(255,255,255,0.65)`. Current stats: **0% commission, ever** · **500+ Purdue students riding** · **Top 5 Purdue New Venture Challenge 2026** (label wraps via `<br>` between "New Venture" and "Challenge 2026"). Each `.stat-item` has `.reveal` class with staggered `--reveal-delay`.
+
+**FAQ section** — `<section id="faq" class="section">` inside `.light-zone`, between Ambassador and Download. Centered column, max-width 720px (`.faq-inner`). Heading: `.section-title.letter-reveal`. Three `.faq-item` divs (no animation class — children animate independently): `.faq-q.letter-reveal` for the question, `.faq-a.word-reveal` for the answer. Items separated by `1px solid rgba(0,0,0,0.08)` top/bottom borders.
+
+**How it works — current content** — heading and subheading are `text-align: center` (scoped to `#how-it-works`). Step number badges (`<div class="step-number">`) have been removed from HTML (CSS class kept). Step headings: "Find your ride", "Join your communities", "Unlock perks along the way". All `.step-heading` elements use `.letter-reveal`; all `.step-desc` use `.word-reveal`.
 
 ## Assets
 
@@ -154,6 +164,7 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 - **No bracket waypoints** — peak-only (one waypoint per step). Bracket approach/exit waypoints cause Bezier control-point squiggles when an incoming tangent from a distant neighbour overshoots a short segment. With peak-only, step 2's Catmull-Rom tangent x-component is exactly 0 (steps 1 and 3 are at the same x), so the road descends vertically through the gap with no lateral drift.
 - **Testimonials**: two waypoints — `[W * 0.14, testInnerR.cy]` (left of heading text) then `[cx + W * 0.05, carouselR.cy]` (through middle of carousel). Queries `#testimonials .testimonials-inner` and `#testimonials .testimonials-track-wrap`.
 - **Ambassador**: `W * 0.93` (far right page margin)
+- **FAQ**: `W * 0.12` (sweep left through the question column — queried via `#faq`)
 - **Download**: `dlPhoneR.right + 44` (gap right of download phone — queried via `#download .dl-phone-col`)
 - Ends at `[cx, footerY + OVERLAP]` — under the opaque footer (`z-index: 10000`)
 - Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`

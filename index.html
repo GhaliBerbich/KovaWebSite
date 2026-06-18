@@ -53,6 +53,7 @@
       -webkit-backdrop-filter: blur(14px);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
       mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+      transition: opacity 0.3s ease;
     }
 
     /* ─── Navbar ─────────────────────────────────────────────── */
@@ -98,7 +99,7 @@
       padding: 8px 26px;
       border-radius: 100px;
       cursor: pointer;
-      transition: background 0.2s, color 0.35s ease;
+      transition: background 0.6s, color 0.6s ease;
       border: none;
       background: transparent;
     }
@@ -201,7 +202,7 @@
       -webkit-backdrop-filter: blur(24px);
       text-decoration: none;
       cursor: pointer;
-      transition: background 0.4s, border-color 0.4s, color 0.4s;
+      transition: background 0.6s, border-color 0.6s, color 0.6s;
       margin-bottom: 24px;
       opacity: 0;
       animation: fadeUp 0.8s ease-out 0.2s forwards;
@@ -237,9 +238,9 @@
     .hero-sub {
       font-size: clamp(1rem, 2.2vw, 1.2rem);
       font-weight: 500;
-      color: rgba(255,255,255,0.60);
+      color: rgba(255,255,255,0.78);
       max-width: 520px;
-      margin: 0 auto 40px;
+      margin: 0 auto 20px;
       line-height: 1.7;
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.6s forwards;
@@ -265,7 +266,7 @@
       font-weight: 700;
       border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      transition: transform 0.6s, box-shadow 0.6s, background 0.6s;
       border: none;
       box-shadow: 0 4px 24px rgba(40,196,90,0.35);
     }
@@ -343,6 +344,40 @@
       margin-bottom: 80px;
     }
 
+    /* ─── Stat bar ──────────────────────────────────────────────── */
+    #stat-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 80px;
+      padding: 24px 32px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+      z-index: 1;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+    }
+
     /* ─── Shared light zone (how-it-works → download) ──────────── */
     .light-zone {
       position: relative;
@@ -374,6 +409,8 @@
       overflow: hidden;
     }
     #how-it-works::before, #how-it-works::after { display: none; }
+    #how-it-works .section-title { text-align: center; }
+    #how-it-works .section-sub   { text-align: center; margin-left: auto; margin-right: auto; }
 
     .steps-list {
       display: flex;
@@ -626,10 +663,44 @@
       border-radius: 10px;
       cursor: pointer;
       border: none;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.6s, box-shadow 0.6s;
       box-shadow: 0 4px 20px rgba(46,107,74,0.30);
     }
     .btn-amb:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(46,107,74,0.40); }
+
+    /* ─── FAQ ───────────────────────────────────────────────── */
+    .faq-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    #faq .section-title {
+      margin-bottom: 48px;
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .faq-item {
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .faq-item:first-child {
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .faq-q {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--near-black);
+      margin-bottom: 10px;
+    }
+    .faq-a {
+      font-family: 'Manrope', sans-serif;
+      font-size: 1rem;
+      color: #5a6672;
+      line-height: 1.75;
+      margin: 0;
+    }
 
     /* ─── Download ───────────────────────────────────────────── */
     #download {
@@ -691,7 +762,7 @@
       border-radius: 16px;
       color: var(--white);
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.6s, box-shadow 0.6s;
       border: none;
     }
     .store-badge:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.20); }
@@ -699,12 +770,12 @@
       display: inline-block;
       line-height: 0;
       border-radius: 14px;
-      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+      transition: transform 0.6s ease, box-shadow 0.6s ease, opacity 0.6s ease;
     }
     .appstore-btn:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 14px 36px rgba(0,0,0,0.28);
-      opacity: 0.95;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+      opacity: 0.92;
     }
     .appstore-btn:active { transform: translateY(-1px) scale(1.00); box-shadow: 0 5px 16px rgba(0,0,0,0.18); }
     .appstore-img { height: 56px; width: auto; display: block; }
@@ -851,11 +922,18 @@
     .letter-reveal .char {
       display: inline-block;
       opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.45s ease-out calc(var(--i) * 0.028s),
-                  transform 0.45s ease-out calc(var(--i) * 0.028s);
+      transform: translateY(5px);
+      transition: opacity 0.3s ease-out calc(var(--i) * 0.016s),
+                  transform 0.3s ease-out calc(var(--i) * 0.016s);
     }
     .letter-reveal.in-view .char { opacity: 1; transform: translateY(0); }
+
+    .word-reveal .word {
+      display: inline;
+      opacity: 0;
+      transition: opacity 0.45s ease-out calc(var(--wi) * 0.06s);
+    }
+    .word-reveal.in-view .word { opacity: 1; }
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
@@ -871,6 +949,8 @@
       .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
       .letter-reveal .char { transition: opacity 0.3s ease-out; transform: none !important; }
       .letter-reveal.in-view .char { opacity: 1; }
+      .word-reveal .word { transition: opacity 0.3s ease-out; }
+      .word-reveal.in-view .word { opacity: 1; }
       .scroll-line, .scroll-dot { animation: none; }
       .road-wrap { display: none; }
     }
@@ -969,12 +1049,27 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <h1 class="hero-title">Your world just<br /><span>got bigger.</span></h1>
-      <p class="hero-sub">KOVA is the rideshare app built for students. Share rides with verified .edu members, keep all your earnings, and actually get to know the people you travel with.</p>
+      <p class="hero-sub">Verified .edu rideshare with no commission. Drivers set their own price and keep every dollar.</p>
       <div class="hero-ctas">
         <button class="btn-primary" onclick="scrollToSection('download')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
           Download the app
         </button>
+      </div>
+    </div>
+
+    <div id="stat-bar">
+      <div class="stat-item reveal" style="--reveal-delay:0s">
+        <span class="stat-num">0%</span>
+        <span class="stat-label">commission, ever</span>
+      </div>
+      <div class="stat-item reveal" style="--reveal-delay:0.12s">
+        <span class="stat-num">500+</span>
+        <span class="stat-label">Purdue students riding</span>
+      </div>
+      <div class="stat-item reveal" style="--reveal-delay:0.24s">
+        <span class="stat-num">Top 5</span>
+        <span class="stat-label">Purdue New Venture<br>Challenge 2026</span>
       </div>
     </div>
   </section>
@@ -1002,7 +1097,7 @@
   <section id="how-it-works" class="section">
     <div class="section-inner">
       <h2 class="section-title letter-reveal">How it works</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">From sign-up to your first ride in under a minute.</p>
+      <p class="section-sub word-reveal">From sign-up to your first ride in under a minute.</p>
 
       <div class="steps-list">
 
@@ -1017,9 +1112,8 @@
             </div>
           </div>
           <div class="step-text-col">
-            <div class="step-number">1</div>
-            <h3 class="step-heading">Create your profile</h3>
-            <p class="step-desc">Sign up with your .edu email. Add a photo, verify your student status, and you're in. Takes about 60 seconds.</p>
+            <h3 class="step-heading letter-reveal">Find your ride</h3>
+            <p class="step-desc word-reveal">Search rides going your way or post your own. Drivers set their price. No surge, no commission.</p>
           </div>
         </div>
 
@@ -1034,9 +1128,8 @@
             </div>
           </div>
           <div class="step-text-col">
-            <div class="step-number">2</div>
-            <h3 class="step-heading">Find a ride or post one</h3>
-            <p class="step-desc">Browse rides going your way or post your own trip. No commission means drivers set their own price and riders pay fair rates, not surge pricing.</p>
+            <h3 class="step-heading letter-reveal">Join your communities</h3>
+            <p class="step-desc word-reveal">Find students heading the same places. Groups form around airport runs, game days, and regular routes. Join one or start your own.</p>
           </div>
         </div>
 
@@ -1051,9 +1144,8 @@
             </div>
           </div>
           <div class="step-text-col">
-            <div class="step-number">3</div>
-            <h3 class="step-heading">Ride and connect</h3>
-            <p class="step-desc">Hop in, have an actual conversation. Riders rate each other, so the community stays solid. A lot of people end up finding a travel group they keep going back to.</p>
+            <h3 class="step-heading letter-reveal">Unlock perks along the way</h3>
+            <p class="step-desc word-reveal">KOVA works with local brands and venues to get riders real discounts. Cheaper entry, free samples, ride credits. Check the app before you head out.</p>
           </div>
         </div>
 
@@ -1065,7 +1157,7 @@
   <section id="testimonials">
     <div class="testimonials-inner">
       <h2 class="section-title letter-reveal">From riders at Purdue</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">Real students, real rides.</p>
+      <p class="section-sub word-reveal">Real students, real rides.</p>
     </div>
     <div class="testimonials-track-wrap">
       <div class="testimonials-track">
@@ -1229,7 +1321,7 @@
   <section id="ambassador" class="section">
     <div class="section-inner">
       <h2 class="section-title letter-reveal">Become an Ambassador</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">KOVA Ambassadors are the people building this thing on the ground. You grow the community at Purdue, and we make it worth your while.</p>
+      <p class="section-sub word-reveal">KOVA Ambassadors are the people building this thing on the ground. You grow the community at Purdue, and we make it worth your while.</p>
 
       <div class="amb-features">
         <div class="amb-feat reveal from-left" style="--reveal-delay:0s">
@@ -1256,6 +1348,28 @@
         Apply Now
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─────────────────────────────────────────────────── -->
+  <section id="faq" class="section">
+    <div class="faq-inner">
+      <h2 class="section-title letter-reveal">Common questions</h2>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <p class="faq-q letter-reveal">Is KOVA only for Purdue students right now?</p>
+          <p class="faq-a word-reveal">Yes, KOVA is at Purdue right now. More campuses are coming. If yours isn't listed yet, you can sign up to hear when it goes live.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q letter-reveal">How does pricing work if there's no commission?</p>
+          <p class="faq-a word-reveal">Drivers set their own price per seat when they post a ride. Riders see the full cost upfront, no hidden fees. Whatever the driver charges, they keep.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q letter-reveal">Is it safe to ride with someone I don't know?</p>
+          <p class="faq-a word-reveal">Every account is verified with a .edu email. Riders and drivers have profiles with photos and ratings. You can see who you're riding with before you confirm.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1365,8 +1479,15 @@
       navbar.classList.toggle('over-light', overLight);
     }
 
+    function updateBottomBlur() {
+      const bottomBlur = document.querySelector('.bottom-blur');
+      if (bottomBlur) bottomBlur.style.opacity = window.scrollY < 50 ? '0' : '1';
+    }
+
     window.addEventListener('scroll', updateNavTheme, { passive: true });
+    window.addEventListener('scroll', updateBottomBlur, { passive: true });
     updateNavTheme();
+    updateBottomBlur();
 
     const stepObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -1390,12 +1511,31 @@
       el.innerHTML = parts.join('');
     });
 
+    document.querySelectorAll('.word-reveal').forEach(el => {
+      let wordIndex = 0;
+      const parts = [];
+      el.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent.split(/(\s+)/).forEach(token => {
+            if (/\S/.test(token)) {
+              parts.push(`<span class="word" style="--wi:${wordIndex++}">${token}</span>`);
+            } else {
+              parts.push(token);
+            }
+          });
+        } else if (node.nodeName === 'BR') {
+          parts.push('<br />');
+        }
+      });
+      el.innerHTML = parts.join('');
+    });
+
     const revealObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
       });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal, .letter-reveal').forEach(el => revealObs.observe(el));
+    document.querySelectorAll('.reveal, .letter-reveal, .word-reveal').forEach(el => revealObs.observe(el));
 
     /* ── Road animation ── */
     (function () {
@@ -1510,6 +1650,7 @@
           const testInnerR = getLayoutRect(document.querySelector('#testimonials .testimonials-inner'));
           const carouselR  = getLayoutRect(document.querySelector('#testimonials .testimonials-track-wrap'));
           const ambR       = getLayoutRect(document.querySelector('#ambassador'));
+          const faqR       = getLayoutRect(document.querySelector('#faq'));
           const dlPhoneR   = getLayoutRect(document.querySelector('#download .dl-phone-col'));
           const footerEl   = document.querySelector('footer');
           const footerY    = footerEl.offsetTop - lz.offsetTop;
@@ -1537,6 +1678,7 @@
           waypoints.push([cx + W * 0.05, carouselR.cy]);
 
           waypoints.push([W * 0.93, ambR.cy]);                 // ambassador — far right page margin
+          waypoints.push([W * 0.12, faqR.cy]);                // faq — sweep left through question column
           waypoints.push([dlPhoneR.right + 44, dlPhoneR.cy]); // download — gap between phone and text
           waypoints.push([cx, footerY + OVERLAP]);             // converge to center at footer
 
