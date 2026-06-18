@@ -401,7 +401,7 @@
     .road-sheen  { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 54; stroke-linecap: round; stroke-linejoin: round; }
     .road-center { fill: none; stroke: var(--bright-green); stroke-width: 6; stroke-dasharray: 24 20; stroke-linecap: butt; stroke-linejoin: round; }
     .road-reveal { fill: none; stroke: #fff; stroke-width: 62; stroke-linecap: round; stroke-linejoin: round; }
-    .road-brush  { transition: opacity 0.25s ease-out; }
+    .road-brush  { transition: opacity 0.25s ease-out; will-change: transform; }
 
     /* ─── How it Works ───────────────────────────────────────── */
     #how-it-works {
@@ -431,6 +431,7 @@
       flex: 0 0 auto;
       opacity: 0;
       transform: translateX(-110px);
+      will-change: transform, opacity;
       transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                   transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
@@ -441,6 +442,7 @@
       flex: 1;
       opacity: 0;
       transform: translateX(60px);
+      will-change: transform, opacity;
       transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s,
                   transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s;
     }
@@ -848,6 +850,7 @@
       gap: 24px;
       width: max-content;
       padding: 20px 0 80px;
+      will-change: transform;
       animation: testimonialScroll 40s linear infinite;
     }
     .testimonial-card {
@@ -913,6 +916,7 @@
     .reveal {
       opacity: 0;
       transform: translateX(60px);
+      will-change: transform, opacity;
       transition: opacity 0.7s ease-out var(--reveal-delay, 0s),
                   transform 0.7s ease-out var(--reveal-delay, 0s);
     }
@@ -1107,7 +1111,7 @@
             <div class="iphone" aria-label="App screenshot, step 1">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step1.png" alt="App screenshot, step 1" class="iphone-screen-img">
+                <img src="step1.png" alt="App screenshot, step 1" class="iphone-screen-img" decoding="async">
               </div>
             </div>
           </div>
@@ -1123,7 +1127,7 @@
             <div class="iphone" aria-label="App screenshot, step 2">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step2.png" alt="App screenshot, step 2" class="iphone-screen-img">
+                <img src="step2.png" alt="App screenshot, step 2" class="iphone-screen-img" decoding="async">
               </div>
             </div>
           </div>
@@ -1139,7 +1143,7 @@
             <div class="iphone" aria-label="App screenshot, step 3">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step3.png" alt="App screenshot, step 3" class="iphone-screen-img">
+                <img src="step3.png" alt="App screenshot, step 3" class="iphone-screen-img" decoding="async">
               </div>
             </div>
           </div>
@@ -1552,6 +1556,8 @@
       let animating  = false;
       let scrollRaf  = null;
       let scrollK    = 0.65;           // updated dynamically in buildRoad
+      let pathCache  = null;           // pre-sampled {x,y} points; replaces getPointAtLength in hot path
+      const CACHE_N  = 1000;          // sample resolution (sub-pixel accuracy at typical path lengths)
 
       const bg = (getComputedStyle(document.documentElement)
                     .getPropertyValue('--bright-green').trim()) || '#28C45A';
@@ -1615,18 +1621,30 @@
         return path;
       }
 
-      /* Binary search: arc length s on the reveal path where its Y ≈ targetY.
+      /* Interpolated point at arc length s using the pre-sampled cache. */
+      function pointAtLen(s) {
+        const t  = Math.max(0, Math.min(1, s / totalLen));
+        const fi = t * CACHE_N;
+        const i  = Math.floor(fi);
+        if (i >= CACHE_N) return pathCache[CACHE_N];
+        const frac = fi - i;
+        const a = pathCache[i], b = pathCache[i + 1];
+        return { x: a.x + (b.x - a.x) * frac, y: a.y + (b.y - a.y) * frac };
+      }
+
+      /* Binary search on the cache: arc length where Y ≈ targetY.
          Valid only when path Y is monotonically increasing (true for our waypoints). */
       function arcLengthForY(targetY) {
-        if (targetY <= 0) return 0;
-        if (reveal.getPointAtLength(totalLen).y <= targetY) return totalLen;
-        let lo = 0, hi = totalLen;
-        for (let i = 0; i < 20; i++) {
-          const mid = (lo + hi) / 2;
-          if (reveal.getPointAtLength(mid).y < targetY) lo = mid;
-          else hi = mid;
+        if (!pathCache || targetY <= 0) return 0;
+        if (pathCache[CACHE_N].y <= targetY) return totalLen;
+        let lo = 0, hi = CACHE_N;
+        while (hi - lo > 1) {
+          const mid = (lo + hi) >> 1;
+          if (pathCache[mid].y < targetY) lo = mid; else hi = mid;
         }
-        return (lo + hi) / 2;
+        const a = pathCache[lo], b = pathCache[hi];
+        const frac = (b.y - a.y) > 0 ? (targetY - a.y) / (b.y - a.y) : 0;
+        return (lo + frac) * totalLen / CACHE_N;
       }
 
       function buildRoad() {
@@ -1691,11 +1709,27 @@
         reveal.style.strokeDasharray  = totalLen;
         reveal.style.strokeDashoffset = totalLen;   // start fully hidden
 
-        /* Reset draw state; first target comes from current scroll position */
+        /* Reset draw state immediately so the road dashoffset is correct */
         drawnLen  = 0;
         targetLen = 0;
+        pathCache = null;
         brushG.style.opacity = '0';
-        requestAnimationFrame(updateTarget);
+
+        /* Fill the point cache when the browser is idle so the initial scroll
+           is never blocked by 1000+ getPointAtLength() calls. Falls back to
+           setTimeout(0) on browsers without requestIdleCallback (Safari <16). */
+        const fillCache = () => {
+          pathCache = new Array(CACHE_N + 1);
+          for (let i = 0; i <= CACHE_N; i++) {
+            pathCache[i] = reveal.getPointAtLength(i * totalLen / CACHE_N);
+          }
+          requestAnimationFrame(updateTarget);
+        };
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(fillCache, { timeout: 400 });
+        } else {
+          setTimeout(fillCache, 0);
+        }
       }
 
       /* Recompute the scroll-driven target length (high-water — never retreats). */
@@ -1721,9 +1755,9 @@
 
         reveal.style.strokeDashoffset = totalLen - drawnLen;
 
-        if (drawnLen > 4 && drawnLen < totalLen - 2) {
-          const tip  = reveal.getPointAtLength(drawnLen);
-          const back = reveal.getPointAtLength(Math.max(0, drawnLen - 6));
+        if (pathCache && drawnLen > 4 && drawnLen < totalLen - 2) {
+          const tip  = pointAtLen(drawnLen);
+          const back = pointAtLen(Math.max(0, drawnLen - 6));
           const ang  = Math.atan2(tip.y - back.y, tip.x - back.x) * 180 / Math.PI;
           brushG.setAttribute('transform', `translate(${tip.x} ${tip.y}) rotate(${ang})`);
           brushG.style.opacity = '1';
