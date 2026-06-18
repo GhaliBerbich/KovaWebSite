@@ -41,14 +41,14 @@ Everything is in `index.html`, organized top-to-bottom:
 | `--dark-green` | `#2E6B4A` | Ambassador button, dark accents, icon strokes |
 | `--bright-green` | `#28C45A` | CTAs, highlights, step badges |
 | `--near-black` | `#0D1117` | Body text, hero bg, footer bg |
-| `--light-bg` | `#F4F9F6` | Fallback only — active background is `.light-zone` gradient |
+| `--light-bg` | `#F4F9F6` | Active background for `.light-zone` (flat solid color) |
 
 ## Typography
 
 | Font | Usage |
 |---|---|
 | **Plus Jakarta Sans** | Headings (`h1`–`h4`), nav buttons, UI labels, CTAs |
-| **Manrope** | Body text (`body` default) — paragraphs, descriptions |
+| **Manrope** | Body text (`body` default, `font-weight: 500`) — paragraphs, descriptions |
 
 Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Use" PP Agrandir package is present in the repo folder but is **not wired up** — it requires a commercial license for a public website).
 
@@ -78,16 +78,22 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Download section card** — `#download` contains a `.dl-card` (dark green, `border-radius: 28px`, `height: 380px`, `overflow: hidden`) with three flex columns:
 1. `.dl-phone-col` — the `.iphone.large` frame with `final_ss.png`; `padding-top: 40px` so the phone top has breathing room, and the card's fixed height clips the bottom ~51% of the frame.
-2. `.dl-text-col` — "Available now" label, "Take KOVA everywhere." heading, and paragraph. Text colors are overridden white inside the card (`.dl-card .section-title`, `.dl-card .section-sub`, etc.).
+2. `.dl-text-col` — "Take KOVA everywhere." heading and paragraph (no section label). Text colors are overridden white inside the card (`.dl-card .section-title`, `.dl-card .section-sub`, etc.).
 3. `.dl-qr-card` — white rounded sub-frame (`border-radius: 14px`, `padding: 12px 14px`) containing a QR code image (`200×200px`, fetched from `api.qrserver.com`) and the App Store badge (`width: 200px`, `height: auto`). Both are the same width.
 
 The road JS queries the download phone via `#download .dl-phone-col` — update this selector if the class name changes.
 
 **Hero background** — local file `hero_image.png` + dot grid in `.hero-bg::after`. The dark overlay (`.hero-bg::before`) is set to `display: none` — the raw image shows through. To restore the tint, remove `display: none` from `.hero-bg::before`.
 
-**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, and `#download` are wrapped in `<div class="light-zone">`. Shared layered radial gradient applied once to `.light-zone`. Do not add a `background` property to any of these four sections individually.
+**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, and `#download` are wrapped in `<div class="light-zone">`. Background is a flat `var(--light-bg)` (`#F4F9F6`) — no gradient blobs or decorative radial layers. Do not add a `background` property to any of these four sections individually. The decorative rings and dot grids on `#how-it-works` and `#download` are present in CSS but set to `display: none`.
 
-**Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. 12 cards (6 originals + 6 duplicates). Edge fade via `mask-image` on `.testimonials-track-wrap`.
+**Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. 12 cards (6 originals + 6 duplicates). Edge fade via `mask-image` on `.testimonials-track-wrap`. Card background: `rgba(255,255,255,0.95)` (95% opaque).
+
+**Section labels** — `.section-label` CSS class exists but the label `<div>` elements have been removed from all section HTML (How it works, Testimonials, Ambassador, Download). Do not re-add them.
+
+**Hero scroll indicator** — `.hero-scroll` / `.scroll-dot` / `.scroll-line` elements have been removed from the hero HTML. The CSS classes remain but are unused.
+
+**How it works step layout** — `.step-row` has `max-width: 1120px; margin: 0 auto` to keep phone/text pairs centered rather than edge-to-edge. `.step-heading` is `2.5rem`, `.step-desc` is `1.2rem`.
 
 **Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. The footer has `position: relative; z-index: 10000` to render above it.
 

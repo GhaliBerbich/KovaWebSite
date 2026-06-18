@@ -28,6 +28,7 @@
     body {
       font-family: 'Manrope', sans-serif;
       font-size: 16px;
+      font-weight: 500;
       line-height: 1.6;
       color: var(--near-black);
       background: var(--white);
@@ -230,7 +231,7 @@
     }
     .hero-sub {
       font-size: clamp(1rem, 2.2vw, 1.2rem);
-      font-weight: 400;
+      font-weight: 500;
       color: rgba(255,255,255,0.60);
       max-width: 520px;
       margin: 0 auto 40px;
@@ -340,12 +341,7 @@
     /* ─── Shared light zone (how-it-works → download) ──────────── */
     .light-zone {
       position: relative;
-      background:
-        radial-gradient(ellipse 55% 40% at 92% 12%, rgba(40,196,90,0.16) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 8%  58%, rgba(46,107,74,0.13) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 35% at 72% 88%, rgba(40,196,90,0.12) 0%, transparent 50%),
-        radial-gradient(ellipse 35% 30% at 38% 22%, rgba(46,107,74,0.08) 0%, transparent 45%),
-        linear-gradient(155deg, #f6fdf9 0%, #eaf6ee 40%, #f3fbf6 75%, #f9fefb 100%);
+      background: var(--light-bg);
     }
 
     /* ─── Scroll-driven road ─────────────────────────────────── */
@@ -372,27 +368,7 @@
       position: relative;
       overflow: hidden;
     }
-    /* Decorative large ring — top right */
-    #how-it-works::before {
-      content: '';
-      position: absolute;
-      top: 20px;
-      right: -160px;
-      width: 560px;
-      height: 560px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(40,196,90,0.16);
-      pointer-events: none;
-    }
-    /* Green dot grid overlay */
-    #how-it-works::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(46,107,74,0.10) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-    }
+    #how-it-works::before, #how-it-works::after { display: none; }
 
     .steps-list {
       display: flex;
@@ -403,6 +379,8 @@
       display: flex;
       align-items: center;
       gap: 88px;
+      max-width: 1120px;
+      margin: 0 auto;
     }
     .step-row.reverse { flex-direction: row-reverse; }
 
@@ -578,14 +556,14 @@
       margin-bottom: 22px;
     }
     .step-heading {
-      font-size: 2.25rem;
+      font-size: 2.5rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--near-black);
       margin-bottom: 16px;
     }
     .step-desc {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #5a6672;
       line-height: 1.75;
       max-width: 440px;
@@ -653,27 +631,7 @@
       position: relative;
       overflow: hidden;
     }
-    /* Decorative ring — bottom right */
-    #download::before {
-      content: '';
-      position: absolute;
-      bottom: -80px;
-      right: -140px;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(40,196,90,0.15);
-      pointer-events: none;
-    }
-    /* Dot grid overlay */
-    #download::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(46,107,74,0.09) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-    }
+    #download::before, #download::after { display: none; }
     .dl-card {
       display: flex;
       align-items: flex-start;
@@ -819,7 +777,7 @@
     .testimonial-card {
       flex-shrink: 0;
       width: 300px;
-      background: rgba(255,255,255,0.72);
+      background: rgba(255,255,255,0.95);
       border: 1px solid rgba(46,107,74,0.13);
       border-radius: 20px;
       padding: 28px 26px 24px;
@@ -1006,17 +964,13 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <h1 class="hero-title">Your world just<br /><span>got bigger.</span></h1>
-      <p class="hero-sub">KOVA connects you with people who share your journey — whether you're heading across town or across the world.</p>
+      <p class="hero-sub">KOVA connects you with people who share your journey, whether you're heading across town or across the world.</p>
       <div class="hero-ctas">
         <a href="https://apps.apple.com/us/app/ridekova/id6757269118" class="btn-primary" target="_blank" rel="noopener noreferrer">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
           Download the app
         </a>
       </div>
-    </div>
-    <div class="hero-scroll" aria-hidden="true">
-      <div class="scroll-dot"></div>
-      <div class="scroll-line"></div>
     </div>
   </section>
 
@@ -1042,9 +996,8 @@
   <!-- ─── How it Works ─────────────────────────────────────────── -->
   <section id="how-it-works" class="section">
     <div class="section-inner">
-      <div class="section-label reveal from-left">Simple by design</div>
       <h2 class="section-title letter-reveal">How it works</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">Getting started takes less than a minute. Here's how KOVA brings people together.</p>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">Getting started takes less than a minute.</p>
 
       <div class="steps-list">
 
@@ -1061,7 +1014,7 @@
           <div class="step-text-col">
             <div class="step-number">1</div>
             <h3 class="step-heading">Create your profile</h3>
-            <p class="step-desc">Sign up in seconds. Tell KOVA a little about yourself — your interests, your travel style, and the experiences you're looking for.</p>
+            <p class="step-desc">Sign up in seconds. Tell KOVA your interests and travel style.</p>
           </div>
         </div>
 
@@ -1078,7 +1031,7 @@
           <div class="step-text-col">
             <div class="step-number">2</div>
             <h3 class="step-heading">Discover your people</h3>
-            <p class="step-desc">Browse events, trips, and gatherings near you — or anywhere in the world. KOVA surfaces the moments that match who you are.</p>
+            <p class="step-desc">Browse trips and events near you or anywhere in the world. KOVA shows you what fits.</p>
           </div>
         </div>
 
@@ -1095,7 +1048,7 @@
           <div class="step-text-col">
             <div class="step-number">3</div>
             <h3 class="step-heading">Go together</h3>
-            <p class="step-desc">Join the experience, meet new faces, and build memories that last. The world is better when you explore it with others.</p>
+            <p class="step-desc">Join the experience, meet people you wouldn't have found otherwise, and see where things go. The connections tend to outlast the trip.</p>
           </div>
         </div>
 
@@ -1106,9 +1059,8 @@
   <!-- ─── Testimonials ────────────────────────────────────────── -->
   <section id="testimonials">
     <div class="testimonials-inner">
-      <div class="section-label reveal from-left">What people say</div>
       <h2 class="section-title letter-reveal">Riders love KOVA</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">Real reviews from real people who've connected, explored, and made memories through KOVA.</p>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">From people who found their people through KOVA.</p>
     </div>
     <div class="testimonials-track-wrap">
       <div class="testimonials-track">
@@ -1142,7 +1094,7 @@
         <!-- Card 3 -->
         <div class="testimonial-card">
           <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Game changer."</p>
+          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Didn't expect it to work that fast."</p>
           <div class="testimonial-author-row">
             <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
             <div>
@@ -1218,7 +1170,7 @@
 
         <div class="testimonial-card">
           <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Game changer."</p>
+          <p class="testimonial-quote">"Moved to a new city and KOVA had me meeting locals within the first week. Didn't expect it to work that fast."</p>
           <div class="testimonial-author-row">
             <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
             <div>
@@ -1271,9 +1223,8 @@
   <!-- ─── Ambassador Program ────────────────────────────────────── -->
   <section id="ambassador" class="section">
     <div class="section-inner">
-      <div class="section-label reveal from-left">Join the team</div>
       <h2 class="section-title letter-reveal">Become an Ambassador</h2>
-      <p class="section-sub reveal" style="--reveal-delay:0.1s">Help KOVA grow in your city. As an ambassador, you'll be the face of a movement — hosting events, welcoming new members, and shaping the culture of your local community.</p>
+      <p class="section-sub reveal" style="--reveal-delay:0.1s">Help KOVA grow in your city. You'll host events, welcome new members, and shape what the community looks like where you live.</p>
 
       <div class="amb-features">
         <div class="amb-feat reveal from-left" style="--reveal-delay:0s">
@@ -1316,9 +1267,8 @@
           </div>
         </div>
         <div class="dl-text-col">
-          <div class="section-label">Available now</div>
           <h2 class="section-title letter-reveal">Take KOVA<br />everywhere.</h2>
-          <p class="section-sub">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
+          <p class="section-sub">Download KOVA on the App Store. Find the people and places that make your world bigger.</p>
         </div>
         <div class="dl-qr-card">
           <img
@@ -1625,6 +1575,7 @@
       window.addEventListener('resize', buildRoad);
       buildRoad();
     })();
+
   </script>
   <div class="bottom-blur" aria-hidden="true"></div>
 </body>
