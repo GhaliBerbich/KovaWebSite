@@ -74,7 +74,14 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a white "New" badge (`.btn-purdue-new`, black text on white background, stays white on hover) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text. Links to the live Purdue article URL.
 
-**App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
+**App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` inside `.dl-qr-card` in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
+
+**Download section card** — `#download` contains a `.dl-card` (dark green, `border-radius: 28px`, `height: 380px`, `overflow: hidden`) with three flex columns:
+1. `.dl-phone-col` — the `.iphone.large` frame with `final_ss.png`; `padding-top: 40px` so the phone top has breathing room, and the card's fixed height clips the bottom ~51% of the frame.
+2. `.dl-text-col` — "Available now" label, "Take KOVA everywhere." heading, and paragraph. Text colors are overridden white inside the card (`.dl-card .section-title`, `.dl-card .section-sub`, etc.).
+3. `.dl-qr-card` — white rounded sub-frame (`border-radius: 14px`, `padding: 12px 14px`) containing a QR code image (`200×200px`, fetched from `api.qrserver.com`) and the App Store badge (`width: 200px`, `height: auto`). Both are the same width.
+
+The road JS queries the download phone via `#download .dl-phone-col` — update this selector if the class name changes.
 
 **Hero background** — local file `hero_image.png` + dot grid in `.hero-bg::after`. The dark overlay (`.hero-bg::before`) is set to `display: none` — the raw image shows through. To restore the tint, remove `display: none` from `.hero-bg::before`.
 
@@ -82,7 +89,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. 12 cards (6 originals + 6 duplicates). Edge fade via `mask-image` on `.testimonials-track-wrap`.
 
-**Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 140px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. The footer has `position: relative; z-index: 10000` to render above it.
+**Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. The footer has `position: relative; z-index: 10000` to render above it.
 
 **darkSectionIds** — only `'hero'` is in the set. All other sections use the light background.
 
@@ -95,7 +102,6 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 - `step1.png`, `step2.png`, `step3.png` — app screenshots displayed inside the "How it works" iPhone frames
 - `final_ss.png` — app screenshot displayed inside the Download section's large iPhone frame
 - `Agrandir - Free For Personal Use/` — PP Agrandir font files, **personal use only**, not wired up
-- Other PNGs/JPGs in root — development preview screenshots only, not served to users
 
 ## Pages
 
@@ -140,7 +146,7 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 - **No bracket waypoints** — peak-only (one waypoint per step). Bracket approach/exit waypoints cause Bezier control-point squiggles when an incoming tangent from a distant neighbour overshoots a short segment. With peak-only, step 2's Catmull-Rom tangent x-component is exactly 0 (steps 1 and 3 are at the same x), so the road descends vertically through the gap with no lateral drift.
 - **Testimonials**: two waypoints — `[W * 0.14, testInnerR.cy]` (left of heading text) then `[cx + W * 0.05, carouselR.cy]` (through middle of carousel). Queries `#testimonials .testimonials-inner` and `#testimonials .testimonials-track-wrap`.
 - **Ambassador**: `W * 0.93` (far right page margin)
-- **Download**: `dlPhoneR.right + 44` (gap right of download phone)
+- **Download**: `dlPhoneR.right + 44` (gap right of download phone — queried via `#download .dl-phone-col`)
 - Ends at `[cx, footerY + OVERLAP]` — under the opaque footer (`z-index: 10000`)
 - Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`
 

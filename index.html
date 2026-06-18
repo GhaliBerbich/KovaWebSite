@@ -41,7 +41,7 @@
     .bottom-blur {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      height: 140px;
+      height: 90px;
       pointer-events: none;
       z-index: 9999;
       backdrop-filter: blur(14px);
@@ -674,15 +674,51 @@
       background-size: 28px 28px;
       pointer-events: none;
     }
-    .download-grid {
+    .dl-card {
       display: flex;
-      align-items: center;
-      gap: 88px;
+      align-items: flex-start;
+      background: var(--dark-green);
+      border-radius: 28px;
+      overflow: hidden;
+      height: 380px;
+      margin: 0 48px;
     }
-    .download-phone-wrap { flex: 0 0 auto; }
-    .download-text { flex: 1; }
-    .download-text .section-title { margin-bottom: 16px; }
-    .download-text .section-sub { margin-bottom: 36px; }
+    .dl-phone-col {
+      flex: 0 0 auto;
+      padding-top: 40px;
+      padding-left: 48px;
+    }
+    .dl-text-col {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .dl-card .section-label { color: rgba(255,255,255,0.65); }
+    .dl-card .section-label::before { background: rgba(255,255,255,0.4); }
+    .dl-card .section-title { color: #fff; }
+    .dl-card .letter-reveal .char { color: #fff; }
+    .dl-card .section-sub { color: rgba(255,255,255,0.72); margin-bottom: 0; }
+    .dl-qr-card {
+      flex: 0 0 auto;
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      align-self: center;
+      margin: 0 48px 0 auto;
+    }
+    .dl-qr-card .appstore-img { width: 200px; height: auto; }
+    .dl-qr-img {
+      width: 200px;
+      height: 200px;
+      border-radius: 6px;
+      display: block;
+    }
     .store-badge {
       display: inline-flex;
       align-items: center;
@@ -922,11 +958,11 @@
       .iphone.large { width: 240px; height: 520px; border-radius: 48px; }
       .iphone.large .iphone-screen { border-radius: 40px; }
 
-      .download-grid { flex-direction: column; gap: 48px; text-align: center; }
-      .download-phone-wrap { order: -1; }
-      .download-text .section-sub { margin: 0 auto 32px; }
+      .dl-card { flex-direction: column; align-items: center; margin: 0 20px; min-height: unset; overflow: visible; }
+      .dl-phone-col { padding: 32px 0 0; }
+      .dl-text-col { padding: 32px 28px; text-align: center; }
+      .dl-qr-card { margin: 0 0 40px; align-self: center; }
       .store-badge { margin: 0 auto; }
-      .appstore-btn { margin: 0 auto; }
 
       .amb-features { gap: 28px; }
       .footer-inner { flex-direction: column; align-items: center; text-align: center; }
@@ -1270,8 +1306,8 @@
   <!-- ─── Download ──────────────────────────────────────────────── -->
   <section id="download" class="section">
     <div class="section-inner">
-      <div class="download-grid">
-        <div class="download-phone-wrap reveal from-left">
+      <div class="dl-card reveal">
+        <div class="dl-phone-col">
           <div class="iphone large" aria-label="App screenshot for download section">
             <div class="iphone-screen">
               <div class="iphone-island"></div>
@@ -1279,11 +1315,18 @@
             </div>
           </div>
         </div>
-        <div class="download-text">
-          <div class="section-label reveal" style="--reveal-delay:0.05s">Available now</div>
+        <div class="dl-text-col">
+          <div class="section-label">Available now</div>
           <h2 class="section-title letter-reveal">Take KOVA<br />everywhere.</h2>
-          <p class="section-sub reveal" style="--reveal-delay:0.15s">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
-          <a href="https://apps.apple.com/us/app/ridekova/id6757269118" class="appstore-btn reveal" style="--reveal-delay:0.25s" target="_blank" rel="noopener noreferrer" aria-label="Download KOVA on the App Store">
+          <p class="section-sub">Download KOVA on the App Store and start discovering the people and places that make your world bigger.</p>
+        </div>
+        <div class="dl-qr-card">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=https://apps.apple.com/us/app/ridekova/id6757269118"
+            alt="Scan to download KOVA on the App Store"
+            class="dl-qr-img"
+          />
+          <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="appstore-btn" aria-label="Download KOVA on the App Store">
             <img src="download_appstore_svg.png" alt="Download on the App Store" class="appstore-img" />
           </a>
         </div>
@@ -1486,7 +1529,7 @@
           const testInnerR = getLayoutRect(document.querySelector('#testimonials .testimonials-inner'));
           const carouselR  = getLayoutRect(document.querySelector('#testimonials .testimonials-track-wrap'));
           const ambR       = getLayoutRect(document.querySelector('#ambassador'));
-          const dlPhoneR   = getLayoutRect(document.querySelector('#download .download-phone-wrap'));
+          const dlPhoneR   = getLayoutRect(document.querySelector('#download .dl-phone-col'));
           const footerEl   = document.querySelector('footer');
           const footerY    = footerEl.offsetTop - lz.offsetTop;
 
