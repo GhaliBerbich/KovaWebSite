@@ -68,7 +68,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Smooth scroll helper** — `scrollToSection(id)` scrolls a section to the top of the viewport. Named `scrollToSection` (not `scrollTo`) to avoid shadowing `window.scrollTo`.
 
-**Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a green "New" badge (`.btn-purdue-new`) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text; the "New" badge inverts to dark bg + green text so it stays visible. The `href` links to the Purdue article (currently `#` — update before launch).
+**Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a white "New" badge (`.btn-purdue-new`, black text on white background, stays white on hover) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text. Links to the live Purdue article URL.
 
 **App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
 
@@ -89,6 +89,7 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 - `download_appstore_svg.png` — official App Store badge image used in the download section
 - `color palette.png` — reference swatches (white / `#2E6B4A` / `#28C45A`)
 - `step1.png`, `step2.png`, `step3.png` — app screenshots displayed inside the "How it works" iPhone frames
+- `final_ss.png` — app screenshot displayed inside the Download section's large iPhone frame
 - `Agrandir - Free For Personal Use/` — PP Agrandir font files, **personal use only**, not wired up
 - Other PNGs/JPGs in root — development preview screenshots only, not served to users
 
@@ -129,16 +130,24 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 **Brush tip** — each frame, the brush `<g>` is `translate`d to `reveal.getPointAtLength(drawnLen)` and `rotate`d to the path tangent (point 6px behind). It fades out (`opacity 0`) at the very start and once the road is essentially complete, so no brush floats under the footer.
 
 **Path geometry (desktop ≥ 768px):**
-- Starts at `[cx, 0]` (top-center of light-zone, hidden by top mask fade)
-- S-snake through each `.step-phone-wrap`: peaks in the gap between phone and text column
-- Gentle S through testimonials and ambassador sections
-- Ends at `[cx, footerY + OVERLAP]` — continues *under* the opaque footer (`z-index:10000`), which occludes the seam so the road appears to slide under it (mirrors the top emergence). `OVERLAP = 40` in JS **must equal** the `.road-wrap` bottom inset (`-40px`) so the SVG scales 1:1.
+- Starts at `[cx, -OVERLAP]` (40px above the light-zone top — inside the hero's covered area)
+- **Steps 1 & 3** (phone LEFT): peak at `W * 0.83` — the wide empty right portion of the layout past the text content
+- **Step 2** (phone RIGHT): peak at `pr.left - 90` — 90px clearance from the phone frame, well into the center gap
+- **No bracket waypoints** — peak-only (one waypoint per step). Bracket approach/exit waypoints cause Bezier control-point squiggles when an incoming tangent from a distant neighbour overshoots a short segment. With peak-only, step 2's Catmull-Rom tangent x-component is exactly 0 (steps 1 and 3 are at the same x), so the road descends vertically through the gap with no lateral drift.
+- **Testimonials**: two waypoints — `[W * 0.14, testInnerR.cy]` (left of heading text) then `[cx + W * 0.05, carouselR.cy]` (through middle of carousel). Queries `#testimonials .testimonials-inner` and `#testimonials .testimonials-track-wrap`.
+- **Ambassador**: `W * 0.93` (far right page margin)
+- **Download**: `dlPhoneR.right + 44` (gap right of download phone)
+- Ends at `[cx, footerY + OVERLAP]` — under the opaque footer (`z-index: 10000`)
 - Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`
+
+**Hero emergence (mirrors footer):**
+- `.road-wrap` has `inset: -40px 0 -40px 0` — extends `OVERLAP=40px` above AND below the light-zone
+- `#hero` has `z-index: 1` — hero renders on top of the road-wrap extension, hiding the road stub just as the footer (`z-index: 10000`) hides the tail
+- ViewBox: `0 -OVERLAP W H+2*OVERLAP` — SVG coordinates remain light-zone-relative; `getLayoutRect` measurements are unchanged
+- Mask: `transparent 0px, black 50px` — hero covers the first 40px, leaving only a ~10px fade visible just below the hero edge
 
 **Visual** (thicker, premium):
 - `.road-base`: 34px, `var(--near-black)` @ 0.92 opacity (solid road body)
 - `.road-sheen`: 40px, `rgba(255,255,255,0.06)` (faint lift under the base)
 - `.road-center`: 3px, `var(--bright-green)`, `stroke-dasharray: 26 22` (green dashed marking)
 - `.road-reveal`: 46px white (mask only — never visible)
-
-**`.road-wrap` mask** — only a 100px **top** fade (hides the origin stub at the hero seam). The bottom is no longer faded; the road is occluded by the footer instead.
