@@ -860,8 +860,6 @@
       border: 1px solid rgba(46,107,74,0.13);
       border-radius: 20px;
       padding: 28px 26px 24px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: default;
     }
@@ -927,6 +925,7 @@
       display: inline-block;
       opacity: 0;
       transform: translateY(5px);
+      will-change: transform, opacity;
       transition: opacity 0.3s ease-out calc(var(--i) * 0.016s),
                   transform 0.3s ease-out calc(var(--i) * 0.016s);
     }
@@ -935,6 +934,7 @@
     .word-reveal .word {
       display: inline;
       opacity: 0;
+      will-change: opacity;
       transition: opacity 0.45s ease-out calc(var(--wi) * 0.06s);
     }
     .word-reveal.in-view .word { opacity: 1; }
@@ -1035,7 +1035,7 @@
 
   <!-- ─── Navbar ───────────────────────────────────────────────── -->
   <nav class="nav" id="navbar" aria-label="Main navigation">
-    <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" />
+    <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
     <div class="nav-links">
       <button class="nav-btn" onclick="scrollToSection('how-it-works')">How it works</button>
       <button class="nav-btn" onclick="scrollToSection('ambassador')">Ambassador Program</button>
@@ -1065,7 +1065,7 @@
     <div id="stat-bar">
       <div class="stat-item reveal" style="--reveal-delay:0s">
         <span class="stat-num">0%</span>
-        <span class="stat-label">commission, ever</span>
+        <span class="stat-label">commission</span>
       </div>
       <div class="stat-item reveal" style="--reveal-delay:0.12s">
         <span class="stat-num">500+</span>
@@ -1111,7 +1111,7 @@
             <div class="iphone" aria-label="App screenshot, step 1">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step1.png" alt="App screenshot, step 1" class="iphone-screen-img" decoding="async">
+                <img src="step1.png" alt="App screenshot, step 1" class="iphone-screen-img" decoding="async" loading="lazy">
               </div>
             </div>
           </div>
@@ -1127,7 +1127,7 @@
             <div class="iphone" aria-label="App screenshot, step 2">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step2.png" alt="App screenshot, step 2" class="iphone-screen-img" decoding="async">
+                <img src="step2.png" alt="App screenshot, step 2" class="iphone-screen-img" decoding="async" loading="lazy">
               </div>
             </div>
           </div>
@@ -1143,7 +1143,7 @@
             <div class="iphone" aria-label="App screenshot, step 3">
               <div class="iphone-screen">
                 <div class="iphone-island"></div>
-                <img src="step3.png" alt="App screenshot, step 3" class="iphone-screen-img" decoding="async">
+                <img src="step3.png" alt="App screenshot, step 3" class="iphone-screen-img" decoding="async" loading="lazy">
               </div>
             </div>
           </div>
@@ -1385,7 +1385,7 @@
           <div class="iphone large" aria-label="App screenshot for download section">
             <div class="iphone-screen">
               <div class="iphone-island"></div>
-              <img src="final_ss.png" alt="KOVA app screenshot" class="iphone-screen-img">
+              <img src="final_ss.png" alt="KOVA app screenshot" class="iphone-screen-img" decoding="async" loading="lazy">
             </div>
           </div>
         </div>
@@ -1398,9 +1398,10 @@
             src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=https://apps.apple.com/us/app/ridekova/id6757269118"
             alt="Scan to download KOVA on the App Store"
             class="dl-qr-img"
+            decoding="async" loading="lazy"
           />
           <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="appstore-btn" aria-label="Download KOVA on the App Store">
-            <img src="download_appstore_svg.png" alt="Download on the App Store" class="appstore-img" />
+            <img src="download_appstore_svg.png" alt="Download on the App Store" class="appstore-img" decoding="async" loading="lazy" />
           </a>
         </div>
       </div>
@@ -1470,11 +1471,16 @@
 
     const navbar = document.getElementById('navbar');
     const darkSectionIds = new Set(['hero']);
+    let _sections = null;
+    function getSections() {
+      return _sections || (_sections = Array.from(document.querySelectorAll('section[id]')));
+    }
+    window.addEventListener('resize', () => { _sections = null; }, { passive: true });
 
     function updateNavTheme() {
       const probe = navbar.getBoundingClientRect().bottom + 10;
       let overLight = false;
-      document.querySelectorAll('section[id]').forEach(section => {
+      getSections().forEach(section => {
         const r = section.getBoundingClientRect();
         if (r.top <= probe && r.bottom > probe) {
           overLight = !darkSectionIds.has(section.id);
@@ -1488,8 +1494,15 @@
       if (bottomBlur) bottomBlur.style.opacity = window.scrollY < 50 ? '0' : '1';
     }
 
-    window.addEventListener('scroll', updateNavTheme, { passive: true });
-    window.addEventListener('scroll', updateBottomBlur, { passive: true });
+    let _uiRaf = null;
+    window.addEventListener('scroll', () => {
+      if (_uiRaf) return;
+      _uiRaf = requestAnimationFrame(() => {
+        _uiRaf = null;
+        updateNavTheme();
+        updateBottomBlur();
+      });
+    }, { passive: true });
     updateNavTheme();
     updateBottomBlur();
 
