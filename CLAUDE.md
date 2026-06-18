@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Single-file static landing page for the **KOVA** social/travel app. All HTML, CSS, and JS live in `index.html`. No build tools, no framework, no dependencies beyond Google Fonts (loaded via CDN).
+Single-file static landing page for the **KOVA** social/travel app. All HTML, CSS, and JS live in `index.html`. No build tools, no framework. External deps (both via CDN): Google Fonts and **Lenis** (smooth-scroll, `unpkg.com/lenis`).
 
 ## Development
 
@@ -70,11 +70,13 @@ Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Us
 
 **Letter-by-letter headings** — `.letter-reveal` elements have text nodes split into `<span class="char" style="--i:N">`. Each char transitions `opacity` + `translateY(18px)` with delay `calc(var(--i) * 0.028s)`.
 
-**Smooth scroll helper** — `scrollToSection(id)` scrolls a section to the top of the viewport. Named `scrollToSection` (not `scrollTo`) to avoid shadowing `window.scrollTo`.
+**Smooth scrolling (Lenis)** — Lenis (CDN, `lenis@1.1.18`) gives the page a weighted-but-smooth glide. Initialized at the top of the inline `<script>` with `lerp: 0.06` (lower = heavier), `wheelMultiplier: 0.9`, driven by a `requestAnimationFrame` loop. Lenis updates the *native* scroll position (not a transform), so `window.scrollY` and `window` `scroll` events stay accurate — the road animation and `updateNavTheme` listeners need no changes. Skipped entirely when `prefers-reduced-motion: reduce` (falls back to native scroll). Tune free-scroll feel via `lerp` (~0.08 lighter / ~0.05 heavier). The CSS `html { scroll-behavior: smooth }` was removed because it double-eases against Lenis; minimal Lenis reset CSS lives in the Reset block.
+
+**Smooth scroll helpers** — `scrollToSection(id)` and `scrollToTop()` both route nav-triggered scrolls through `lenis.scrollTo(..., NAV_SCROLL)`, where `NAV_SCROLL = { duration: 1.6, easing: easeInOutCubic }` gives a deliberate, slow glide (distinct from — and slower than — the free-scroll `lerp`). Both fall back to `window.scrollTo({ behavior: 'smooth' })` when Lenis is inactive. `scrollToSection` is named so (not `scrollTo`) to avoid shadowing `window.scrollTo`. Used by: nav links (How it works, Ambassador), "Get KOVA" + hero "Download the app" (→ `download`), and the nav logo (→ `scrollToTop`). Tune auto-scroll pace via `NAV_SCROLL.duration`.
 
 **Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a white "New" badge (`.btn-purdue-new`, black text on white background, stays white on hover) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text. Links to the live Purdue article URL.
 
-**App Store CTA** — The "Get KOVA" nav pill, the hero "Download the app" button, and the `.appstore-btn` inside `.dl-qr-card` in the download section all link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
+**App Store CTA** — Only the `.appstore-btn` inside `.dl-qr-card` and the QR code in the download section link to `https://apps.apple.com/us/app/ridekova/id6757269118`. The "Get KOVA" nav pill and the hero "Download the app" button are now `<button>`s that `scrollToSection('download')` (smooth-scroll to the download section) instead of opening the App Store.
 
 **Download section card** — `#download` contains a `.dl-card` (dark green, `border-radius: 28px`, `height: 380px`, `overflow: hidden`) with three flex columns:
 1. `.dl-phone-col` — the `.iphone.large` frame with `final_ss.png`; `padding-top: 40px` so the phone top has breathing room, and the card's fixed height clips the bottom ~51% of the frame.
