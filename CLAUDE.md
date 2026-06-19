@@ -145,7 +145,6 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 - `download_appstore_svg.png` — App Store badge
 - `purdue.png` — Purdue logo in the footer (original colors)
 - `color palette.png` — reference swatches
-- **Currently unused** (left over from the pre-Round-3 design; safe to delete if you want): `hero_image.png`, `step1.png`, `step2.png`, `step3.png`
 - `Agrandir - Free For Personal Use/` — fonts, **personal use only**, not wired up
 
 ## Pages
