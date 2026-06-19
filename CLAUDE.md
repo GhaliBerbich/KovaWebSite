@@ -35,26 +35,26 @@ Playwright MCP is available — navigate to `http://localhost:<port>`, resize to
 Everything is in `index.html`, organized top-to-bottom:
 
 1. **CSS custom properties** (`:root`) — all color tokens; do not use raw hex outside this block
-2. **Reset + bottom-blur + navbar + shared type + buttons** CSS
-3. **Hero + stat-bar** CSS
-4. **Site-section mechanics** (`.site-section` base, overlap z-index ladder, wave clip-path map, `.card-bg`/`.card-bg-edge` layers, per-section background variation) CSS
+2. **Reset + grain overlay + bottom-blur + navbar + shared type + buttons** CSS
+3. **Hero + floating hero-stats** CSS
+4. **Site-section mechanics** (`.site-section` base + top drop-shadow, overlap z-index ladder, wave clip-path map, `.card-bg`/`.card-bg-edge` layers, per-section background variation) CSS
 5. **Per-section CSS** (how-it-works grid, road, testimonials, ambassador, faq, download, route chips)
 6. **Footer + animations + reduced-motion + responsive** CSS
-7. **Hidden wave-clip SVG** — first element in `<body>`; `<defs>` of 5 `clipPath`s (`objectBoundingBox`)
-8. **HTML** — Navbar → `#hero` (with route chips) → `#stat-bar` → `#how-it-works` → `#testimonials` → `#ambassador` → `#faq` → `#download` → `<footer>`
-9. **JS** — Lenis, nav active + bottom blur, letter/word splitters, reveal observer, FAQ accordion, testimonials road animation
-10. **`<div class="bottom-blur">`** — last element before `</body>`
+7. **Hidden wave-clip SVG** — first element in `<body>`; `<defs>` of 5 wave `clipPath`s (`objectBoundingBox`) + the `#grain` film-grain `<filter>`
+8. **HTML** — Navbar → `#hero` (with floating stats + route chips) → `#how-it-works` → `#testimonials` → `#ambassador` → `#faq` → `#download` → `<footer>`
+9. **JS** — Lenis, nav active + bottom blur, letter/word splitters, reveal observer, FAQ accordion, road animation (how-it-works + testimonials + ambassador)
+10. **`<div class="bottom-blur">`** then **`<div class="grain-overlay">`** — last two elements before `</body>`
 
 ## Color Tokens
 
 | Token | Value | Used for |
 |---|---|---|
-| `--bg` | `#0D1117` | Page background, stat bar, footer |
+| `--bg` | `#0D1117` | Page background, footer |
 | `--bright-green` | `#28C45A` | Primary CTA, road center line, badge/eyebrow border, open FAQ question, car accents |
 | `--dark-green` | `#2E6B4A` | Reserved accent |
 | `--text-primary` / `--text-body` / `--text-muted` | `rgba(255,255,255, .92/.60/.52)` | Body text tiers |
-| `--glass-bg` / `--glass-border` | `rgba(255,255,255, .07/.12)` | Glass surfaces (testimonial cards, route chips, nav) |
-| `--glass-green-bg` / `--glass-green-border` | `rgba(40,196,90, .08/.22)` | Download card glass |
+| `--glass-bg` / `--glass-border` | `rgba(255,255,255, .07/.12)` | Glass surfaces (testimonial cards, route chips, nav, **download card**) |
+| `--glass-green-bg` / `--glass-green-border` | `rgba(40,196,90, .08/.22)` | Reserved (green-tint glass; no longer used — the download card switched to neutral `--glass-bg`) |
 | `--road-base` / `--road-sheen` / `--road-center` | white .10 / white .04 / green .55 | Road strokes |
 
 **Green is reserved.** It appears only on: the primary CTA fill, the road center dashes, the eyebrow badge border, the car sprite accents, and the open FAQ question. Do **not** put green on body text, headings, or icons elsewhere.
@@ -63,54 +63,58 @@ Everything is in `index.html`, organized top-to-bottom:
 
 | Font | Usage |
 |---|---|
-| **Fraunces** (serif; 400/600/700, optical + italic axes) | All headings, section titles, nav links, stat numbers, button labels, testimonial names, `.hiw-item-label` |
-| **Figtree** (400/500/600) | Body text, descriptions, testimonial quotes, FAQ answers, stat labels, footer, route-chip meta |
+| **Fraunces** (serif; 400/600/700, optical + italic axes) | All headings, section titles, nav links, hero-stat numbers, button labels, testimonial names, `.hiw-item-label` |
+| **Lora** (serif; 400/500/600 + italic 400) | Body text, descriptions, testimonial quotes, FAQ answers, hero-stat labels, footer, route-chip meta |
 
-Loaded via Google Fonts CDN. Headings use `'Fraunces', serif`; body uses `'Figtree', sans-serif`. (Round 3 switched the display face from Space Grotesk to Fraunces; there is no Syne in the codebase.) The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
+Loaded via Google Fonts CDN. Headings use `'Fraunces', serif`; body uses `'Lora', serif`. (Round 3 switched the display face from Space Grotesk to Fraunces; Round 4 switched the body face from Figtree to Lora — there is no Figtree or Syne in the codebase anymore.) The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
 
 ## Layout: site-sections, overlap & waves (core)
 
 The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `#download`) all carry the class **`.site-section`**:
 ```css
 .site-section { position: relative; min-height: 100vh; display:flex; align-items:center;
-                justify-content:center; overflow:hidden; margin-top:-44px; }
+                justify-content:center; overflow:hidden; margin-top:-44px;
+                box-shadow: 0 -14px 48px rgba(0,0,0,0.55); }
 ```
 - **Overlap:** `margin-top:-44px` pulls each section up over the one above. A z-index ladder keeps later sections on top: how-it-works 10 → testimonials 20 → ambassador 30 → faq 40 → download 50 → footer 60.
+- **Top drop-shadow:** `box-shadow: 0 -14px 48px rgba(0,0,0,0.55)` casts upward so each section reads as sliding over the one above. NOTE: every section also has a wave `clip-path`, which clips the box-shadow to the section box — so this shadow is largely cropped away and barely visible. If a visible seam-shadow is ever wanted, it needs a separate **unclipped** layer.
 - **Waves:** a hidden `<svg>` (first child of `<body>`) defines 5 `clipPath`s with `clipPathUnits="objectBoundingBox"` — `#wave-how-it-works`, `#wave-testimonials`, `#wave-ambassador`, `#wave-faq`, `#wave-download`. Each is an irregular hand-drawn curve along the top edge (y ≈ 0.01–0.04, no repeating pattern). Applied via `#<id> { clip-path: url(#wave-<id>); }`. Content wrappers carry `padding-top: 80px+` so content clears the wave.
 
 **Background layers per section** (`.card-bg` z 0 → `.site-section::before` overlay z 1 → `.road-svg` z 2 → `.route-chip` z 3 → content z 4 via `.site-section > *:not(...)`):
-- `.card-bg` (`inset:-10%`, `background-size:cover`) and `.card-bg-edge` (same image, `blur(22px)`, radial mask — a soft halo around the sharper center) get their **image + position + scale/rotate + blur** set **per-ID** (the variation block). `.site-section::before` is the dark overlay tint, also per-ID.
+- `.card-bg` (`inset:-10%`, `background-size:cover`) and `.card-bg-edge` (same image, radial mask — a soft halo around the sharper center) get their **image + position + scale/rotate** set **per-ID** (the variation block). The backgrounds are now rendered **sharp** — the earlier per-section `blur()` on `.card-bg` and the `blur(22px)` on `.card-bg-edge` were removed. `.site-section::before` is the dark overlay tint, also per-ID.
 
-**Per-section backgrounds** (real photos; filenames contain spaces, so quote them in CSS):
+**Per-section backgrounds** (real photos; some filenames contain spaces, so quote them in CSS):
 
-| Section | image | position | overlay | blur |
-|---|---|---|---|---|
-| `#hero` (`.hero-bg`) | `drive pic.jpg` | `center 40%` | `rgba(0,0,0,0.35)` | — |
-| `#how-it-works` | `drive pic.jpg` | `center 70%` | `rgba(0,0,0,0.75)` | `9px` |
-| `#testimonials` | `concert pic.jpg` | `center 30%` | `rgba(0,0,0,0.72)` | `10px` |
-| `#ambassador` | `nightclub pic.jpg` | `60% center` | `rgba(0,0,0,0.75)` | `4px` |
-| `#faq` | `concert pic.jpg` | `center 65%` | `rgba(0,0,0,0.85)` | `12px` |
-| `#download` | `nightclub pic.jpg` | `40% center` | `rgba(0,0,0,0.80)` | `8px` |
+| Section | image | position | overlay |
+|---|---|---|---|
+| `#hero` (`.hero-bg`) | `drive pic.jpg` | `center 40%` | `rgba(0,0,0,0.35)` |
+| `#how-it-works` | `hiw-bg.jpg` | `center 70%` | `rgba(0,0,0,0.75)` |
+| `#testimonials` | `concert pic.jpg` | `center 30%` | `rgba(0,0,0,0.72)` |
+| `#ambassador` | `nightclub pic.jpg` | `60% center` | `rgba(0,0,0,0.75)` |
+| `#faq` | `faq-bg.jpg` | `center 65%` | `rgba(0,0,0,0.85)` |
+| `#download` | `download-bg.jpg` | `40% center` | `rgba(0,0,0,0.80)` |
 
 ## Key Patterns
 
 **Navbar** — `position: fixed`, glass (`backdrop-filter: blur(24px)`, faint border), `border-radius: 16px`, 3-column grid (logo / centered `.nav-links` / Get KOVA). Fraunces 600 links; hover and `.active` (current section) go to `#fff`, `.active` also bold. The logo keeps `filter: invert(1) hue-rotate(180deg)` permanently (white text, green wheel). Nav targets: How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`, Get KOVA → `download`. Active state is set by `updateNavActive()` using `data-target` + `absTop`.
 
-**Hero** — `#hero` (z-index 1; not a `.site-section`, no wave clip). `drive pic.jpg` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)`). Title `.hero-title` is solid white Fraunces `clamp(3rem,7vw,5.5rem)`. `.btn-purdue` eyebrow is a glass pill (Figtree 500, green-tinted border, white "New" badge, links to the Purdue article). Two floating `.route-chip`s sit at the edges (z-index 1, below content).
+**Hero** — `#hero` (z-index 1; not a `.site-section`, no wave clip). `drive pic.jpg` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)`). Title `.hero-title` is solid white Fraunces `clamp(3rem,7vw,5.5rem)`. `.btn-purdue` eyebrow is a glass pill (Lora 500, green-tinted border, white "New" badge, links to the Purdue article). Two floating `.route-chip`s sit at the edges (z-index 1, below content).
 
-**Stat bar** — `#stat-bar` is a static block between hero and `#how-it-works`, `background: var(--bg)`, top/bottom hairline borders. Three `.stat-item` columns with `.stat-item + .stat-item { border-left }` dividers. Stats: **0% commission** · **500+ Purdue students riding** · **Top 5 Purdue New Venture Challenge 2026**. Stacks vertically `@media (max-width:600px)`.
+**Hero floating stats** — three `.hero-stat`s are absolutely positioned (z-index 5) over the hero photo, scattered into open corners and each given a random-looking tilt via an inline `transform: rotate(...)`: **0% commission taken** (top-left, `-12deg`) · **2,400+ Purdue students** (top-right, `13deg`) · **4.9★ average rating** (bottom-left, `-7deg`). Positions are chosen to clear the two route chips and the centered CTA. Each has a big Fraunces `.hero-stat-number` and a small uppercase Lora `.hero-stat-label`. Hidden `@media (max-width:768px)`. (These replaced the old standalone `#stat-bar` block, which is gone.)
 
-**How it works** (`#how-it-works`) — one section (was 4 cards). `.hiw-inner` is a centered column (`padding:100px 48px 80px`) holding the `.section-title` and a `.hiw-grid` (2×2; 1-col under 768px). Each `.hiw-item` = `.hiw-item-label` (Fraunces 700) + `.hiw-placeholder` (4:3 glass box, decorative app-element placeholder) + `.hiw-item-desc` (Figtree). The 4 items: **Find a ride**, **Join communities**, **Unlock perks**, **Make a few bucks**. No road, no route chips here.
+**How it works** (`#how-it-works`) — one section (was 4 cards). `.hiw-inner` is a centered column (`padding:100px 48px 80px`) holding the `.section-title` and a `.hiw-grid` (2×2; 1-col under 768px). Each `.hiw-item` = `.hiw-item-label` (Fraunces 700) + `.hiw-placeholder` (4:3 glass box, decorative app-element placeholder) + `.hiw-item-desc` (Lora). The 4 items: **Find a ride**, **Join communities**, **Unlock perks**, **Make a few bucks**. Has a **road animation** (`<svg class="road-svg">`) weaving through the grid; no route chips here.
 
-**Testimonials** (`#testimonials`) — `.testimonials-inner` centered column (heading + marquee). Holds the **only road animation** (`<svg class="road-svg">`). `.marquee-outer` clips the track and has left/right edge-fade gradients. `.testimonials-track` is the infinite `@keyframes testimonialScroll` marquee (12 cards = 6 + 6 duplicates). `.testimonial-card` is glass. Stars stay gold (`#FFB800`).
+**Testimonials** (`#testimonials`) — `.testimonials-inner` centered column (heading + marquee). Has a **road animation** (`<svg class="road-svg">`) that now runs **right → left** (waypoints reversed). `.marquee-outer` clips the track and has left/right edge-fade gradients. `.testimonials-track` is the infinite `@keyframes testimonialScroll` marquee (12 cards = 6 + 6 duplicates). `.testimonial-card` is glass. Stars stay gold (`#FFB800`).
 
-**Ambassador** (`#ambassador`) — `.ambassador-inner` centered. `.amb-feats` is a 3-up flex row of `.amb-feat` glass icon tiles (white SVG strokes). The "Apply Now" button is `.btn-glass`.
+**Ambassador** (`#ambassador`) — `.ambassador-inner` centered. Has a **road animation** (`<svg class="road-svg">`) shaped as a vertical **S**: it enters above the top edge (`y=-0.10`) and exits below the bottom edge (`y=1.10`), so its ends are cropped by the section's `overflow:hidden` and it appears to slide out from under the top and disappear beneath the bottom. `.amb-feats` is a 3-up flex row of `.amb-feat` glass icon tiles (white SVG strokes). The "Apply Now" button is `.btn-glass`.
 
-**FAQ** (`#faq`) — an **accordion**. Each `.faq-item` has a clickable `.faq-question` (Fraunces 700 + `.faq-chevron` SVG) and a `.faq-answer` that is `display:none` until the item gets `.open` (toggled by JS click). The chevron rotates 180° and the question turns `var(--bright-green)` when open (the only non-white heading on the page). All items start closed.
+**FAQ** (`#faq`) — an **accordion**. Each `.faq-item` has a clickable `.faq-question` (Fraunces 700 + `.faq-chevron` SVG) and a `.faq-answer`. Open/close is **animated** (the item gets `.open` on JS click): the answer transitions `max-height` (0 → 260px), `opacity`, and `margin-top` over `0.5s cubic-bezier(0.4,0,0.2,1)`, and the chevron rotates 180° over `0.5s`; the question turns `var(--bright-green)` when open (the only non-white heading on the page). `#faq` overrides `.site-section`'s centering with `align-items:flex-start` so the column is **top-anchored** — opening an item pushes the items below it down instead of shoving the title up (`.faq-inner` carries `padding:110px 48px 90px` for navbar clearance). All items start closed. **If a future answer is longer than ~260px it will clip** — bump the `max-height`.
 
-**Download** (`#download`) — a centered glass-green `.dl-card` (radius 28), **two-column**: `.dl-phone-col` (a rounded `.dl-screenshot` `<img>` of `final_ss.png` — **no iPhone frame**) on the left, `.dl-info` (title, sub, white `.dl-qr-card` with QR + App Store badge) on the right. Stacks to one column `@media (max-width:768px)` (`.dl-screenshot` shrinks to 170px). Section is flex-centered in 100vh, so the wave clip never touches the card.
+**Download** (`#download`) — a centered **neutral-glass** `.dl-card` (radius 28, `--glass-bg`/`--glass-border` — the green tint was removed), **two-column**: `.dl-info` (title + sub) on the left (`flex:1`), and the white `.dl-qr-card` (QR + App Store badge, `flex:0 0 auto`) on the right. The app screenshot (`final_ss.png` / `.dl-phone-col` / `.dl-screenshot`) was **removed**. Stacks to one centered column `@media (max-width:768px)`. Section is flex-centered in 100vh, so the wave clip never touches the card.
 
-**Route chips** — `.route-chip` glass pills (`.route-chip-route` Fraunces 700 + `.route-chip-meta` Figtree). Decorative placeholders. **Hero has 2** (the only ones left after the step cards were removed). Hidden `@media (max-width:768px)`.
+**Route chips** — `.route-chip` glass pills (`.route-chip-route` Fraunces 700 + `.route-chip-meta` Lora). Decorative placeholders. **Hero has 2** (the only ones left after the step cards were removed). Hidden `@media (max-width:768px)`.
+
+**Film grain** — `<div class="grain-overlay">` (last child of `<body>`, `position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0.045`) applies `filter:url(#grain)` — an SVG `feTurbulence` fractal-noise filter (defined in the hidden `<defs>` block) desaturated and `feBlend mode="overlay"`. Gives a subtle analog grain over the whole page. Lower the opacity (≈0.03) if it ever reads too heavy.
 
 **Buttons** — `.btn-primary` (green CTA, Fraunces 700, radius 10) and `.btn-glass` (glass secondary). Hero "Download the app" + nav "Get KOVA" are `<button>`s that `scrollToSection('download')`. Only `.appstore-btn` and the QR image link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
 
@@ -126,26 +130,37 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 
 **Image loading** — below-fold images use `loading="lazy"`; all use `decoding="async"`. The hero/section backgrounds are CSS, so neither applies.
 
-## Road Animation (testimonials only)
+## Road Animation (how-it-works, testimonials, ambassador)
 
-After Round 3 only `#testimonials` has a road. It contains an empty `<svg class="road-svg">`; the IIFE at the bottom of the script populates and animates it.
+**Three** sections have a road: `#how-it-works`, `#testimonials`, and `#ambassador`. Each contains an empty `<svg class="road-svg">`; one IIFE at the bottom of the script builds and animates all of them, keyed off the `ROADS` map. To add/remove a road, add a `.road-svg` to the section and an entry to `ROADS` — nothing else.
 
-- **SVG** (built in JS, mask id `road-mask-testimonials`): `<defs><mask><path class="road-reveal"/></mask></defs>`, a masked `<g>` with `.road-sheen`/`.road-base`/`.road-center` (shared `d`), and a `.road-brush` `<g>` holding the top-down **car sprite** (white-ish body, green outline/glass/headlights, red taillights, dark wheels; authored nose-toward +x).
-- **Model** — mask-wipe + rAF-lerp driven by scroll progress within the section. `build()` turns the `ROADS['testimonials']` waypoints (`[x%,y%]` fractions of section W×H) into a Catmull-Rom path, sets `viewBox = "0 0 W H"`, computes `totalLen` + dasharray/offset, and a `pathCache` of 601 sampled points for cheap `pointAt()`. `inst.top = absTop(card)` (true document offset in the flat layout). `updateTargets()` (rAF-throttled on scroll): `progress = clamp((scrollY - top) / (innerHeight*0.8), 0, 1)`. `tick()` eases `drawnLen → targetLen` (`SMOOTH ≈ 0.14`), sets `strokeDashoffset`, positions/rotates the car at the tip; the car fades out at the very start and once the road is essentially complete. `resize` → rebuild.
+- **`ROADS`** — `{ id: waypoints }`, waypoints `[x,y]` as fractions of section W×H. Current:
+  - `how-it-works`: `[[0,.5],[.28,.3],[.5,.5],[.72,.7],[1,.5]]` — left → right, weaving through the 2×2 grid.
+  - `testimonials`: `[[.95,.5],[.7,.68],[.3,.32],[.05,.5]]` — **right → left** (reversed from the original L→R).
+  - `ambassador`: `[[.92,-.10],[.45,.20],[.72,.50],[.30,.78],[.10,1.10]]` — a vertical **S** whose ends sit off the top/bottom edges so they're cropped by `overflow:hidden`.
+- **SVG** (built in JS, mask id `road-mask-<id>`): `<defs><mask><path class="road-reveal"/></mask></defs>`, a masked `<g>` with `.road-sheen`/`.road-base`/`.road-center` (shared `d`), and a `.road-brush` `<g>` holding the top-down **car sprite** (white-ish body, green outline/glass/headlights, red taillights, dark wheels; authored nose-toward +x).
+- **Model** — mask-wipe + rAF-lerp driven by scroll progress within the section. `build(inst)` turns the waypoints into a Catmull-Rom path, sets `viewBox = "0 0 W H"`, computes `totalLen` + dasharray/offset, stores `inst.top = absTop(card)` (true document offset) and `inst.h = H`, and fills a 601-point `cache` for cheap `pointAt()`.
+- **Scroll driver** — `updateTargets()` (rAF-throttled on scroll) maps progress off the **section center crossing the viewport**: `center = top + h/2`, `progress = clamp((scrollY - center + innerHeight) / innerHeight, 0, 1)`. So `p=0` when the center is at the viewport bottom, `p=0.5` when the section is centered (most visible), `p=1` when the center reaches the viewport top — the road's start and finish both land on-screen. (This replaced the older `(scrollY - top)/(innerHeight*0.8)` formula, which started the draw too late.)
+- **`tick()`** eases `drawnLen → targetLen` (`SMOOTH ≈ 0.14`), sets `strokeDashoffset`, positions/rotates the car at the tip; the car fades out at the very start and once the road is essentially complete. `resize` → rebuild all.
 
 Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE early-returns and CSS hides `.road-svg`).
 
 ## Assets
 
 - `KOVA logo.png` — black "KOVA" text + bright green steering wheel (inverted to white in nav/footer)
-- `drive pic.jpg` — hero + how-it-works background
-- `concert pic.jpg` — testimonials + faq background
-- `nightclub pic.jpg` — ambassador + download background
-- `final_ss.png` — app screenshot in the download section (rounded `<img>`)
+- `drive pic.jpg` — hero background (was also how-it-works; now hero only)
+- `hiw-bg.jpg` — how-it-works background
+- `concert pic.jpg` — testimonials background (was also faq; now testimonials only)
+- `nightclub pic.jpg` — ambassador background (was also download; now ambassador only)
+- `faq-bg.jpg` — faq background
+- `download-bg.jpg` — download background
 - `download_appstore_svg.png` — App Store badge
 - `purdue.png` — Purdue logo in the footer (original colors)
 - `color palette.png` — reference swatches
+- `final_ss.png` — old download-section app screenshot, **no longer referenced** (the screenshot was removed; file kept in repo)
 - `Agrandir - Free For Personal Use/` — fonts, **personal use only**, not wired up
+
+> **`.gitignore` gotcha:** the repo ignores all `*.png`/`*.jpg` (a dev-screenshot rule) and re-allows the real assets with explicit `!filename` exceptions. When you add a **new** background/image used by the site, add a matching `!<filename>` line or it will silently never get committed/pushed.
 
 ## Pages
 
@@ -155,6 +170,6 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 
 ## Footer
 
-`<footer>` is dark (`var(--bg)`), `position: relative; z-index: 60` (above the bottom blur). Three flex columns: KOVA logo (inverted white) / `.footer-links` (Terms → `terms.html`, Privacy → `privacy.html`, `help@ridekova.com`) / `.footer-right` (Instagram → `instagram.com/ridekova/`, copyright `© 2026 KOVA Group, Inc. All rights reserved.`, "Built with love, at [purdue.png]"). Footer links Figtree, `rgba(255,255,255,0.60)` → `#fff` on hover. `.footer-purdue` is `display:inline` to override the global `img{display:block}` reset.
+`<footer>` is dark (`var(--bg)`), `position: relative; z-index: 60` (above the bottom blur). Three flex columns: KOVA logo (inverted white) / `.footer-links` (Terms → `terms.html`, Privacy → `privacy.html`, `help@ridekova.com`) / `.footer-right` (Instagram → `instagram.com/ridekova/`, copyright `© 2026 KOVA Group, Inc. All rights reserved.`, "Built with love, at [purdue.png]"). Footer links Lora, `rgba(255,255,255,0.60)` → `#fff` on hover. `.footer-purdue` is `display:inline` to override the global `img{display:block}` reset.
 </content>
 </invoke>
