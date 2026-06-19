@@ -1,8 +1,14 @@
-# Development screenshots
+# Development screenshots (ignore stray PNG/JPG, but keep real site assets)
 *.png
 *.jpg
 !KOVA logo.png
 !color palette.png
+!concert pic.jpg
+!drive pic.jpg
+!nightclub pic.jpg
+!final_ss.png
+!download_appstore_svg.png
+!purdue.png
 
 # Playwright artifacts
 .playwright-mcp/
