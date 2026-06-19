@@ -6,7 +6,7 @@
   <title>KOVA — Your world just got bigger</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     /* ─── Tokens ─────────────────────────────────────────────── */
     :root {
@@ -45,7 +45,7 @@
       background: var(--bg);
       overflow-x: hidden;
     }
-    h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; line-height: 1.15; }
+    h1, h2, h3, h4 { font-family: 'Fraunces', serif; line-height: 1.15; }
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
 
@@ -102,7 +102,7 @@
       background: transparent;
       border: none;
       padding: 8px 12px;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 0.95rem;
       font-weight: 600;
       transition: color 0.2s;
@@ -121,7 +121,7 @@
 
     /* ─── Shared section type ────────────────────────────────── */
     .section-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: clamp(2.2rem, 4vw, 3.2rem);
       font-weight: 800;
       letter-spacing: -0.02em;
@@ -145,7 +145,7 @@
       border: none;
       border-radius: 10px;
       padding: 14px 32px;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
@@ -168,7 +168,7 @@
       -webkit-backdrop-filter: blur(12px);
       border-radius: 10px;
       color: #fff;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
@@ -194,9 +194,9 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('hero_image.png');
+      background-image: url('drive pic.jpg');
       background-size: cover;
-      background-position: center 30%;
+      background-position: center 40%;
       background-repeat: no-repeat;
       background-color: #122a1c;
     }
@@ -253,7 +253,7 @@
       border-radius: 100px;
     }
     .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: clamp(3rem, 7vw, 5.5rem);
       font-weight: 800;
       color: #fff;
@@ -304,7 +304,7 @@
     }
     .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,0.10); }
     .stat-number {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 2rem;
       font-weight: 800;
       color: #fff;
@@ -319,42 +319,40 @@
       text-align: center;
     }
 
-    /* ─── Card stack ─────────────────────────────────────────── */
-    .card-stack {
+    /* ─── Site sections (normal flow, gentle overlap) ────────── */
+    .site-section {
       position: relative;
-      height: calc(8 * 100vh);   /* 8 cards × 100vh — required, or all sticky cards collapse */
-    }
-    .page-card {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      will-change: transform, filter;
+      overflow: hidden;
+      margin-top: -44px;          /* each section slides slightly over the one above */
     }
-    /* Stacking order */
-    #hiw-intro   { z-index: 10; }
-    #step-1      { z-index: 20; }
-    #step-2      { z-index: 30; }
-    #step-3      { z-index: 40; }
-    #testimonials{ z-index: 50; }
-    #ambassador  { z-index: 60; }
-    #faq         { z-index: 70; }
-    #download    { z-index: 80; }
+    /* Overlap stacking order */
+    #how-it-works { z-index: 10; }
+    #testimonials { z-index: 20; }
+    #ambassador   { z-index: 30; }
+    #faq          { z-index: 40; }
+    #download     { z-index: 50; }
+    footer        { z-index: 60; }
+
+    /* Wave top-edge clip per section */
+    #how-it-works { clip-path: url(#wave-how-it-works); }
+    #testimonials { clip-path: url(#wave-testimonials); }
+    #ambassador   { clip-path: url(#wave-ambassador); }
+    #faq          { clip-path: url(#wave-faq); }
+    #download     { clip-path: url(#wave-download); }
 
     /* Layer order: card-bg (0) → ::before overlay (1) → road (2) → chips (3) → content (4) */
     .card-bg {
       position: absolute;
       inset: -10%;                /* oversized so blur edges never fringe */
-      background-image: url('hero_image.png');
       background-size: cover;
       background-repeat: no-repeat;
       z-index: 0;
     }
-    .page-card::before {
+    .site-section::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -370,7 +368,7 @@
       pointer-events: none;
       opacity: 0.7;
     }
-    .page-card > *:not(.card-bg):not(.card-bg-edge):not(.road-svg):not(.route-chip) {
+    .site-section > *:not(.card-bg):not(.card-bg-edge):not(.road-svg):not(.route-chip) {
       position: relative;
       z-index: 4;
     }
@@ -379,7 +377,6 @@
     .card-bg-edge {
       position: absolute;
       inset: -10%;
-      background-image: url('hero_image.png');
       background-size: cover;
       z-index: 0;
       filter: blur(22px);
@@ -387,48 +384,22 @@
       -webkit-mask-image: radial-gradient(ellipse 60% 70% at center, transparent 40%, black 80%);
     }
 
-    /* Per-card background variation (crop / rotation / blur / overlay / wave edge) */
-    #hiw-intro .card-bg    { background-position: center 20%; transform: scale(1.05) rotate(-1deg);  filter: blur(9px); }
-    #hiw-intro .card-bg-edge { background-position: center 20%; }
-    #hiw-intro::before     { background: rgba(0, 0, 0, 0.78); }
-    #hiw-intro             { clip-path: url(#wave-hiw-intro); }
-    #step-1 .card-bg       { background-position: 70% center; transform: scale(1.08) rotate(0.5deg); filter: blur(5px); }
-    #step-1 .card-bg-edge  { background-position: 70% center; }
-    #step-1::before        { background: rgba(0, 0, 0, 0.70); }
-    #step-1                { clip-path: url(#wave-step-1); }
-    #step-2 .card-bg       { background-position: 30% 60%;    transform: scale(1.03) rotate(-0.8deg);filter: blur(11px); }
-    #step-2 .card-bg-edge  { background-position: 30% 60%; }
-    #step-2::before        { background: rgba(0, 0, 0, 0.78); }
-    #step-2                { clip-path: url(#wave-step-2); }
-    #step-3 .card-bg       { background-position: center 80%; transform: scale(1.06) rotate(1.2deg); filter: blur(7px); }
-    #step-3 .card-bg-edge  { background-position: center 80%; }
-    #step-3::before        { background: rgba(0, 0, 0, 0.82); }
-    #step-3                { clip-path: url(#wave-step-3); }
-    #testimonials .card-bg { background-position: center top; transform: scale(1.04) rotate(-0.4deg);filter: blur(10px); }
-    #testimonials .card-bg-edge { background-position: center top; }
-    #testimonials::before  { background: rgba(0, 0, 0, 0.72); }
-    #testimonials          { clip-path: url(#wave-testimonials); }
-    #ambassador .card-bg   { background-position: 60% 40%;    transform: scale(1.07) rotate(0.7deg); filter: blur(4px); }
-    #ambassador .card-bg-edge { background-position: 60% 40%; }
-    #ambassador::before    { background: rgba(0, 0, 0, 0.75); }
-    #ambassador            { clip-path: url(#wave-ambassador); }
-    #faq .card-bg          { background-position: 40% center; transform: scale(1.05) rotate(-1.1deg);filter: blur(12px); }
-    #faq .card-bg-edge     { background-position: 40% center; }
-    #faq::before           { background: rgba(0, 0, 0, 0.85); }
-    #faq                   { clip-path: url(#wave-faq); }
-    #download .card-bg     { background-position: center 50%; transform: scale(1.03) rotate(0.3deg); filter: blur(8px); }
-    #download .card-bg-edge { background-position: center 50%; }
-    #download::before      { background: rgba(0, 0, 0, 0.80); }
-    #download              { clip-path: url(#wave-download); }
-
-    .card-inner {
-      width: 100%;
-      max-width: 1100px;
-      padding: 0 48px;
-      display: flex;
-      align-items: center;
-      gap: 80px;
-    }
+    /* Per-section background variation (image / crop / rotation / blur / overlay) */
+    #how-it-works .card-bg      { background-image: url('drive pic.jpg');     background-position: center 70%; transform: scale(1.05) rotate(-1deg);   filter: blur(9px); }
+    #how-it-works .card-bg-edge { background-image: url('drive pic.jpg');     background-position: center 70%; }
+    #how-it-works::before       { background: rgba(0, 0, 0, 0.75); }
+    #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg); filter: blur(10px); }
+    #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
+    #testimonials::before       { background: rgba(0, 0, 0, 0.72); }
+    #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg);  filter: blur(4px); }
+    #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
+    #ambassador::before         { background: rgba(0, 0, 0, 0.75); }
+    #faq .card-bg               { background-image: url('concert pic.jpg');   background-position: center 65%; transform: scale(1.05) rotate(-1.1deg); filter: blur(12px); }
+    #faq .card-bg-edge          { background-image: url('concert pic.jpg');   background-position: center 65%; }
+    #faq::before                { background: rgba(0, 0, 0, 0.85); }
+    #download .card-bg          { background-image: url('nightclub pic.jpg'); background-position: 40% center; transform: scale(1.03) rotate(0.3deg);  filter: blur(8px); }
+    #download .card-bg-edge     { background-image: url('nightclub pic.jpg'); background-position: 40% center; }
+    #download::before           { background: rgba(0, 0, 0, 0.80); }
 
     /* ─── Road (per card) ────────────────────────────────────── */
     .road-base   { fill: none; stroke: var(--road-base);   stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; }
@@ -437,125 +408,50 @@
     .road-reveal { fill: none; stroke: #fff; stroke-width: 56; stroke-linecap: round; stroke-linejoin: round; }
     .road-brush  { transition: opacity 0.25s ease-out; will-change: transform; }
 
-    /* ─── HIW intro card ─────────────────────────────────────── */
-    .hiw-intro-inner {
+    /* ─── How it works (grid of placeholders) ────────────────── */
+    .hiw-inner {
+      position: relative;
+      z-index: 4;
+      max-width: 920px;
+      width: 100%;
+      padding: 100px 48px 80px;
+      display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 56px;
       text-align: center;
-      gap: 20px;
     }
-    .hiw-intro-inner .section-title {
-      font-size: clamp(3rem, 6vw, 5rem);
-      margin-bottom: 0;
-    }
-    .hiw-intro-inner .section-sub {
-      font-family: 'Figtree', sans-serif;
-      font-size: 1.15rem;
-      color: rgba(255,255,255,0.60);
-      max-width: 460px;
-    }
-    .scroll-hint { margin-top: 16px; animation: bounce 2s ease-in-out infinite; }
-
-    /* ─── Step cards ─────────────────────────────────────────── */
-    .step-inner {
-      display: flex;
-      align-items: center;
-      gap: 80px;
-      max-width: 1100px;
+    .hiw-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px 64px;
       width: 100%;
-      padding: 0 48px;
+      text-align: left;
     }
-    #step-2 .step-inner { flex-direction: row-reverse; }
-    .step-text { flex: 1; max-width: 440px; }
-    .step-heading {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.6rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
-    .step-desc {
-      font-family: 'Figtree', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.60);
-      line-height: 1.65;
-      max-width: 380px;
-    }
-    .step-phone-wrap { flex-shrink: 0; position: relative; }
-    .step-phone-wrap::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 340px; height: 340px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(40,196,90,0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .step-phone-wrap > .iphone { position: relative; z-index: 1; }
-
-    /* ─── iPhone frame ───────────────────────────────────────── */
-    .iphone {
-      position: relative;
-      width: 260px;
-      height: 563px;
-      background: #1C1C1E;
-      border-radius: 50px;
-      box-shadow:
-        0 0 0 1.5px #3a3a3c,
-        0 28px 72px rgba(0,0,0,0.40),
-        0 6px 16px rgba(0,0,0,0.30),
-        0 0 60px rgba(40,196,90,0.12),
-        inset 0 0 0 1px rgba(255,255,255,0.07);
-    }
-    .iphone::before {
-      content: '';
-      position: absolute;
-      left: -3.5px; top: 104px;
-      width: 3.5px; height: 32px;
-      background: #3a3a3c;
-      border-radius: 2px 0 0 2px;
-      box-shadow: 0 46px 0 #3a3a3c, 0 90px 0 #3a3a3c;
-    }
-    .iphone::after {
-      content: '';
-      position: absolute;
-      right: -3.5px; top: 132px;
-      width: 3.5px; height: 60px;
-      background: #3a3a3c;
-      border-radius: 0 2px 2px 0;
-    }
-    .iphone-screen {
-      position: absolute;
-      inset: 11px;
-      background: #1a1a1a;
-      border-radius: 40px;
-      overflow: hidden;
+    .hiw-item {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      gap: 14px;
     }
-    .iphone-island {
-      width: 100px;
-      height: 28px;
-      background: #1C1C1E;
-      border-radius: 0 0 18px 18px;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
+    .hiw-item-label {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
     }
-    .iphone-screen-img {
-      position: absolute;
-      inset: 0;
+    .hiw-placeholder {
       width: 100%;
-      height: 100%;
-      object-fit: fill;
+      aspect-ratio: 4/3;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
     }
-    .iphone.large { width: 300px; height: 650px; border-radius: 56px; }
-    .iphone.large .iphone-screen { border-radius: 46px; }
+    .hiw-item-desc {
+      font-family: 'Figtree', sans-serif;
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
 
     /* ─── Testimonials card ──────────────────────────────────── */
     .testimonials-inner {
@@ -564,7 +460,7 @@
       align-items: center;
       gap: 48px;
       width: 100%;
-      padding: 0 48px;
+      padding: 80px 48px;
     }
     .testimonials-heading { text-align: center; }
     .testimonials-heading .section-title { color: #fff; margin-bottom: 10px; }
@@ -615,11 +511,11 @@
     .testimonial-avatar {
       width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 13px; font-weight: 700; color: #fff;
       flex-shrink: 0;
     }
-    .testimonial-name     { color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .testimonial-name     { color: #fff; font-family: 'Fraunces', serif; font-weight: 600; font-size: 0.9rem; }
     .testimonial-location { color: rgba(255,255,255,0.50); font-family: 'Figtree', sans-serif; font-size: 0.8rem; margin-top: 2px; }
 
     /* ─── Ambassador card ────────────────────────────────────── */
@@ -631,7 +527,7 @@
       gap: 48px;
       max-width: 820px;
       width: 100%;
-      padding: 0 48px;
+      padding: 80px 48px;
     }
     .ambassador-inner .section-title { color: #fff; margin-bottom: 10px; }
     .ambassador-inner .section-sub   { color: rgba(255,255,255,0.60); font-family: 'Figtree', sans-serif; font-size: 1.05rem; }
@@ -645,7 +541,7 @@
       display: flex; align-items: center; justify-content: center;
     }
     .amb-feat-icon svg { width: 24px; height: 24px; stroke: rgba(255,255,255,0.70); }
-    .amb-feat-label { color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; }
+    .amb-feat-label { color: #fff; font-family: 'Fraunces', serif; font-weight: 600; font-size: 0.95rem; }
 
     /* ─── FAQ card ───────────────────────────────────────────── */
     .faq-inner {
@@ -655,7 +551,7 @@
       gap: 48px;
       max-width: 720px;
       width: 100%;
-      padding: 0 48px;
+      padding: 80px 48px;
     }
     .faq-inner .section-title { color: #fff; text-align: center; }
     .faq-list { width: 100%; display: flex; flex-direction: column; }
@@ -670,7 +566,7 @@
       align-items: center;
       gap: 16px;
       cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Fraunces', serif;
       font-size: 1.05rem;
       font-weight: 700;
       color: #fff;
@@ -705,8 +601,12 @@
       gap: 48px;
     }
     .dl-phone-col { flex: 0 0 auto; }
-    .dl-card .iphone.large { width: 190px; height: 412px; border-radius: 40px; }
-    .dl-card .iphone.large .iphone-screen { border-radius: 32px; }
+    .dl-screenshot {
+      width: 200px;
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: block;
+    }
     .dl-info { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
     .dl-card .section-title { color: #fff; margin-bottom: 0; }
     .dl-card .section-sub   { color: rgba(255,255,255,0.60); font-family: 'Figtree', sans-serif; font-size: 1.05rem; max-width: 420px; }
@@ -745,7 +645,7 @@
       user-select: none;
       z-index: 3;
     }
-    .route-chip-route { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.90); }
+    .route-chip-route { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.90); }
     .route-chip-meta  { font-family: 'Figtree', sans-serif; font-size: 11px; color: rgba(255,255,255,0.50); }
 
     /* Hero chips */
@@ -834,55 +734,27 @@
       .letter-reveal.in-view .char { opacity: 1; }
       .word-reveal .word { transition: opacity 0.3s ease-out; }
       .word-reveal.in-view .word { opacity: 1; }
-      .scroll-hint { animation: none; }
       .road-svg { display: none; }
     }
 
     /* ─── Responsive ─────────────────────────────────────────── */
-    @media (max-width: 1024px) {
-      .iphone { width: 230px; height: 498px; border-radius: 44px; }
-      .iphone::before { top: 92px; height: 28px; box-shadow: 0 40px 0 #3a3a3c, 0 80px 0 #3a3a3c; }
-      .iphone::after { top: 118px; height: 54px; }
-      .iphone-screen { border-radius: 35px; }
-      .iphone-island { width: 90px; height: 26px; }
-      .iphone.large { width: 270px; height: 585px; border-radius: 50px; }
-      .iphone.large .iphone-screen { border-radius: 41px; }
-      .step-heading { font-size: 2.1rem; }
-      .step-inner, .card-inner { gap: 56px; }
-    }
-
     @media (max-width: 768px) {
       .nav { width: calc(100vw - 28px); padding: 8px 12px 8px 16px; }
       .nav-logo { height: 24px; }
       .nav-btn { font-size: 12px; padding: 7px 10px; }
 
-      .card-inner, .step-inner {
-        flex-direction: column;
-        padding: 0 24px;
-        gap: 40px;
-        align-items: center;
-        text-align: center;
-      }
-      #step-2 .step-inner { flex-direction: column; }
-      .step-phone-wrap { order: -1; }
-      .step-heading { font-size: 2rem; }
-      .step-text, .step-desc { max-width: 100%; }
+      .hiw-grid { grid-template-columns: 1fr; gap: 36px; }
+      .hiw-inner { padding: 80px 24px 60px; }
 
       .route-chip { display: none; }
 
       .amb-feats { flex-direction: column; align-items: center; }
-      .faq-inner, .ambassador-inner { padding: 0 20px; }
-
-      .iphone { width: 200px; height: 433px; border-radius: 40px; }
-      .iphone::before { top: 80px; height: 24px; box-shadow: 0 36px 0 #3a3a3c, 0 70px 0 #3a3a3c; }
-      .iphone::after { top: 102px; height: 48px; }
-      .iphone-screen { border-radius: 31px; inset: 9px; }
-      .iphone-island { width: 82px; height: 24px; }
+      .faq-inner, .ambassador-inner { padding: 80px 20px; }
 
       .dl-card { flex-direction: column; text-align: center; padding: 36px 24px; width: calc(100% - 40px); gap: 28px; }
       .dl-info { align-items: center; }
       .dl-card .section-sub { max-width: 100%; }
-      .dl-card .iphone.large { width: 170px; height: 368px; }
+      .dl-screenshot { width: 170px; }
 
       .marquee-outer::before, .marquee-outer::after { width: 60px; }
 
@@ -900,7 +772,6 @@
     @media (max-width: 480px) {
       .hero-ctas { flex-direction: column; align-items: center; }
       .btn-primary { width: 100%; max-width: 280px; justify-content: center; }
-      .step-heading { font-size: 1.7rem; }
     }
   </style>
 </head>
@@ -909,17 +780,8 @@
   <!-- ─── Wave top-edge clip paths (hand-drawn, irregular; one per card) ───── -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
     <defs>
-      <clipPath id="wave-hiw-intro" clipPathUnits="objectBoundingBox">
-        <path d="M0,0.028 C0.07,0.006 0.15,0.038 0.25,0.019 C0.33,0.008 0.44,0.034 0.54,0.021 C0.63,0.012 0.72,0.04 0.83,0.016 C0.91,0.006 0.97,0.03 1,0.025 L1,1 L0,1 Z"/>
-      </clipPath>
-      <clipPath id="wave-step-1" clipPathUnits="objectBoundingBox">
-        <path d="M0,0.018 C0.09,0.035 0.18,0.012 0.29,0.027 C0.39,0.039 0.5,0.015 0.61,0.022 C0.71,0.029 0.81,0.009 0.9,0.031 C0.95,0.038 0.98,0.02 1,0.016 L1,1 L0,1 Z"/>
-      </clipPath>
-      <clipPath id="wave-step-2" clipPathUnits="objectBoundingBox">
-        <path d="M0,0.032 C0.06,0.014 0.14,0.028 0.23,0.011 C0.34,0.024 0.45,0.04 0.55,0.018 C0.66,0.01 0.74,0.033 0.85,0.022 C0.92,0.015 0.97,0.036 1,0.029 L1,1 L0,1 Z"/>
-      </clipPath>
-      <clipPath id="wave-step-3" clipPathUnits="objectBoundingBox">
-        <path d="M0,0.012 C0.08,0.03 0.16,0.017 0.27,0.034 C0.37,0.022 0.48,0.009 0.58,0.026 C0.69,0.038 0.78,0.02 0.88,0.013 C0.94,0.025 0.98,0.034 1,0.021 L1,1 L0,1 Z"/>
+      <clipPath id="wave-how-it-works" clipPathUnits="objectBoundingBox">
+        <path d="M0,0.03 C0.06,0.008 0.14,0.042 0.25,0.02 C0.35,0.006 0.46,0.038 0.57,0.018 C0.66,0.005 0.77,0.036 0.88,0.022 C0.93,0.012 0.97,0.032 1,0.026 L1,1 L0,1 Z"/>
       </clipPath>
       <clipPath id="wave-testimonials" clipPathUnits="objectBoundingBox">
         <path d="M0,0.024 C0.05,0.04 0.13,0.019 0.24,0.03 C0.35,0.038 0.46,0.013 0.57,0.025 C0.67,0.035 0.77,0.011 0.86,0.028 C0.93,0.04 0.97,0.017 1,0.033 L1,1 L0,1 Z"/>
@@ -940,7 +802,7 @@
   <nav class="nav" id="navbar" aria-label="Main navigation">
     <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
     <div class="nav-links">
-      <button class="nav-btn" data-target="hiw-intro" onclick="scrollToSection('hiw-intro')">How it works</button>
+      <button class="nav-btn" data-target="how-it-works" onclick="scrollToSection('how-it-works')">How it works</button>
       <button class="nav-btn" data-target="testimonials" onclick="scrollToSection('testimonials')">Testimonials</button>
       <button class="nav-btn" data-target="ambassador" onclick="scrollToSection('ambassador')">Ambassador Program</button>
     </div>
@@ -993,102 +855,39 @@
     </div>
   </div>
 
-  <!-- ─── Card stack ───────────────────────────────────────────── -->
-  <div class="card-stack">
-
-    <!-- How it works — intro -->
-    <div class="page-card" id="hiw-intro">
-      <div class="card-bg"></div>
-      <div class="card-bg-edge"></div>
-      <svg class="road-svg" aria-hidden="true"></svg>
-      <div class="card-inner hiw-intro-inner">
-        <h2 class="section-title letter-reveal">How it works</h2>
-        <p class="section-sub word-reveal">From sign-up to your first ride in under a minute.</p>
-        <div class="scroll-hint" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4v12M4 10l6 6 6-6" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+  <!-- ─── How it works ─────────────────────────────────────────── -->
+  <section id="how-it-works" class="site-section">
+    <div class="card-bg"></div>
+    <div class="card-bg-edge"></div>
+    <div class="hiw-inner">
+      <h2 class="section-title">How it works</h2>
+      <div class="hiw-grid">
+        <div class="hiw-item">
+          <span class="hiw-item-label">Find a ride</span>
+          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <p class="hiw-item-desc">Browse rides posted by verified Purdue students and book in seconds.</p>
+        </div>
+        <div class="hiw-item">
+          <span class="hiw-item-label">Join communities</span>
+          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <p class="hiw-item-desc">Connect with people who share your route, major, or vibe.</p>
+        </div>
+        <div class="hiw-item">
+          <span class="hiw-item-label">Unlock perks</span>
+          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <p class="hiw-item-desc">Discounts and deals from KOVA partners, just for riding.</p>
+        </div>
+        <div class="hiw-item">
+          <span class="hiw-item-label">Make a few bucks</span>
+          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <p class="hiw-item-desc">Post your own ride and keep every dollar. Zero commission.</p>
         </div>
       </div>
     </div>
-
-    <!-- Step 1 — phone right -->
-    <div class="page-card" id="step-1">
-      <div class="card-bg"></div>
-      <div class="card-bg-edge"></div>
-      <svg class="road-svg" aria-hidden="true"></svg>
-      <div class="route-chip" aria-hidden="true">
-        <span class="route-chip-route">[Origin] → [Destination]</span>
-        <span class="route-chip-meta">[X] seats · $[XX]/seat · [Day] [Time]</span>
-      </div>
-      <div class="step-inner">
-        <div class="step-text">
-          <h3 class="step-heading letter-reveal">Find your ride</h3>
-          <p class="step-desc word-reveal">Search rides going your way or post your own. Drivers set their price. No surge, no commission.</p>
-        </div>
-        <div class="step-phone-wrap reveal">
-          <div class="iphone" aria-label="App screenshot, step 1">
-            <div class="iphone-screen">
-              <div class="iphone-island"></div>
-              <img src="step1.png" alt="App screenshot, step 1" class="iphone-screen-img" decoding="async" loading="lazy">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 2 — phone left -->
-    <div class="page-card" id="step-2">
-      <div class="card-bg"></div>
-      <div class="card-bg-edge"></div>
-      <svg class="road-svg" aria-hidden="true"></svg>
-      <div class="route-chip" aria-hidden="true">
-        <span class="route-chip-route">[Community name]</span>
-        <span class="route-chip-meta">[XXX] members · [X] friends</span>
-      </div>
-      <div class="step-inner">
-        <div class="step-text">
-          <h3 class="step-heading letter-reveal">Join your communities</h3>
-          <p class="step-desc word-reveal">Find students heading the same places. Groups form around airport runs, game days, and regular routes. Join one or start your own.</p>
-        </div>
-        <div class="step-phone-wrap reveal">
-          <div class="iphone" aria-label="App screenshot, step 2">
-            <div class="iphone-screen">
-              <div class="iphone-island"></div>
-              <img src="step2.png" alt="App screenshot, step 2" class="iphone-screen-img" decoding="async" loading="lazy">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 3 — phone right -->
-    <div class="page-card" id="step-3">
-      <div class="card-bg"></div>
-      <div class="card-bg-edge"></div>
-      <svg class="road-svg" aria-hidden="true"></svg>
-      <div class="route-chip" aria-hidden="true">
-        <span class="route-chip-route">[Partner name] × KOVA</span>
-        <span class="route-chip-meta">[Perk description placeholder]</span>
-      </div>
-      <div class="step-inner">
-        <div class="step-text">
-          <h3 class="step-heading letter-reveal">Unlock perks along the way</h3>
-          <p class="step-desc word-reveal">KOVA works with local brands and venues to get riders real discounts. Cheaper entry, free samples, ride credits. Check the app before you head out.</p>
-        </div>
-        <div class="step-phone-wrap reveal">
-          <div class="iphone" aria-label="App screenshot, step 3">
-            <div class="iphone-screen">
-              <div class="iphone-island"></div>
-              <img src="step3.png" alt="App screenshot, step 3" class="iphone-screen-img" decoding="async" loading="lazy">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  </section>
 
     <!-- Testimonials -->
-    <div class="page-card" id="testimonials">
+    <div class="site-section" id="testimonials">
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <svg class="road-svg" aria-hidden="true"></svg>
@@ -1257,7 +1056,7 @@
     </div>
 
     <!-- Ambassador -->
-    <div class="page-card" id="ambassador">
+    <div class="site-section" id="ambassador">
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="ambassador-inner">
@@ -1295,7 +1094,7 @@
     </div>
 
     <!-- FAQ -->
-    <div class="page-card" id="faq">
+    <div class="site-section" id="faq">
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="faq-inner">
@@ -1328,17 +1127,12 @@
     </div>
 
     <!-- Download -->
-    <div class="page-card" id="download">
+    <div class="site-section" id="download">
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="dl-card reveal">
         <div class="dl-phone-col">
-          <div class="iphone large" aria-label="App screenshot for download section">
-            <div class="iphone-screen">
-              <div class="iphone-island"></div>
-              <img src="final_ss.png" alt="KOVA app screenshot" class="iphone-screen-img" decoding="async" loading="lazy">
-            </div>
-          </div>
+          <img src="final_ss.png" alt="KOVA app screenshot" class="dl-screenshot" decoding="async" loading="lazy">
         </div>
         <div class="dl-info">
           <h2 class="section-title letter-reveal">Take KOVA everywhere.</h2>
@@ -1357,8 +1151,6 @@
         </div>
       </div>
     </div>
-
-  </div><!-- /.card-stack -->
 
   <!-- ─── Footer ───────────────────────────────────────────────── -->
   <footer>
@@ -1455,22 +1247,6 @@
     updateNavActive();
     updateBottomBlur();
 
-    /* ── Scroll-driven card stacking (next card covers → this card shrinks + dims) ── */
-    function updateCardStack() {
-      const cards = document.querySelectorAll('.page-card');
-      cards.forEach((card, i) => {
-        const next = cards[i + 1];
-        if (!next) return;
-        const nextTop = next.getBoundingClientRect().top;
-        const vh = window.innerHeight;
-        const overlap = Math.max(0, Math.min(1, (vh - nextTop) / vh));
-        card.style.transform = `scale(${1 - overlap * 0.07})`;
-        card.style.filter = `brightness(${1 - overlap * 0.30})`;
-      });
-    }
-    window.addEventListener('scroll', updateCardStack, { passive: true });
-    updateCardStack();
-
     /* ── Letter-by-letter split (word-aware: chars animate, words never break mid-word) ── */
     document.querySelectorAll('.letter-reveal').forEach(el => {
       let charIndex = 0;
@@ -1555,10 +1331,6 @@
 
       /* Waypoints per card, as fractions of card offsetWidth × offsetHeight. */
       const ROADS = {
-        'hiw-intro':    [[0, 0.85], [0.25, 0.60], [0.50, 0.45], [0.75, 0.35], [1, 0.50]],
-        'step-1':       [[0, 0.70], [0.25, 0.55], [0.50, 0.40], [0.70, 0.55], [1, 0.80]],
-        'step-2':       [[1, 0.15], [0.70, 0.35], [0.50, 0.55], [0.30, 0.60], [0, 0.50]],
-        'step-3':       [[1, 0.30], [0.75, 0.50], [0.50, 0.65], [0.25, 0.75], [0, 0.90]],
         'testimonials': [[0.05, 0.50], [0.30, 0.32], [0.70, 0.68], [0.95, 0.50]],
       };
 
