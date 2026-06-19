@@ -160,7 +160,7 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 - Path `d` built via Catmull-Rom spline through waypoints from `getLayoutRect()` (offsetTop/offsetLeft chain — transform-immune). The same `d` is set on every visual layer **and** `.road-reveal`.
 - `.road-reveal` has `strokeDasharray = totalLength`; animating its `strokeDashoffset` from `totalLength`→`0` wipes the mask open, progressively revealing the static layers beneath. This is why the center line can be a static green dash pattern *and* still draw on.
 - **Smoothness**: a continuous `requestAnimationFrame` loop eases the rendered length toward a scroll-driven target each frame — `drawnLen += (targetLen − drawnLen) * SMOOTH` (`SMOOTH ≈ 0.14`). Decoupled from scroll-event timing, so the draw is fluid at any scroll speed (no CSS transition on dashoffset). The loop stops when settled and restarts on scroll.
-- **Target**: on scroll (rAF-throttled), `arcLengthForY()` binary-searches the pre-sampled `pathCache` to find the arc length whose Y equals `scrollY + vh * scrollK − lzTop` (consistent tip screen position). `targetLen` is a high-water mark — the road never retreats when scrolling up. Within ~8px of page bottom, the target snaps to `totalLength` so the road always completes.
+- **Target**: on scroll (rAF-throttled), `arcLengthForY()` binary-searches the pre-sampled `pathCache` to find the arc length whose Y equals `scrollY + vh * scrollK − lzTop` (consistent tip screen position). `targetLen` updates freely in both directions — the road extends when scrolling down and retracts when scrolling up (car reverses in place, facing forward). Within ~8px of page bottom, the target snaps to `totalLength` so the road always completes.
 - **`scrollK`** is computed dynamically in `buildRoad()` so the tip reaches `footerY + OVERLAP` (under the footer) exactly at max scroll.
 - On resize: `buildRoad()` resets and rebuilds.
 
@@ -170,12 +170,13 @@ A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div cl
 
 **Path geometry (desktop ≥ 768px):**
 - Starts at `[cx, -OVERLAP]` (40px above the light-zone top — inside the hero's covered area)
+- **"How it works" heading clearance**: `[cx + W * 0.15, hiTitleR.cy]` — routes the road 15% of viewport-width to the right of center at the heading's y-level, clearing the "How it works" text without overshooting. Uses `getLayoutRect('#how-it-works .section-title')`. Note: `offsetWidth` of a block h2 equals its container width (not text width), so `hiTitleR.right` is unusable — use `cx + W * fraction` instead.
 - **Steps 1 & 3** (phone LEFT): peak at `W * 0.83` — the wide empty right portion of the layout past the text content
 - **Step 2** (phone RIGHT): peak at `pr.left - 90` — 90px clearance from the phone frame, well into the center gap
 - **No bracket waypoints** — peak-only (one waypoint per step). Bracket approach/exit waypoints cause Bezier control-point squiggles when an incoming tangent from a distant neighbour overshoots a short segment. With peak-only, step 2's Catmull-Rom tangent x-component is exactly 0 (steps 1 and 3 are at the same x), so the road descends vertically through the gap with no lateral drift.
 - **Testimonials**: two waypoints — `[W * 0.14, testInnerR.cy]` (left of heading text) then `[cx + W * 0.05, carouselR.cy]` (through middle of carousel). Queries `#testimonials .testimonials-inner` and `#testimonials .testimonials-track-wrap`.
 - **Ambassador**: `W * 0.93` (far right page margin)
-- **FAQ**: `W * 0.12` (sweep left through the question column — queried via `#faq`)
+- **FAQ**: `[W * 0.08, faqTitleR.cy]` — sweeps left to 8% of viewport at the "Common questions" heading's y-center. Uses `getLayoutRect('#faq .section-title')`. `W * 0.08` ≈ 115px is safely left of the `.faq-inner` left edge (≈ `(W−720)/2` ≈ 360px at 1440px), ensuring the road clears the heading.
 - **Download**: `dlPhoneR.right + 44` (gap right of download phone — queried via `#download .dl-phone-col`)
 - Ends at `[cx, footerY + OVERLAP]` — under the opaque footer (`z-index: 10000`)
 - Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`

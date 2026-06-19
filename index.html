@@ -1730,6 +1730,8 @@
           const carouselR  = getLayoutRect(document.querySelector('#testimonials .testimonials-track-wrap'));
           const ambR       = getLayoutRect(document.querySelector('#ambassador'));
           const faqR       = getLayoutRect(document.querySelector('#faq'));
+          const faqTitleR  = getLayoutRect(document.querySelector('#faq .section-title'));
+          const hiTitleR   = getLayoutRect(document.querySelector('#how-it-works .section-title'));
           const dlPhoneR   = getLayoutRect(document.querySelector('#download .dl-phone-col'));
           const footerEl   = document.querySelector('footer');
           const footerY    = footerEl.offsetTop - lz.offsetTop;
@@ -1742,6 +1744,7 @@
           ));
 
           const waypoints = [[cx, -OVERLAP]];
+          waypoints.push([cx + W * 0.15, hiTitleR.cy]); // clear "How it works" heading to the right
 
           pRects.forEach((pr) => {
             const isLeft = pr.cx < cx;
@@ -1757,7 +1760,7 @@
           waypoints.push([cx + W * 0.05, carouselR.cy]);
 
           waypoints.push([W * 0.93, ambR.cy]);                 // ambassador — far right page margin
-          waypoints.push([W * 0.12, faqR.cy]);                // faq — sweep left through question column
+          waypoints.push([W * 0.08, faqTitleR.cy]);            // faq — clear "Common questions" heading to the left
           waypoints.push([dlPhoneR.right + 44, dlPhoneR.cy]); // download — gap between phone and text
           waypoints.push([cx, footerY + OVERLAP]);             // converge to center at footer
 
@@ -1803,7 +1806,7 @@
            & tucks under the footer regardless of sub-pixel rounding. */
         const atBottom = (window.scrollY + vh) >= (document.documentElement.scrollHeight - 8);
         if (atBottom) arcLen = totalLen;
-        if (arcLen > targetLen) targetLen = arcLen;
+        targetLen = arcLen;
         startLoop();
       }
 
