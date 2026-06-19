@@ -10,6 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-file static landing page for the **KOVA** social/travel app. All HTML, CSS, and JS live in `index.html`. No build tools, no framework. External deps (both via CDN): Google Fonts and **Lenis** (smooth-scroll, `unpkg.com/lenis`).
 
+The site is **full dark mode** (Gen Z / cinematic direction). The page body is a **stack of full-viewport sticky cards** ("dealing cards onto a deck"); the hero and stat bar sit above the stack, the footer below. `REDESIGN_SPEC.md` (untracked, in the project root) is the design source of truth for this look.
+
 ## Development
 
 **Preview locally:**
@@ -20,115 +22,131 @@ python -m http.server 8080
 Use a server (not `file://`) because some browsers block local-file CDN requests on file:// origins.
 
 **Taking screenshots for review:**
-Playwright MCP is available — navigate to `http://localhost:<port>`, resize to 1440×900, inject `.in-view` on `.step-row` and `.reveal` / `.letter-reveal` / `.word-reveal` elements before screenshotting (IntersectionObserver won't fire in headless), then call `updateNavTheme()` to set the correct navbar state.
+Playwright MCP is available — navigate to `http://localhost:<port>`, resize to 1440×900. Two gotchas:
+- IntersectionObserver won't fire under programmatic scroll jumps, so inject `.in-view` on `.reveal` / `.letter-reveal` / `.word-reveal` before screenshotting.
+- `window.scrollTo` fights Lenis (Lenis reverts to its own target each frame). Use `window.lenis.scrollTo(y, {immediate:true})` to position reliably — `lenis` is exposed on `window` for exactly this.
+- **Never** save a screenshot to a filename that collides with a tracked asset (e.g. `step1.png`) — it overwrites the real image. Save dev screenshots to `.playwright-mcp/` or a throwaway name.
+
+To view a given card fully (before the next card slides over it), scroll to roughly `cardAbsTop + 150`. To see a card's road near-complete, scroll to `cardAbsTop + 0.8*innerHeight` (but by then the next card is already covering ~80% — that's the intended stacking effect).
 
 ## Architecture
 
 Everything is in `index.html`, organized top-to-bottom:
 
-1. **CSS custom properties** (`:root`) — all color tokens, do not use raw hex outside this block
-2. **Bottom blur overlay CSS** — `.bottom-blur` fixed element
-3. **Navbar CSS + JS** — glassmorphism rectangle (no border), section-aware theme switching
-4. **Section CSS** — each section has its own block; light sections share `.light-zone` background
-5. **HTML sections** — Hero (+ `#stat-bar` pinned at bottom) → `<div class="light-zone">` wrapping (How it works → Testimonials → Ambassador → FAQ → Download) → Footer
-6. **JS** — IntersectionObserver for scroll animations + navbar theme detection + road animation, at bottom of `<body>`
-7. **`<div class="bottom-blur">`** — last element before `</body>`
+1. **CSS custom properties** (`:root`) — all color tokens, do not use raw hex outside this block (iPhone shell `#1C1C1E` / screen `#1a1a1a` are the only intentional hardcodes)
+2. **Reset + bottom-blur + navbar + shared type + buttons** CSS
+3. **Hero + stat-bar** CSS
+4. **Card-stack mechanics + per-card background variation** CSS
+5. **Per-section card CSS** (road, hiw-intro, steps, testimonials, ambassador, faq, download, route chips)
+6. **Footer + animations + reduced-motion + responsive** CSS
+7. **HTML** — Navbar → `#hero` (with route chips) → `#stat-bar` → `<div class="card-stack">` (8 `.page-card`s) → `<footer>`
+8. **JS** — Lenis, nav active + bottom blur, letter/word splitters, reveal observer, FAQ accordion, per-card road animation
+9. **`<div class="bottom-blur">`** — last element before `</body>`
 
 ## Color Tokens
 
-| Token | Hex | Used for |
+| Token | Value | Used for |
 |---|---|---|
-| `--dark-green` | `#2E6B4A` | Ambassador button, dark accents, icon strokes |
-| `--bright-green` | `#28C45A` | CTAs, highlights, step badges |
-| `--near-black` | `#0D1117` | Body text, hero bg, footer bg |
-| `--light-bg` | `#F4F9F6` | Active background for `.light-zone` (flat solid color) |
+| `--bg` | `#0D1117` | Page background, stat bar, footer |
+| `--bright-green` | `#28C45A` | Primary CTA, road center line, badge/eyebrow border, phone halo, open FAQ question, car accents |
+| `--dark-green` | `#2E6B4A` | Reserved accent |
+| `--text-primary` / `--text-body` / `--text-muted` | `rgba(255,255,255, .92/.60/.52)` | Body text tiers |
+| `--glass-bg` / `--glass-border` | `rgba(255,255,255, .07/.12)` | Glass surfaces (testimonial cards, route chips, nav) |
+| `--glass-green-bg` / `--glass-green-border` | `rgba(40,196,90, .08/.22)` | Download card glass |
+| `--road-base` / `--road-sheen` / `--road-center` | white .10 / white .04 / green .55 | Road strokes |
+
+**Green is reserved.** It appears only on: the primary CTA fill, the road center dashes, the eyebrow badge border, the phone halo glow, the car sprite accents, and the open FAQ question. Do **not** put green on body text, headings, or icons elsewhere.
 
 ## Typography
 
 | Font | Usage |
 |---|---|
-| **Plus Jakarta Sans** | Headings (`h1`–`h4`), nav buttons, UI labels, CTAs |
-| **Manrope** | Body text (`body` default, `font-weight: 500`) — paragraphs, descriptions |
+| **Syne** (600/700/800) | All headings, section titles, nav links, step/FAQ headings, stat numbers, button labels, testimonial names |
+| **Figtree** (400/500/600) | Body text, descriptions, testimonial quotes, FAQ answers, stat labels, footer, route-chip meta |
 
-Loaded via Google Fonts CDN. No local font files in use (a "Free For Personal Use" PP Agrandir package is present in the repo folder but is **not wired up** — it requires a commercial license for a public website).
+Loaded via Google Fonts CDN. The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
+
+## Card Stack (core layout)
+
+`.card-stack` wraps all 8 sections and **must** have `height: calc(8 * 100vh)` — without it, every sticky card collapses to the same position and the stacking breaks entirely.
+
+Each `.page-card` is `position: sticky; top: 0; height: 100vh; overflow: hidden; border-radius: 20px 20px 0 0` with a persistent `box-shadow: 0 -8px 40px rgba(0,0,0,0.60)` (casts a shadow down onto the card below). Cards are flex-centered.
+
+**Card order + z-index** (ID selectors): `#hiw-intro` 10 → `#step-1` 20 → `#step-2` 30 → `#step-3` 40 → `#testimonials` 50 → `#ambassador` 60 → `#faq` 70 → `#download` 80. Footer is z-index 10000.
+
+**Layer order inside every card (do not deviate):** `.card-bg` (z 0) → `.page-card::before` overlay (z 1) → `.road-svg` (z 2) → `.route-chip` (z 3) → all other content (z 4, via `.page-card > *:not(.card-bg):not(.road-svg):not(.route-chip)`).
+
+**Per-card background variation** — every card has its own blurred `hero_image.png` (placeholder for now). Crop / rotation / blur live on `#<id> .card-bg`; overlay tint on `#<id>::before`. These are set per-ID (see the variation block in CSS), **not** on the shared `.page-card` rule. `.card-bg` uses `inset: -10%` so blur never fringes the card edges.
+
+**Card-absolute top** for scroll math is computed by `absTop(el)` (sums `offsetTop` up the `offsetParent` chain — scroll-independent and sticky-safe).
 
 ## Key Patterns
 
-**Navbar** — `position: fixed`, glassmorphism (`backdrop-filter: blur(24px)`), no border, `border-radius: 16px`, `width: min(92vw, 1060px)`. Layout is a **3-column CSS grid** (`grid-template-columns: 1fr auto 1fr`): logo in col 1 (left-aligned), `.nav-links` in col 2 (centered), Get KOVA button in col 3 (`justify-self: end`). Nav links: How it works → `#how-it-works`, Testimonials → `#testimonials`, Ambassador Program → `#ambassador`. `.nav-btn.primary` has `border-radius: 10px`.
+**Navbar** — `position: fixed`, glass (`backdrop-filter: blur(24px)`, faint border), `border-radius: 16px`, 3-column grid (logo / centered `.nav-links` / Get KOVA). Syne 600 links; hover and `.active` (current section) go to `#fff`, `.active` also bold. The whole page is dark, so the logo keeps `filter: invert(1) hue-rotate(180deg)` permanently (white text, green wheel). There is **no** `.over-light` class and **no** `darkSectionIds` — both were removed. Nav targets: How it works → `hiw-intro`, Testimonials → `testimonials`, Ambassador Program → `ambassador`, Get KOVA → `download`. Active state is set by `updateNavActive()` using `data-target` + `absTop`.
 
-**Navbar theme detection** — JS probes `navbar.getBoundingClientRect().bottom + 10` against each `section[id]` rect to determine which section the navbar overlaps, then toggles `.over-light` class. Add new dark-background sections to the `darkSectionIds` Set.
+**Hero** — `#hero` (z-index 1, outside the stack). `hero_image.png` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)` — restored, not disabled). Title `.hero-title` is solid white Syne 800 `clamp(3rem,7vw,5.5rem)` (no green gradient). `.btn-purdue` eyebrow is a glass pill (Figtree 500, border `var(--bright-green)` low opacity, white "New" badge, links to the Purdue article). Two floating `.route-chip`s sit at the edges (z-index 1, below content).
 
-**Logo filter on dark backgrounds** — `filter: invert(1) hue-rotate(180deg)` keeps "KOVA" text white while mathematically restoring the green steering wheel. `.nav.over-light .nav-logo { filter: none }` restores the original logo on light sections.
+**Stat bar** — `#stat-bar` is a static (non-sticky) block between hero and `.card-stack`, `background: var(--bg)`, top/bottom hairline borders. Three `.stat-item` columns with `.stat-item + .stat-item { border-left }` dividers. Numbers `.stat-number` (Syne 800, 2rem). Stats: **0% commission** · **500+ Purdue students riding** · **Top 5 Purdue New Venture Challenge 2026**. Stacks vertically `@media (max-width:600px)`.
 
-**Green buttons** — All use `border-radius: 10px` for a rectangular look: `.btn-primary` (hero), `.btn-amb` (ambassador), `.nav-btn.primary` (nav).
+**Step cards** (`#step-1/2/3`) — `.step-inner` two-column flex; `#step-2 .step-inner { flex-direction: row-reverse }` (phone left). `.step-heading` Syne 800 2.6rem, `.step-desc` Figtree. `.step-phone-wrap` has a soft green halo `::before` at `0.08` opacity. **No** decorative green frames and **no** `.step-number` badges (both removed). Each step card has one `.route-chip` (placeholder, positioned per-ID). Step headings: "Find your ride", "Join your communities", "Unlock perks along the way".
 
-**iPhone frames** — CSS-only shell; screens now show real app screenshots. Structure: `.step-phone-wrap > .iphone > (.iphone-screen > .iphone-island + .iphone-screen-img)`. `.iphone-screen-img` uses `position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill` to fill edge-to-edge; `.iphone-island` has `position: relative; z-index: 1` to overlay the image. Side buttons via `::before`/`::after`. Add `.large` modifier for the Download section phone.
+**iPhone frame** — CSS shell, `width: 260px` (`.large` 300px for download). Shell `#1C1C1E`, screen `#1a1a1a` (hardcoded). Structure `.iphone > (.iphone-screen > .iphone-island + .iphone-screen-img)`; `.iphone-screen-img` is `position:absolute; inset:0; object-fit:fill`. Side buttons via `::before`/`::after`.
 
-**Scroll animations** — `.step-row` starts `opacity:0` with `translateX(±80px)`. `IntersectionObserver` adds `.in-view` to trigger the CSS transition. Left-entry rows use `.from-left`, right-entry use `.from-right`.
+**Testimonials** (`#testimonials`) — `.testimonials-inner` centered column (heading + marquee). `.marquee-outer` clips the track and has left/right edge-fade gradients via `::before`/`::after` (replaced the old `mask-image`). `.testimonials-track` is the infinite `@keyframes testimonialScroll` marquee (12 cards = 6 + 6 duplicates). `.testimonial-card` is glass (`--glass-bg` + blur, min 280 / max 320). Stars stay gold (`#FFB800`); avatar colors unchanged.
 
-**Reveal animations** — `.reveal` elements start `opacity:0` + `translateX(±60px)`. `IntersectionObserver` (`revealObs`, threshold 0.12) adds `.in-view`. `--reveal-delay` custom property staggers related elements. Used for UI components (stat items, ambassador features, footer, dl-card) — not body text.
+**Ambassador** (`#ambassador`) — `.ambassador-inner` centered. `.amb-feats` is a 3-up flex row of `.amb-feat` glass icon tiles (white SVG strokes). The "Apply Now" button is `.btn-glass` (the old `.btn-amb` was removed).
 
-**Letter-by-letter headings** — `.letter-reveal` elements have text nodes split into `<span class="char" style="--i:N">`. Each char transitions `opacity` + `translateY(5px)` with delay `calc(var(--i) * 0.016s)`, duration `0.3s`. Fast ripple (~0.5s total for a 12-char heading), barely perceptible lift. Used on: all `.section-title` h2s, `.step-heading` h3s, `.faq-q` paragraphs.
+**FAQ** (`#faq`) — now an **accordion**. Each `.faq-item` has a clickable `.faq-question` (Syne 700, with `.faq-chevron` SVG) and a `.faq-answer` that is `display:none` until the item gets `.open` (toggled by JS click handler). The chevron rotates 180° and the question turns `var(--bright-green)` when open (the only non-white heading on the page). All items start closed.
 
-**Word-by-word body text** — `.word-reveal` elements have text nodes split into `<span class="word" style="--wi:N">`. Each word transitions `opacity` only (no transform) with delay `calc(var(--wi) * 0.06s)`, duration `0.45s`. Pure fade in reading order — second visual line starts only after the first is mostly visible. Used on: `.section-sub`, `.step-desc`, `.faq-a`. The `revealObs` IntersectionObserver observes `.reveal, .letter-reveal, .word-reveal` all together.
+**Download** (`#download`) — a centered glass-green `.dl-card` (`--glass-green-bg` + blur, radius 28). **Two-column** layout: `.dl-phone-col` (the `.iphone.large` with `final_ss.png`) on the left, `.dl-info` (title, sub, white `.dl-qr-card` with QR + App Store badge) on the right. The card is deliberately sized (phone 190×412, QR/badge 140px) so the whole card stays **≤ ~530px tall** — at max page scroll the footer pushes the last sticky card up ~one footer-height, and a taller card would clip the heading. If you grow this card, re-check it at the very bottom. Stacks to one column `@media (max-width:768px)`.
 
-**Smooth scrolling (Lenis)** — Lenis (CDN, `lenis@1.1.18`) gives the page a weighted-but-smooth glide. Initialized at the top of the inline `<script>` with `lerp: 0.06` (lower = heavier), `wheelMultiplier: 0.9`, driven by a `requestAnimationFrame` loop. Lenis updates the *native* scroll position (not a transform), so `window.scrollY` and `window` `scroll` events stay accurate — the road animation and `updateNavTheme` listeners need no changes. Skipped entirely when `prefers-reduced-motion: reduce` (falls back to native scroll). Tune free-scroll feel via `lerp` (~0.08 lighter / ~0.05 heavier). The CSS `html { scroll-behavior: smooth }` was removed because it double-eases against Lenis; minimal Lenis reset CSS lives in the Reset block.
+**Route chips** — `.route-chip` glass pills (`.route-chip-route` Syne 700 + `.route-chip-meta` Figtree). Decorative placeholders ("[Origin] → [Destination]", etc.) — Mehdi will swap in real app elements later. Hero has 2, each step card 1. Hidden `@media (max-width:768px)`.
 
-**Smooth scroll helpers** — `scrollToSection(id)` and `scrollToTop()` both route nav-triggered scrolls through `lenis.scrollTo(..., NAV_SCROLL)`, where `NAV_SCROLL = { duration: 1.6, easing: easeInOutCubic }` gives a deliberate, slow glide (distinct from — and slower than — the free-scroll `lerp`). Both fall back to `window.scrollTo({ behavior: 'smooth' })` when Lenis is inactive. `scrollToSection` is named so (not `scrollTo`) to avoid shadowing `window.scrollTo`. Used by: nav links (How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`), "Get KOVA" + hero "Download the app" (→ `download`), and the nav logo (→ `scrollToTop`). Tune auto-scroll pace via `NAV_SCROLL.duration`.
+**Buttons** — `.btn-primary` (green CTA, Syne 700, radius 10) and `.btn-glass` (glass secondary). Hero "Download the app" + nav "Get KOVA" are `<button>`s that `scrollToSection('download')`. Only the `.appstore-btn` and the QR image link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
 
-**Hero eyebrow button** — `.btn-purdue` replaces the old `Discover · Connect · Explore` eyebrow text. It is a pill-shaped outline button (`border: 1.5px solid rgba(255,255,255,0.35)`, `border-radius: 100px`, Manrope font) with a white "New" badge (`.btn-purdue-new`, black text on white background, stays white on hover) on the left and a right-arrow SVG on the right. On hover: solid `var(--bright-green)` fill, dark text. Links to the live Purdue article URL.
+**Smooth scrolling (Lenis)** — `lenis@1.1.18`, `lerp: 0.06`, `wheelMultiplier: 0.9`, rAF loop. Skipped entirely under `prefers-reduced-motion`. The instance is exposed as `window.lenis` (testing hook). `scrollToSection(id)` / `scrollToTop()` route nav scrolls through `lenis.scrollTo(..., NAV_SCROLL)` (`NAV_SCROLL = { duration: 1.6, easeInOutCubic }`), falling back to native `window.scrollTo` when Lenis is inactive.
 
-**App Store CTA** — Only the `.appstore-btn` inside `.dl-qr-card` and the QR code in the download section link to `https://apps.apple.com/us/app/ridekova/id6757269118`. The "Get KOVA" nav pill and the hero "Download the app" button are now `<button>`s that `scrollToSection('download')` (smooth-scroll to the download section) instead of opening the App Store.
+**Reveal animations** — `.reveal` starts `opacity:0; translateY(24px)`, `.reveal.in-view` fades/slides in (0.6s, `--reveal-delay` stagger). `revealObs` (threshold 0.12) observes `.reveal, .letter-reveal, .word-reveal` together and unobserves after firing.
 
-**Download section card** — `#download` contains a `.dl-card` (dark green, `border-radius: 28px`, `height: 380px`, `overflow: hidden`) with three flex columns:
-1. `.dl-phone-col` — the `.iphone.large` frame with `final_ss.png`; `padding-top: 40px` so the phone top has breathing room, and the card's fixed height clips the bottom ~51% of the frame.
-2. `.dl-text-col` — "Take KOVA everywhere." heading and paragraph (no section label). Text colors are overridden white inside the card (`.dl-card .section-title`, `.dl-card .section-sub`, etc.).
-3. `.dl-qr-card` — white rounded sub-frame (`border-radius: 14px`, `padding: 12px 14px`) containing a QR code image (`200×200px`, fetched from `api.qrserver.com`) and the App Store badge (`width: 200px`, `height: auto`). Both are the same width.
+**Letter-by-letter headings** — `.letter-reveal` text is split per character into `<span class="char" style="--i:N">`, **wrapped per word** in `<span class="lr-word">` (inline-block, `white-space:nowrap`). The word wrapper is essential: without it, inline-block chars break mid-word on wrap. Chars ripple `opacity`+`translateY(5px)`, `calc(var(--i)*0.016s)`.
 
-The road JS queries the download phone via `#download .dl-phone-col` — update this selector if the class name changes.
+**Word-by-word body text** — `.word-reveal` splits text into `<span class="word" style="--wi:N">`, fading `opacity` in reading order (`calc(var(--wi)*0.06s)`).
 
-**Hero background** — local file `hero_image.png` + dot grid in `.hero-bg::after`. The dark overlay (`.hero-bg::before`) is set to `display: none` — the raw image shows through. To restore the tint, remove `display: none` from `.hero-bg::before`.
+**Bottom blur overlay** — `<div class="bottom-blur">` (fixed, bottom, `blur(14px)`, mask gradient). Hidden when `scrollY < 50` via `updateBottomBlur()` (lazy `querySelector('.bottom-blur')` inside the function — the element lives after the `<script>`, so don't hoist the query). Coalesced with `updateNavActive()` into one rAF-throttled scroll listener (`_uiRaf`).
 
-**Light zone** — `#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, and `#download` are wrapped in `<div class="light-zone">`. Background is a flat `var(--light-bg)` (`#F4F9F6`) — no gradient blobs or decorative radial layers. Do not add a `background` property to any of these five sections individually. The decorative rings and dot grids on `#how-it-works` and `#download` are present in CSS but set to `display: none`.
+**Image loading** — below-fold images use `loading="lazy"`; all use `decoding="async"`. The hero/card backgrounds are CSS, so neither applies.
 
-**Testimonials carousel** — infinite marquee via `@keyframes testimonialScroll` translating `.testimonials-track` by `-50%`. 12 cards (6 originals + 6 duplicates). Edge fade via `mask-image` on `.testimonials-track-wrap`. Card background: `rgba(255,255,255,0.95)` (95% opaque). No `backdrop-filter` on cards — at 95% opacity the blur is invisible and removing it eliminates 12 GPU compositor layers from the infinite animation.
+## Road Animation (per card)
 
-**Section labels** — `.section-label` CSS class exists but the label `<div>` elements have been removed from all section HTML (How it works, Testimonials, Ambassador, Download). Do not re-add them.
+The road was refactored from one continuous light-zone thread into **independent per-card segments**. The 5 cards `#hiw-intro`, `#step-1`, `#step-2`, `#step-3`, `#testimonials` each contain an empty `<svg class="road-svg">`; the IIFE at the bottom of the script populates and animates each one. `#ambassador`, `#faq`, `#download` have no road.
 
-**Hero scroll indicator** — `.hero-scroll` / `.scroll-dot` / `.scroll-line` elements have been removed from the hero HTML. The CSS classes remain but are unused.
+**Per-card SVG** (built in JS, unique mask id per card `road-mask-<id>`):
+- `<defs><mask id="road-mask-<id>"><path class="road-reveal"/></mask></defs>`
+- `<g mask="...">` with `.road-sheen` / `.road-base` / `.road-center` (all share the same `d`)
+- `.road-brush` `<g>` holding the top-down **car sprite** (white-ish body `rgba(255,255,255,0.12)`, green outline/glass/headlights, red taillights, dark wheels; authored nose-toward +x)
 
-**How it works step layout** — `.step-row` has `max-width: 1120px; margin: 0 auto; gap: 120px` to keep phone/text pairs centered with generous breathing room. `.step-heading` is `2.5rem`, `.step-desc` is `1.2rem`.
+**Model** — same mask-wipe + rAF-lerp as before, but driven by **scroll progress within the card** instead of a Y binary search:
+- `build(inst)`: waypoints are `[x%, y%]` fractions of the card's `offsetWidth`/`offsetHeight` (`ROADS` table in JS), turned into a Catmull-Rom path; `viewBox = "0 0 W H"` (1:1 with card px); `d` set on all paths; `totalLen` + dasharray/offset; `pathCache` of `CACHE_N+1` (601) sampled points for cheap `pointAt()` lookups; `inst.top = absTop(card)`.
+- `updateTargets()` (rAF-throttled on scroll): `progress = clamp((scrollY - card.offsetTop) / (innerHeight * 0.8), 0, 1)`, `targetLen = progress * totalLen`. Reverses when scrolling up.
+- `tick()`: one shared loop eases each `drawnLen → targetLen` (`SMOOTH ≈ 0.14`), sets `strokeDashoffset`, and positions/rotates the car at the tip (`pointAt(drawnLen)` + tangent 6px behind). Car fades out at the very start and once the road is essentially complete.
+- `resize` → `buildAll()` rebuilds every instance.
 
-**Decorative iPhone frames** — Each `.step-phone-wrap` contains two absolutely-positioned frames before the `.iphone`: `.iphone-deco-back` (dark green `var(--dark-green)`, 386×676px) and `.iphone-deco-mid` (bright green `var(--bright-green)`, 344×648px). Both use `bottom: 0; right: 0` so their bottom and inner-side edges align flush with the iPhone; the extra width/height extends toward the outer screen edge and upward. `border-radius: 38px` on the outer corners; the bottom-inner corner is `56px` to match the iPhone (`border-radius: 38px 38px 56px 38px` for left phones, `38px 38px 38px 56px` for `.step-row.reverse`). Each frame has a layered `box-shadow` for depth and a `1.5px solid rgba(255,255,255,…)` outline stroke. Frames inherit the parent `.step-phone-wrap` opacity animation so they fade in with the phone. `.iphone` has `z-index: 1`; deco frames sit at `z-index: 0` behind it.
+**Waypoints** (`ROADS` in JS, fractions of each card W×H): hiw-intro gentle S `[0,.85]→…→[1,.50]`; step-1 shallow arc `[0,.70]→…→[1,.80]`; step-2 swoop `[1,.15]→…→[0,.50]`; step-3 wide left-down `[1,.30]→…→[0,.90]`; testimonials weave `[.5,1]→…→[.5,0]`.
 
-**Bottom blur overlay** — `<div class="bottom-blur">` is `position: fixed; bottom: 0; height: 90px; backdrop-filter: blur(14px)` with a `mask-image` gradient (transparent → black top to bottom). Creates a progressive frosted glass effect at the bottom of every viewport. Hidden (`opacity: 0`) when `scrollY < 50` via `updateBottomBlur()` scroll listener (prevents it from blurring the hero stat bar on initial load). The footer has `position: relative; z-index: 10000` to render above it. `updateBottomBlur()` uses a lazy `querySelector('.bottom-blur')` call inside the function — do not hoist it to the top-level script scope, because `.bottom-blur` lives after the `<script>` tag in the DOM and would be `null` at parse time (crashes all animations).
+**Visual** — `.road-base` 40px white .10, `.road-sheen` 48px white .04, `.road-center` 5px green .55 (`dasharray 20 18`), `.road-reveal` 56px white (mask only). `.road-svg` is `opacity: 0.7`.
 
-**GPU layer promotion** — `will-change: transform, opacity` is set on `.reveal`, `.step-phone-wrap`, `.step-text-col`, and `.letter-reveal .char`. `will-change: opacity` on `.word-reveal .word`. `will-change: transform` on `.road-brush` and `.testimonials-track`. All pre-promote GPU layers before IntersectionObserver fires, eliminating the jank spike when transitions start.
-
-**Scroll handler throttling** — `updateNavTheme()` and `updateBottomBlur()` are coalesced into a single rAF-throttled listener via `_uiRaf` flag (runs at most once per animation frame, not once per scroll event). `getSections()` lazily caches `Array.from(document.querySelectorAll('section[id]'))` into `_sections` and invalidates on `resize` — avoids re-querying the DOM on every scroll tick.
-
-**Image loading** — below-fold images (`step1–3.png`, `final_ss.png`, QR code, `download_appstore_svg.png`) use `loading="lazy"` so they're not fetched at page load. All images use `decoding="async"` (including the nav logo) to move decode off the main thread. The hero background image is CSS, so neither attribute applies to it.
-
-**Button hover transitions** — all interactive buttons use `0.6s` transitions. `.btn-purdue` transitions `background`, `border-color`, `color`. `.btn-primary`, `.btn-amb` transition `transform`, `box-shadow`, `background`. `.appstore-btn` hover: `translateY(-2px)` only (no scale) — subtle lift.
-
-**darkSectionIds** — only `'hero'` is in the set. All other sections use the light background.
-
-**Stat bar** — `<div id="stat-bar">` is `position: absolute; bottom: 0` inside `#hero`. Three `.stat-item` columns (flex, `justify-content: center`, `gap: 80px`), separated from the hero content by a `1px solid rgba(255,255,255,0.10)` top border. Numbers: Plus Jakarta Sans, `2rem`, `rgba(255,255,255,0.95)`. Labels: Manrope, `0.85rem`, `rgba(255,255,255,0.65)`. Current stats: **0% commission** · **500+ Purdue students riding** · **Top 5 Purdue New Venture Challenge 2026** (label wraps via `<br>` between "New Venture" and "Challenge 2026"). Each `.stat-item` has `.reveal` class with staggered `--reveal-delay`.
-
-**FAQ section** — `<section id="faq" class="section">` inside `.light-zone`, between Ambassador and Download. Centered column, max-width 720px (`.faq-inner`). Heading: `.section-title.letter-reveal`. Three `.faq-item` divs (no animation class — children animate independently): `.faq-q.letter-reveal` for the question, `.faq-a.word-reveal` for the answer. Items separated by `1px solid rgba(0,0,0,0.08)` top/bottom borders.
-
-**How it works — current content** — heading and subheading are `text-align: center` (scoped to `#how-it-works`). Step number badges (`<div class="step-number">`) have been removed from HTML (CSS class kept). Step headings: "Find your ride", "Join your communities", "Unlock perks along the way". All `.step-heading` elements use `.letter-reveal`; all `.step-desc` use `.word-reveal`.
+Roads (and the Lenis smooth scroll) are skipped entirely under `prefers-reduced-motion` (the IIFE early-returns and CSS hides `.road-svg`).
 
 ## Assets
 
-- `KOVA logo.png` — black "KOVA" text + bright green steering wheel replacing the O
-- `hero_image.png` — hero section background photo (people in a car, travel/social vibe)
-- `download_appstore_svg.png` — official App Store badge image used in the download section
-- `color palette.png` — reference swatches (white / `#2E6B4A` / `#28C45A`)
-- `step1.png`, `step2.png`, `step3.png` — app screenshots displayed inside the "How it works" iPhone frames
-- `final_ss.png` — app screenshot displayed inside the Download section's large iPhone frame
-- `purdue.png` — Purdue University logo, displayed in original colors in the footer ("Built with love, at [logo]")
-- `Agrandir - Free For Personal Use/` — PP Agrandir font files, **personal use only**, not wired up
+- `KOVA logo.png` — black "KOVA" text + bright green steering wheel (inverted to white in nav/footer)
+- `hero_image.png` — hero + all card backgrounds (placeholder; cards blur it differently per-ID)
+- `download_appstore_svg.png` — App Store badge
+- `color palette.png` — reference swatches
+- `step1.png`, `step2.png`, `step3.png` — app screenshots inside the step iPhone frames
+- `final_ss.png` — app screenshot inside the download iPhone frame
+- `purdue.png` — Purdue logo in the footer (original colors)
+- `Agrandir - Free For Personal Use/` — fonts, **personal use only**, not wired up
 
 ## Pages
 
@@ -138,57 +156,4 @@ The road JS queries the download phone via `#download .dl-phone-col` — update 
 
 ## Footer
 
-Footer (`<footer>`) is dark (`--near-black`) with `position: relative; z-index: 10000` (sits above the bottom blur overlay). Three columns via `flex` + `space-between`:
-1. **Left** — KOVA logo (inverted to white via `filter: brightness(0) invert(1)`)
-2. **Center** — `.footer-links`: Terms of Service → `terms.html`, Privacy Policy → `privacy.html`, `help@ridekova.com` → `mailto:help@ridekova.com`
-3. **Right** — `.footer-right`: Instagram icon → `https://www.instagram.com/ridekova/`, copyright line, "Built with love, at [purdue.png]" line
-
-Copyright: `© 2026 KOVA Group, Inc. All rights reserved.` The Purdue logo in the footer uses `.footer-purdue` (`display: inline; height: 13px; vertical-align: middle`) in original colors (no filter) — `display: inline` overrides the global `img { display: block }` reset to keep it on the same line as the text.
-
----
-
-## Road Animation
-
-A scroll-driven SVG road lives inside `.light-zone` as the first child: `<div class="road-wrap">` containing `.road-svg`. The road is rendered as **static visual layers revealed by an animated SVG `<mask>`** (mask-wipe), not by per-path dashoffset.
-
-**SVG structure** (`.road-svg`):
-- `<defs>`: `<mask id="road-mask">` containing one `.road-reveal` path (white, thick stroke)
-- `<g mask="url(#road-mask)">`: the static visual layers — `.road-sheen`, `.road-base`, `.road-center` (all share the same `d`)
-- `.road-brush`: a `<g>` holding a **top-down car sprite** (built once in JS via `brushG.innerHTML`), repositioned at the tip every frame. Despite the `brush` name, the sprite is a car, not a paintbrush
-
-**Reveal model (mask-wipe + rAF lerp):**
-- Path `d` built via Catmull-Rom spline through waypoints from `getLayoutRect()` (offsetTop/offsetLeft chain — transform-immune). The same `d` is set on every visual layer **and** `.road-reveal`.
-- `.road-reveal` has `strokeDasharray = totalLength`; animating its `strokeDashoffset` from `totalLength`→`0` wipes the mask open, progressively revealing the static layers beneath. This is why the center line can be a static green dash pattern *and* still draw on.
-- **Smoothness**: a continuous `requestAnimationFrame` loop eases the rendered length toward a scroll-driven target each frame — `drawnLen += (targetLen − drawnLen) * SMOOTH` (`SMOOTH ≈ 0.14`). Decoupled from scroll-event timing, so the draw is fluid at any scroll speed (no CSS transition on dashoffset). The loop stops when settled and restarts on scroll.
-- **Target**: on scroll (rAF-throttled), `arcLengthForY()` binary-searches the pre-sampled `pathCache` to find the arc length whose Y equals `scrollY + vh * scrollK − lzTop` (consistent tip screen position). `targetLen` updates freely in both directions — the road extends when scrolling down and retracts when scrolling up (car reverses in place, facing forward). Within ~8px of page bottom, the target snaps to `totalLength` so the road always completes.
-- **`scrollK`** is computed dynamically in `buildRoad()` so the tip reaches `footerY + OVERLAP` (under the footer) exactly at max scroll.
-- On resize: `buildRoad()` resets and rebuilds.
-
-**Path cache** — `buildRoad()` fills a `pathCache` array of 1001 `{x,y}` points sampled evenly along the path (`CACHE_N = 1000`), deferred via `requestIdleCallback` (400ms timeout; falls back to `setTimeout(0)` on Safari). This replaces all hot-path `getPointAtLength()` calls with `pointAtLen(s)`, a linear-interpolation lookup that costs only array arithmetic. `arcLengthForY()` likewise binary-searches the cache index array. `pathCache` is reset to `null` on every `buildRoad()` call; car and binary search both guard against `null`.
-
-**Car tip** — each frame, the `.road-brush` `<g>` is positioned via `pointAtLen(drawnLen)` and `rotate`d to the path tangent (point 6px behind via `pointAtLen`), so the car drives along the leading edge and the road appears to roll out behind it. It fades out (`opacity 0`) at the very start and once the road is essentially complete, so no car floats under the footer. The sprite is authored **nose-toward +x** (so `rotate(ang)` points it in the direction of travel): a dark `#20262e` body (`64×36`, `rx 11`) with a `var(--bright-green)` outline, green-tinted glass greenhouse, green headlights at the +x nose, red taillights at the rear, and dark wheels poking out the sides. Sized to roughly span the 46px road.
-
-**Path geometry (desktop ≥ 768px):**
-- Starts at `[cx, -OVERLAP]` (40px above the light-zone top — inside the hero's covered area)
-- **"How it works" heading clearance**: `[cx + W * 0.15, hiTitleR.cy]` — routes the road 15% of viewport-width to the right of center at the heading's y-level, clearing the "How it works" text without overshooting. Uses `getLayoutRect('#how-it-works .section-title')`. Note: `offsetWidth` of a block h2 equals its container width (not text width), so `hiTitleR.right` is unusable — use `cx + W * fraction` instead.
-- **Steps 1 & 3** (phone LEFT): peak at `W * 0.83` — the wide empty right portion of the layout past the text content
-- **Step 2** (phone RIGHT): peak at `pr.left - 90` — 90px clearance from the phone frame, well into the center gap
-- **No bracket waypoints** — peak-only (one waypoint per step). Bracket approach/exit waypoints cause Bezier control-point squiggles when an incoming tangent from a distant neighbour overshoots a short segment. With peak-only, step 2's Catmull-Rom tangent x-component is exactly 0 (steps 1 and 3 are at the same x), so the road descends vertically through the gap with no lateral drift.
-- **Testimonials**: two waypoints — `[W * 0.14, testInnerR.cy]` (left of heading text) then `[cx + W * 0.05, carouselR.cy]` (through middle of carousel). Queries `#testimonials .testimonials-inner` and `#testimonials .testimonials-track-wrap`.
-- **Ambassador**: `W * 0.93` (far right page margin)
-- **FAQ**: `[W * 0.08, faqTitleR.cy]` — sweeps left to 8% of viewport at the "Common questions" heading's y-center. Uses `getLayoutRect('#faq .section-title')`. `W * 0.08` ≈ 115px is safely left of the `.faq-inner` left edge (≈ `(W−720)/2` ≈ 360px at 1440px), ensuring the road clears the heading.
-- **Download**: `dlPhoneR.right + 44` (gap right of download phone — queried via `#download .dl-phone-col`)
-- Ends at `[cx, footerY + OVERLAP]` — under the opaque footer (`z-index: 10000`)
-- Mobile (< 768px): simple S-wave fallback ending at `[cx, H + OVERLAP]`
-
-**Hero emergence (mirrors footer):**
-- `.road-wrap` has `inset: -40px 0 -40px 0` — extends `OVERLAP=40px` above AND below the light-zone
-- `#hero` has `z-index: 1` — hero renders on top of the road-wrap extension, hiding the road stub just as the footer (`z-index: 10000`) hides the tail
-- ViewBox: `0 -OVERLAP W H+2*OVERLAP` — SVG coordinates remain light-zone-relative; `getLayoutRect` measurements are unchanged
-- Mask: `transparent 0px, black 50px` — hero covers the first 40px, leaving only a ~10px fade visible just below the hero edge
-
-**Visual** (thicker, premium):
-- `.road-base`: 46px, `var(--near-black)` @ 0.92 opacity (solid road body)
-- `.road-sheen`: 54px, `rgba(255,255,255,0.06)` (faint lift under the base)
-- `.road-center`: 6px, `var(--bright-green)`, `stroke-dasharray: 24 20`, `stroke-linecap: butt` (thick rectangular green dashes — flat ends, not rounded)
-- `.road-reveal`: 62px white (mask only — never visible)
+`<footer>` is dark (`var(--bg)`), `position: relative; z-index: 10000` (above the bottom blur). Three flex columns: KOVA logo (inverted white) / `.footer-links` (Terms → `terms.html`, Privacy → `privacy.html`, `help@ridekova.com`) / `.footer-right` (Instagram → `instagram.com/ridekova/`, copyright `© 2026 KOVA Group, Inc. All rights reserved.`, "Built with love, at [purdue.png]"). Footer links Figtree, `rgba(255,255,255,0.60)` → `#fff` on hover. `.footer-purdue` is `display:inline` to override the global `img{display:block}` reset.
