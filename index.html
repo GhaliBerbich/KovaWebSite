@@ -128,14 +128,40 @@
       cursor: pointer;
     }
     .nav-btn:hover, .nav-btn.active { color: #fff; }
+    /* Get KOVA — liquid glass pill with a green-tinted rim + text */
     .nav-btn.primary {
-      background: var(--bright-green);
-      color: #0D1117;
-      border-radius: 10px;
-      padding: 8px 24px;
-      font-weight: 700;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: rgba(255,255,255,0.04);
+      color: #9af0b8;
+      border: 1px solid rgba(125,242,166,0.30);
+      border-radius: 999px;
+      padding: 9px 24px;
+      font-weight: 600;
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);            /* fallback */
+      backdrop-filter: url(#container-glass); /* liquid distortion */
+      /* green-tinted glass rim */
+      box-shadow:
+        0 0 8px rgba(0,0,0,0.10),
+        0 2px 6px rgba(0,0,0,0.18),
+        inset 3px 3px 0.5px -3.5px rgba(125,242,166,0.9),
+        inset -3px -3px 0.5px -3.5px rgba(125,242,166,0.85),
+        inset 1px 1px 1px -0.5px rgba(125,242,166,0.6),
+        inset -1px -1px 1px -0.5px rgba(125,242,166,0.6),
+        inset 0 0 6px 6px rgba(125,242,166,0.12),
+        inset 0 0 2px 2px rgba(125,242,166,0.06);
+      transition: transform 0.3s ease,
+                  box-shadow 0.4s ease, background 0.4s ease, color 0.4s ease;
     }
-    .nav-btn.primary:hover { background: #34d468; color: #0D1117; }
+    .nav-btn.primary:hover {
+      transform: scale(1.02);
+      background: rgba(255,255,255,0.08);
+      color: #bff8d2;
+    }
 
     /* ─── Shared section type ────────────────────────────────── */
     .section-title {
@@ -200,38 +226,37 @@
     button, .btn-primary, .btn-glass, .btn-purdue, .nav-btn {
       font-family: 'Inter', sans-serif;
     }
-    /* Apply Now — clear glass pill, silver stroke only */
+    /* Apply Now — liquid glass pill (ported from 21st.dev liquid-glass-button) */
     .btn-apply {
       position: relative;
       border: none;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);            /* fallback for browsers without SVG backdrop filters */
+      backdrop-filter: url(#container-glass); /* liquid distortion of what's behind the pill */
+      /* glass rim — inset highlight edges (white insets for the dark theme) */
+      box-shadow:
+        0 0 8px rgba(0,0,0,0.10),
+        0 2px 6px rgba(0,0,0,0.18),
+        inset 3px 3px 0.5px -3.5px rgba(255,255,255,0.9),
+        inset -3px -3px 0.5px -3.5px rgba(255,255,255,0.85),
+        inset 1px 1px 1px -0.5px rgba(255,255,255,0.6),
+        inset -1px -1px 1px -0.5px rgba(255,255,255,0.6),
+        inset 0 0 6px 6px rgba(255,255,255,0.12),
+        inset 0 0 2px 2px rgba(255,255,255,0.06);
     }
     /* Higher specificity than .reveal so hover transitions aren't overridden */
     .btn-glass.btn-apply {
-      transition: background 0.5s ease, box-shadow 0.5s ease,
-                  opacity 0.6s ease var(--reveal-delay, 0s),
-                  transform 0.6s ease var(--reveal-delay, 0s);
-    }
-    .btn-apply::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 0.75px;
-      background: linear-gradient(135deg, #b0b0b0, #e8e8e8, #909090, #d0d0d0, #a8a8a8);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-              mask-composite: exclude;
-      pointer-events: none;
-      transition: filter 0.5s ease;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+                  box-shadow 0.4s ease,
+                  background 0.4s ease,
+                  opacity 0.6s ease var(--reveal-delay, 0s);
     }
     .btn-apply:hover {
-      background: rgba(255, 255, 255, 0.10);
-      box-shadow: 0 0 18px rgba(200, 200, 200, 0.2);
-    }
-    .btn-apply:hover::after {
-      filter: brightness(1.25);
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     /* ─── Hero ───────────────────────────────────────────────── */
@@ -447,11 +472,11 @@
     #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg); }
     #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
     #testimonials::before       { background: rgba(0, 0, 0, 0.72); }
-    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; background-color: #0d1117; filter: blur(8px); }
-    #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg'); }
+    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; transform: scale(1.05) rotate(-0.8deg); }
+    #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg');  background-position: center center; }
     #more-than-a-ride::before       { background: rgba(0, 0, 0, 0.72); }
-    #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; background-color: #0d1117; filter: blur(6px); }
-    #safety .card-bg-edge       { background-image: url('safety-bg.jpg'); }
+    #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; transform: scale(1.05) rotate(0.6deg); }
+    #safety .card-bg-edge       { background-image: url('safety-bg.jpg');     background-position: center 60%; }
     #safety::before             { background: rgba(0, 0, 0, 0.75); }
     #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg); }
     #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
@@ -475,7 +500,7 @@
       position: relative;
       z-index: 4;
       width: 100%;
-      max-width: 860px;
+      max-width: 980px;
       padding: 120px 48px 100px;
       display: flex;
       flex-direction: column;
@@ -491,9 +516,8 @@
     .hiw-step {
       display: flex;
       align-items: center;
-      gap: 48px;
+      gap: 56px;
       position: relative;
-      width: 88%;
     }
     .hiw-step--left {
       align-self: flex-start;
@@ -503,11 +527,17 @@
       align-self: flex-end;
       flex-direction: row-reverse;
     }
+    /* Irregular horizontal placement (desktop only — mobile stacks full-width) */
+    @media (min-width: 769px) {
+      .hiw-step:nth-of-type(1) { width: 78%; margin-left: 0; }
+      .hiw-step:nth-of-type(2) { width: 92%; margin-right: 1%; }
+      .hiw-step:nth-of-type(3) { width: 74%; margin-left: 13%; }
+    }
     .hiw-step-num {
       font-family: 'Fraunces', serif;
       font-size: clamp(4rem, 8vw, 7rem);
       font-weight: 700;
-      color: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.16);
       line-height: 1;
       position: absolute;
       top: -20px;
@@ -526,7 +556,7 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.35), 0 24px 52px rgba(0,0,0,0.42);
     }
     .hiw-step-screen { flex-shrink: 0; }
-    .hiw-shot { width: 260px; max-width: 100%; }
+    .hiw-shot { width: 360px; max-width: 100%; }
     .hiw-step-text {
       display: flex;
       flex-direction: column;
@@ -551,7 +581,7 @@
       position: relative;
       z-index: 4;
       width: 100%;
-      max-width: 900px;
+      max-width: 1080px;
       padding: 120px 48px 100px;
       display: flex;
       flex-direction: column;
@@ -559,39 +589,26 @@
       gap: 56px;
     }
     .mtr-bento {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 16px;
+      display: flex;
+      align-items: center;
+      gap: 88px;
       width: 100%;
-      min-height: 420px;
     }
-    .mtr-card {
-      position: relative;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 28px;
+    .mtr-card--earn { flex: 1; }
+    .mtr-right {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      gap: 8px;
+      gap: 80px;
     }
-    .mtr-shot { position: absolute; top: 22px; right: 22px; width: 116px; }
-    .mtr-card--earn .mtr-shot { width: 150px; }
-    .mtr-card--earn      { grid-column: 1; grid-row: 1 / 3; }
-    .mtr-card--community { grid-column: 2; grid-row: 1; }
-    .mtr-card--perks     { grid-column: 2; grid-row: 2; }
-    .mtr-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.40);
+    .mtr-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
     }
+    .mtr-shot { width: 340px; max-width: 100%; border-radius: 0; box-shadow: none; }
+    .mtr-card--earn .mtr-shot { width: 400px; }
     .mtr-heading {
       font-family: 'Fraunces', serif;
       font-size: 1.5rem;
@@ -628,9 +645,11 @@
     .safety-pillar {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
       gap: 20px;
     }
-    .safety-shot { width: 74%; align-self: center; }
+    .safety-shot { width: auto; height: 150px; max-width: 80%; object-fit: contain; align-self: center; }
     .safety-pillar-heading {
       font-family: 'Fraunces', serif;
       font-size: 1.2rem;
@@ -926,8 +945,8 @@
       .hiw-inner { padding: 80px 24px 60px; gap: 56px; }
       .hiw-step-num { font-size: 3.5rem; top: -12px; left: 0; }
 
-      .mtr-bento { grid-template-columns: 1fr; grid-template-rows: auto; min-height: unset; }
-      .mtr-card--earn, .mtr-card--community, .mtr-card--perks { grid-column: 1; grid-row: auto; }
+      .mtr-bento { flex-direction: column; align-items: flex-start; gap: 40px; }
+      .mtr-right { width: 100%; }
       .mtr-inner { padding: 80px 24px 60px; }
 
       .safety-pillars { grid-template-columns: 1fr; }
@@ -990,6 +1009,14 @@
         <feColorMatrix type="saturate" values="0" in="noise" result="grey"/>
         <feBlend in="SourceGraphic" in2="grey" mode="overlay"/>
       </filter>
+      <!-- Liquid-glass backdrop distortion (Apply Now button) -->
+      <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence"/>
+        <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced"/>
+        <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur"/>
+        <feComposite in="finalBlur" in2="finalBlur" operator="over"/>
+      </filter>
     </defs>
   </svg>
 
@@ -1001,7 +1028,7 @@
       <button class="nav-btn" data-target="testimonials" onclick="scrollToSection('testimonials')">Testimonials</button>
       <button class="nav-btn" data-target="ambassador" onclick="scrollToSection('ambassador')">Ambassador Program</button>
     </div>
-    <button class="nav-btn primary" onclick="scrollToSection('download')">Get KOVA</button>
+    <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
   </nav>
 
   <!-- ─── Hero ─────────────────────────────────────────────────── -->
@@ -1032,7 +1059,7 @@
       <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
       <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission, no middleman.</p>
       <div class="hero-ctas">
-        <button class="btn-primary" onclick="scrollToSection('download')">
+        <button class="btn-primary" onclick="scrollToSection('how-it-works')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
           Pull up
         </button>
@@ -1044,6 +1071,7 @@
   <section id="how-it-works" class="site-section">
     <div class="card-bg"></div>
     <div class="card-bg-edge"></div>
+    <svg class="road-svg" aria-hidden="true"></svg>
     <div class="hiw-inner">
       <h2 class="section-title reveal">How it works</h2>
       <div class="hiw-steps">
@@ -1051,7 +1079,7 @@
         <div class="hiw-step hiw-step--left reveal">
           <div class="hiw-step-num">01</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="find_a_ride.png" alt="A posted ride from a verified Purdue student" style="transform:rotate(-8deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="find_a_ride.png" width="1974" height="1312" alt="A posted ride from a verified Purdue student" style="transform:rotate(-8deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading">Find a ride</h3>
@@ -1062,7 +1090,7 @@
         <div class="hiw-step hiw-step--right reveal">
           <div class="hiw-step-num">02</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="chat_price.png" alt="Chat thread agreeing on a ride price" style="transform:rotate(6deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="chat_price.png" width="1974" height="1514" alt="Chat thread agreeing on a ride price" style="transform:rotate(6deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading">Settle the price</h3>
@@ -1073,7 +1101,7 @@
         <div class="hiw-step hiw-step--left reveal">
           <div class="hiw-step-num">03</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="ride_live.png" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-7deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="ride_live.png" width="1974" height="1479" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-7deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading">Ride live and stay safe</h3>
@@ -1258,29 +1286,29 @@
     <section id="more-than-a-ride" class="site-section">
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
+      <svg class="road-svg" aria-hidden="true"></svg>
       <div class="mtr-inner">
         <h2 class="section-title reveal">More than a ride</h2>
         <div class="mtr-bento">
 
           <div class="mtr-card mtr-card--earn reveal">
-            <img class="app-shot mtr-shot" src="make_bucks.png" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
-            <span class="mtr-label">Earn</span>
+            <img class="app-shot mtr-shot" src="make_bucks.png" width="1974" height="1308" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading">Make a few bucks</h3>
             <p class="mtr-desc">Post your ride, work out a price with your riders, keep everything you make.</p>
           </div>
 
+          <div class="mtr-right">
           <div class="mtr-card mtr-card--community reveal" style="--reveal-delay:0.1s">
-            <img class="app-shot mtr-shot" src="community.png" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
-            <span class="mtr-label">Community</span>
+            <img class="app-shot mtr-shot" src="community.png" width="469" height="330" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading">Find your crew</h3>
             <p class="mtr-desc">Find people heading the same direction as you.</p>
           </div>
 
           <div class="mtr-card mtr-card--perks reveal" style="--reveal-delay:0.2s">
-            <img class="app-shot mtr-shot" src="perks.png" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
-            <span class="mtr-label">Perks</span>
+            <img class="app-shot mtr-shot" src="perks.png" width="1873" height="1221" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading">Unlock perks</h3>
             <p class="mtr-desc">KOVA partners throw in actual discounts just for riding.</p>
+          </div>
           </div>
 
         </div>
@@ -1605,8 +1633,10 @@
 
       /* Waypoints per card, as fractions of card offsetWidth × offsetHeight. */
       const ROADS = {
-        'testimonials': [[0.95, 0.50], [0.70, 0.68], [0.30, 0.32], [0.05, 0.50]],
-        'ambassador':   [[0.92, -0.10], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
+        'how-it-works':    [[0.46, -0.10], [0.72, 0.24], [0.28, 0.50], [0.70, 0.76], [0.48, 1.10]],
+        'testimonials':    [[0.95, 0.50], [0.70, 0.68], [0.30, 0.32], [0.05, 0.50]],
+        'more-than-a-ride':[[0.40, -0.08], [0.70, 0.26], [0.30, 0.54], [0.68, 0.80], [0.42, 1.08]],
+        'ambassador':      [[0.92, -0.10], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
       };
 
       function catmullRomPath(pts) {
@@ -1706,13 +1736,13 @@
         const vh = window.innerHeight, y = window.scrollY;
         instances.forEach(inst => {
           if (!inst.totalLen) return;
-          // Drive the draw off the section's center crossing the viewport:
-          // p=0 when the center is at the viewport bottom (section just well
-          // in view), p=1 when the center reaches the viewport top. The road
-          // is half-drawn exactly when the section is centered/most visible,
-          // so its start and finish both land on-screen.
-          const center = inst.top + inst.h / 2;
-          const p = Math.max(0, Math.min(1, (y - center + vh) / vh));
+          // Pace the draw to the section's own height: p=0 when the top edge
+          // reaches the viewport middle, p=1 when the bottom edge does, so the
+          // road reveals top→bottom in step with scrolling. For viewport-height
+          // sections this is identical to a center-crossing draw (half-drawn
+          // when centered); for sections taller than the viewport it keeps the
+          // road from appearing/vanishing mid-section.
+          const p = Math.max(0, Math.min(1, (y - (inst.top - vh / 2)) / inst.h));
           inst.targetLen = p * inst.totalLen;
         });
         startLoop();
@@ -1727,6 +1757,13 @@
 
       function buildAll() { instances.forEach(build); updateTargets(); }
       window.addEventListener('resize', buildAll);
+      // Section heights (and the positions of everything below them) depend on
+      // the screenshot images. Rebuild after load, and whenever any of those
+      // images finishes loading, so road geometry/timing uses correct heights.
+      window.addEventListener('load', buildAll);
+      document.querySelectorAll('.app-shot').forEach((img) => {
+        if (!img.complete) img.addEventListener('load', buildAll, { once: true });
+      });
       buildAll();
     })();
 
