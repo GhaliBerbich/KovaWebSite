@@ -6,7 +6,7 @@
   <title>KOVA — Your world just got bigger</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&family=DM+Sans:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     /* ─── Tokens ─────────────────────────────────────────────── */
     :root {
@@ -25,7 +25,7 @@
 
       --road-base:          rgba(255, 255, 255, 0.10);
       --road-sheen:         rgba(255, 255, 255, 0.04);
-      --road-center:        rgba(40, 196, 90, 0.55);
+      --road-center:        rgba(255, 255, 255, 0.7);
     }
 
     /* ─── Reset ──────────────────────────────────────────────── */
@@ -76,21 +76,30 @@
     /* ─── Navbar ─────────────────────────────────────────────── */
     .nav {
       position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 1000;
+      isolation: isolate;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      width: min(92vw, 1060px);
-      padding: 10px 22px 10px 26px;
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 16px;
+      width: 100%;
+      padding: 12px 32px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
       white-space: nowrap;
+    }
+    .nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: var(--nav-glass, 0);
     }
     .nav-logo {
       height: 28px;
@@ -108,18 +117,17 @@
     }
     .nav > .nav-btn.primary { justify-self: end; }
     .nav-btn {
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.55);
       background: transparent;
       border: none;
       padding: 8px 12px;
       font-family: 'Fraunces', serif;
       font-size: 0.95rem;
-      font-weight: 600;
-      transition: color 0.2s;
+      font-weight: 400;
+      transition: color 0.4s ease;
       cursor: pointer;
     }
     .nav-btn:hover, .nav-btn.active { color: #fff; }
-    .nav-btn.active { font-weight: 700; }
     .nav-btn.primary {
       background: var(--bright-green);
       color: #0D1117;
@@ -187,6 +195,43 @@
     .btn-glass:hover {
       background: rgba(255,255,255,0.14);
       border-color: rgba(255,255,255,0.24);
+    }
+    /* Buttons + nav links use Inter */
+    button, .btn-primary, .btn-glass, .btn-purdue, .nav-btn {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Apply Now — clear glass pill, silver stroke only */
+    .btn-apply {
+      position: relative;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    /* Higher specificity than .reveal so hover transitions aren't overridden */
+    .btn-glass.btn-apply {
+      transition: background 0.5s ease, box-shadow 0.5s ease,
+                  opacity 0.6s ease var(--reveal-delay, 0s),
+                  transform 0.6s ease var(--reveal-delay, 0s);
+    }
+    .btn-apply::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 0.75px;
+      background: linear-gradient(135deg, #b0b0b0, #e8e8e8, #909090, #d0d0d0, #a8a8a8);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      transition: filter 0.5s ease;
+    }
+    .btn-apply:hover {
+      background: rgba(255, 255, 255, 0.10);
+      box-shadow: 0 0 18px rgba(200, 200, 200, 0.2);
+    }
+    .btn-apply:hover::after {
+      filter: brightness(1.25);
     }
 
     /* ─── Hero ───────────────────────────────────────────────── */
@@ -292,7 +337,6 @@
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.8s forwards;
     }
-    #hero .route-chip { z-index: 1; }
 
     /* ─── Hero floating stats (scattered over the hero photo) ─── */
     .hero-stat {
@@ -368,7 +412,7 @@
       pointer-events: none;
       opacity: 0.7;
     }
-    .site-section > *:not(.card-bg):not(.card-bg-edge):not(.road-svg):not(.route-chip) {
+    .site-section > *:not(.card-bg):not(.card-bg-edge):not(.road-svg) {
       position: relative;
       z-index: 4;
     }
@@ -431,12 +475,15 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
+      text-align: center;
+      align-items: center;
     }
     .hiw-item-label {
       font-family: 'Fraunces', serif;
-      font-size: 1.1rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #fff;
+      text-align: center;
     }
     .hiw-placeholder {
       width: 100%;
@@ -450,6 +497,7 @@
       font-size: 0.92rem;
       color: rgba(255,255,255,0.55);
       line-height: 1.65;
+      text-align: center;
     }
 
     /* ─── Testimonials card ──────────────────────────────────── */
@@ -481,6 +529,7 @@
     .marquee-outer::after  { right: 0; background: linear-gradient(to left,  rgba(0,0,0,0.80), transparent); }
     .testimonials-track {
       display: flex;
+      align-items: stretch;
       gap: 24px;
       width: max-content;
       padding: 8px 0;
@@ -497,16 +546,25 @@
       min-width: 280px;
       max-width: 320px;
       flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 200px;
     }
-    .testimonial-stars { color: #FFB800; font-size: 13px; letter-spacing: 3px; margin-bottom: 14px; }
+    .testimonial-stars { color: #FFB800; font-size: 13px; letter-spacing: 3px; align-self: flex-start; }
     .testimonial-quote {
       color: rgba(255,255,255,0.80);
       font-family: 'Lora', serif;
       font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 20px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 0;
     }
-    .testimonial-author-row { display: flex; align-items: center; gap: 12px; }
+    .testimonial-author-row { display: flex; align-items: center; gap: 12px; align-self: flex-start; }
     .testimonial-avatar {
       width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -632,250 +690,6 @@
     .appstore-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.16); opacity: 0.92; }
     .appstore-img { width: 140px; height: auto; display: block; }
 
-    /* ─── Route chips ────────────────────────────────────────── */
-    .route-chip {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 4px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 14px;
-      padding: 10px 16px;
-      position: absolute;
-      pointer-events: none;
-      user-select: none;
-      z-index: 3;
-    }
-    .route-chip-route { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.90); }
-    .route-chip-meta  { font-family: 'Lora', serif; font-size: 11px; color: rgba(255,255,255,0.50); }
-
-    /* ── Hero route cards (glassmorphism, from Figma) ── */
-    .route-card {
-      position: absolute;
-      z-index: 5;
-      width: 268px;
-      padding: 14px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.10);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(44, 178, 82, 0.18);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* Positioning + rotation */
-    #card-ella {
-      left: 4%;
-      top: 35%;
-      transform: rotate(-3deg);
-    }
-    #card-nick {
-      right: 4%;
-      bottom: 14%;
-      transform: rotate(3deg);
-    }
-
-    /* "Looking for ride" badge */
-    .rc-badge {
-      position: absolute;
-      top: 11px;
-      right: 13px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(197, 255, 115, 0.30);
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 700;
-      font-size: 9px;
-      color: #2cb252;
-      white-space: nowrap;
-    }
-    .rc-badge-icon {
-      width: 11px;
-      height: 11px;
-    }
-
-    /* Header */
-    .rc-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-right: 100px; /* clear badge */
-    }
-    .rc-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      overflow: hidden;
-      flex-shrink: 0;
-      border: 2px solid rgba(54, 103, 68, 0.8);
-    }
-    .rc-avatar img {
-      width: 100%;
-      height: 150%;
-      object-fit: cover;
-      object-position: center top;
-    }
-    .rc-name-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .rc-name {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      color: #fff;
-      line-height: 1;
-    }
-    .rc-rating {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.5);
-    }
-    .rc-rating strong {
-      color: rgba(255, 255, 255, 0.85);
-      font-weight: 600;
-    }
-    .rc-star {
-      width: 12px;
-      height: 12px;
-    }
-
-    /* Route */
-    .rc-route {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .rc-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #2cb252;
-      flex-shrink: 0;
-    }
-    .rc-from, .rc-to {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      color: #fff;
-    }
-    .rc-arrow {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 400;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    /* Quote */
-    .rc-quote {
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 8px;
-      padding: 6px 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-style: italic;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
-      line-height: 1.5;
-    }
-
-    /* Mutuals */
-    .rc-mutuals {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .rc-avatar-stack {
-      display: flex;
-    }
-    .rc-mini-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      object-fit: cover;
-      margin-right: -7px;
-    }
-    .rc-mini-avatar:last-child {
-      margin-right: 0;
-    }
-    .rc-people-icon {
-      width: 14px;
-      height: 14px;
-      opacity: 0.6;
-      margin-left: 4px;
-    }
-    .rc-mutuals-label {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
-    }
-
-    /* Footer */
-    .rc-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid rgba(255, 255, 255, 0.10);
-      padding-top: 8px;
-      gap: 6px;
-    }
-    .rc-date {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .rc-date-day {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.4);
-    }
-    .rc-date-time {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 600;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.85);
-    }
-    .rc-meta {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 600;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.7);
-    }
-    .rc-icon {
-      width: 13px;
-      height: 13px;
-      opacity: 0.7;
-    }
-    .rc-price {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      color: #f8f8f6;
-      background: #366744;
-      border-radius: 999px;
-      padding: 3px 10px;
-      white-space: nowrap;
-    }
-    /* Step chips */
-    #step-1 .route-chip { top: 24%; left: 8%;   transform: rotate(-3deg); opacity: 0.55; }
-    #step-2 .route-chip { top: 26%; right: 8%;  transform: rotate(3deg);  opacity: 0.50; }
-    #step-3 .route-chip { bottom: 24%; left: 8%; transform: rotate(-2deg); opacity: 0.50; }
-
     /* ─── Footer ─────────────────────────────────────────────── */
     footer {
       background: var(--bg);
@@ -959,14 +773,14 @@
 
     /* ─── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .nav { width: calc(100vw - 28px); padding: 8px 12px 8px 16px; }
+      .nav { padding: 8px 16px; }
       .nav-logo { height: 24px; }
       .nav-btn { font-size: 12px; padding: 7px 10px; }
 
       .hiw-grid { grid-template-columns: 1fr; gap: 36px; }
       .hiw-inner { padding: 80px 24px 60px; }
 
-      .route-chip, .hero-chip { display: none; }
+      .hero-chip { display: none; }
 
       .amb-feats { flex-direction: column; align-items: center; }
       .faq-inner, .ambassador-inner { padding: 80px 20px; }
@@ -1081,6 +895,11 @@
           <p class="hiw-item-desc">Browse rides posted by verified Purdue students and book in seconds.</p>
         </div>
         <div class="hiw-item">
+          <span class="hiw-item-label">Make a few bucks</span>
+          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <p class="hiw-item-desc">Post your own ride and keep every dollar. Zero commission.</p>
+        </div>
+        <div class="hiw-item">
           <span class="hiw-item-label">Join communities</span>
           <div class="hiw-placeholder" aria-label="App element placeholder"></div>
           <p class="hiw-item-desc">Connect with people who share your route, major, or vibe.</p>
@@ -1089,11 +908,6 @@
           <span class="hiw-item-label">Unlock perks</span>
           <div class="hiw-placeholder" aria-label="App element placeholder"></div>
           <p class="hiw-item-desc">Discounts and deals from KOVA partners, just for riding.</p>
-        </div>
-        <div class="hiw-item">
-          <span class="hiw-item-label">Make a few bucks</span>
-          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
-          <p class="hiw-item-desc">Post your own ride and keep every dollar. Zero commission.</p>
         </div>
       </div>
     </div>
@@ -1300,7 +1114,7 @@
           </div>
         </div>
 
-        <a href="#" class="btn-glass reveal" style="--reveal-delay:0.15s" aria-label="Apply for the Ambassador Program">
+        <a href="#" class="btn-glass btn-apply reveal" style="--reveal-delay:0.15s" aria-label="Apply for the Ambassador Program">
           Apply Now
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
@@ -1446,6 +1260,11 @@
       const bottomBlur = document.querySelector('.bottom-blur');
       if (bottomBlur) bottomBlur.style.opacity = window.scrollY < 50 ? '0' : '1';
     }
+    const navbar = document.getElementById('navbar');
+    function updateNavGlass() {
+      const p = Math.min(window.scrollY / 100, 1);
+      if (navbar) navbar.style.setProperty('--nav-glass', p);
+    }
     let _uiRaf = null;
     window.addEventListener('scroll', () => {
       if (_uiRaf) return;
@@ -1453,10 +1272,12 @@
         _uiRaf = null;
         updateNavActive();
         updateBottomBlur();
+        updateNavGlass();
       });
     }, { passive: true });
     updateNavActive();
     updateBottomBlur();
+    updateNavGlass();
 
     /* ── Letter-by-letter split (word-aware: chars animate, words never break mid-word) ── */
     document.querySelectorAll('.letter-reveal').forEach(el => {
@@ -1531,11 +1352,11 @@
           <rect x="11"  y="15"  width="9" height="6" rx="2" fill="#0a0d12"/>
           <rect x="-22" y="-21" width="9" height="6" rx="2" fill="#0a0d12"/>
           <rect x="-22" y="15"  width="9" height="6" rx="2" fill="#0a0d12"/>
-          <rect x="-32" y="-18" width="64" height="36" rx="11" fill="rgba(255,255,255,0.12)" stroke="${bg}" stroke-width="2.5"/>
-          <rect x="-13" y="-13" width="27" height="26" rx="6" fill="rgba(40,196,90,0.80)"/>
+          <rect x="-32" y="-18" width="64" height="36" rx="11" fill="rgba(255,255,255,0.12)" stroke="#a0a0a0" stroke-width="2.5"/>
+          <rect x="-13" y="-13" width="27" height="26" rx="6" fill="rgba(44,178,82,0.4)"/>
           <rect x="-7"  y="-11" width="13" height="22" rx="4" fill="rgba(255,255,255,0.18)"/>
-          <rect x="27"  y="-14" width="4" height="6" rx="1.5" fill="${bg}"/>
-          <rect x="27"  y="8"   width="4" height="6" rx="1.5" fill="${bg}"/>
+          <rect x="27"  y="-14" width="4" height="6" rx="1.5" fill="rgba(255,255,255,0.15)"/>
+          <rect x="27"  y="8"   width="4" height="6" rx="1.5" fill="rgba(255,255,255,0.15)"/>
           <rect x="-31" y="-14" width="3" height="6" rx="1.5" fill="#c0392b"/>
           <rect x="-31" y="8"   width="3" height="6" rx="1.5" fill="#c0392b"/>
         </g>`;

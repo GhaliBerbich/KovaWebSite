@@ -38,11 +38,11 @@ Everything is in `index.html`, organized top-to-bottom:
 2. **Reset + grain overlay + bottom-blur + navbar + shared type + buttons** CSS
 3. **Hero + floating hero-stats** CSS
 4. **Site-section mechanics** (`.site-section` base + top drop-shadow, overlap z-index ladder, wave clip-path map, `.card-bg`/`.card-bg-edge` layers, per-section background variation) CSS
-5. **Per-section CSS** (how-it-works grid, road, testimonials, ambassador, faq, download, route chips)
+5. **Per-section CSS** (how-it-works grid, road, testimonials, ambassador, faq, download) + hero chip image
 6. **Footer + animations + reduced-motion + responsive** CSS
 7. **Hidden wave-clip SVG** — first element in `<body>`; `<defs>` of 5 wave `clipPath`s (`objectBoundingBox`) + the `#grain` film-grain `<filter>`
 8. **HTML** — Navbar → `#hero` (with floating stats + a `road_chip1.png` chip image) → `#how-it-works` → `#testimonials` → `#ambassador` → `#faq` → `#download` → `<footer>`
-9. **JS** — Lenis, nav active + bottom blur, letter/word splitters, reveal observer, FAQ accordion, road animation (how-it-works + testimonials + ambassador)
+9. **JS** — Lenis, nav active + nav glass + bottom blur, letter/word splitters, reveal observer, FAQ accordion, road animation (how-it-works + testimonials + ambassador)
 10. **`<div class="bottom-blur">`** then **`<div class="grain-overlay">`** — last two elements before `</body>`
 
 ## Color Tokens
@@ -50,25 +50,24 @@ Everything is in `index.html`, organized top-to-bottom:
 | Token | Value | Used for |
 |---|---|---|
 | `--bg` | `#0D1117` | Page background, footer |
-| `--bright-green` | `#28C45A` | Primary CTA, road center line, badge/eyebrow border, open FAQ question, car accents |
+| `--bright-green` | `#28C45A` | Primary CTA, badge/eyebrow border, open FAQ question, single car-window accent |
 | `--dark-green` | `#2E6B4A` | Reserved accent |
 | `--text-primary` / `--text-body` / `--text-muted` | `rgba(255,255,255, .92/.60/.52)` | Body text tiers |
-| `--glass-bg` / `--glass-border` | `rgba(255,255,255, .07/.12)` | Glass surfaces (testimonial cards, route chips, nav, **download card**) |
+| `--glass-bg` / `--glass-border` | `rgba(255,255,255, .07/.12)` | Glass surfaces (testimonial cards, nav, **download card**) |
 | `--glass-green-bg` / `--glass-green-border` | `rgba(40,196,90, .08/.22)` | Reserved (green-tint glass; no longer used — the download card switched to neutral `--glass-bg`) |
-| `--road-base` / `--road-sheen` / `--road-center` | white .10 / white .04 / green .55 | Road strokes |
+| `--road-base` / `--road-sheen` / `--road-center` | white .10 / white .04 / **white .70** | Road strokes (center dashes are now white) |
 
-**Green is reserved.** It appears only on: the primary CTA fill, the road center dashes, the eyebrow badge border, the car sprite accents, and the open FAQ question. Do **not** put green on body text, headings, or icons elsewhere.
+**Green is reserved.** It appears only on: the primary CTA fill, the eyebrow badge border, the open FAQ question, and a **single small car-window accent** (`rgba(44,178,82,0.4)`). The road center dashes are now white and the car body/outline/headlights are grey/white (Round 6 toned the road down). Do **not** put green on body text, headings, or icons elsewhere.
 
 ## Typography
 
 | Font | Usage |
 |---|---|
-| **Fraunces** (serif; 400/600/700, optical + italic axes) | All headings, section titles, nav links, hero-stat numbers, button labels, testimonial names, `.hiw-item-label` |
-| **Lora** (serif; 400/500/600 + italic 400) | Body text, descriptions, testimonial quotes, FAQ answers, hero-stat labels, footer, route-chip meta |
+| **Fraunces** (serif; 400/600/700, optical + italic axes) | All headings, section titles, hero-stat numbers, testimonial names, `.hiw-item-label` |
+| **Lora** (serif; 400/500/600 + italic 400) | Body text, descriptions, testimonial quotes, FAQ answers, hero-stat labels, footer |
+| **Inter** (sans; 400/500/600) | All buttons + nav links (`button, .btn-primary, .btn-glass, .btn-purdue, .nav-btn`) |
 
-Loaded via Google Fonts CDN. Headings use `'Fraunces', serif`; body uses `'Lora', serif`. (Round 3 switched the display face from Space Grotesk to Fraunces; Round 4 switched the body face from Figtree to Lora — there is no Figtree or Syne in the codebase anymore.) The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
-
-> The Google Fonts link also loads **Plus Jakarta Sans** and **DM Sans**. These were added for an HTML/CSS version of the hero route cards that was later reverted to a static image — they're now only referenced by the **leftover unused** `.route-card` / `.rc-*` CSS block. Safe to drop the fonts + that CSS in a future cleanup; left in place for now.
+Loaded via Google Fonts CDN. **Fraunces**, **Lora**, and **Inter** are loaded. Headings use `'Fraunces', serif`; body uses `'Lora', serif`; buttons + nav links use `'Inter', sans-serif` (Round 6). (Round 3 switched the display face from Space Grotesk to Fraunces; Round 4 switched the body face from Figtree to Lora — there is no Figtree or Syne in the codebase anymore. Plus Jakarta Sans / DM Sans were briefly loaded for an HTML route-card experiment and have been removed.) The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
 
 ## Layout: site-sections, overlap & waves (core)
 
@@ -82,7 +81,7 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 - **Top drop-shadow:** `box-shadow: 0 -14px 48px rgba(0,0,0,0.55)` casts upward so each section reads as sliding over the one above. NOTE: every section also has a wave `clip-path`, which clips the box-shadow to the section box — so this shadow is largely cropped away and barely visible. If a visible seam-shadow is ever wanted, it needs a separate **unclipped** layer.
 - **Waves:** a hidden `<svg>` (first child of `<body>`) defines 5 `clipPath`s with `clipPathUnits="objectBoundingBox"` — `#wave-how-it-works`, `#wave-testimonials`, `#wave-ambassador`, `#wave-faq`, `#wave-download`. Each is an irregular hand-drawn curve along the top edge (y ≈ 0.01–0.04, no repeating pattern). Applied via `#<id> { clip-path: url(#wave-<id>); }`. Content wrappers carry `padding-top: 80px+` so content clears the wave.
 
-**Background layers per section** (`.card-bg` z 0 → `.site-section::before` overlay z 1 → `.road-svg` z 2 → `.route-chip` z 3 → content z 4 via `.site-section > *:not(...)`):
+**Background layers per section** (`.card-bg` z 0 → `.site-section::before` overlay z 1 → `.road-svg` z 2 → content z 4 via `.site-section > *:not(.card-bg):not(.card-bg-edge):not(.road-svg)`):
 - `.card-bg` (`inset:-10%`, `background-size:cover`) and `.card-bg-edge` (same image, radial mask — a soft halo around the sharper center) get their **image + position + scale/rotate** set **per-ID** (the variation block). The backgrounds are now rendered **sharp** — the earlier per-section `blur()` on `.card-bg` and the `blur(22px)` on `.card-bg-edge` were removed. `.site-section::before` is the dark overlay tint, also per-ID.
 
 **Per-section backgrounds** (real photos; some filenames contain spaces, so quote them in CSS):
@@ -98,29 +97,27 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 
 ## Key Patterns
 
-**Navbar** — `position: fixed`, glass (`backdrop-filter: blur(24px)`, faint border), `border-radius: 16px`, 3-column grid (logo / centered `.nav-links` / Get KOVA). Fraunces 600 links; hover and `.active` (current section) go to `#fff`, `.active` also bold. The logo keeps `filter: invert(1) hue-rotate(180deg)` permanently (white text, green wheel). Nav targets: How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`, Get KOVA → `download`. Active state is set by `updateNavActive()` using `data-target` + `absTop`.
+**Navbar** — `position: fixed`, **full-width and flush to the top** (`top:0; left:0; right:0; border-radius:0`), 3-column grid (logo / centered `.nav-links` / Get KOVA), `isolation:isolate`. The bar itself is `background:transparent; border:none`; the glass lives on a **`.nav::before`** layer (`inset:0; z-index:-1; background:rgba(255,255,255,0.06); backdrop-filter:blur(12px); opacity:var(--nav-glass,0)`) — so at the very top the nav is see-through and **fades into frosted glass over the first 100px of scroll** (`updateNavGlass()` sets `--nav-glass = min(scrollY/100, 1)`, folded into the `_uiRaf` scroll loop). Middle links (`.nav-btn`) are **Inter 400**, resting `rgba(255,255,255,0.55)`, easing to `#fff` on hover/`.active` over `0.4s` (no bold/weight jump anymore — removed so section-to-section active changes are smooth). The logo keeps `filter: invert(1) hue-rotate(180deg)` permanently (white text, green wheel). Nav targets: How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`, Get KOVA → `download`. Active state is set by `updateNavActive()` using `data-target` + `absTop`.
 
 **Hero** — `#hero` (z-index 1; not a `.site-section`, no wave clip). `drive pic.jpg` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)`). Title `.hero-title` is solid white Fraunces `clamp(3rem,7vw,5.5rem)`. `.btn-purdue` eyebrow is a glass pill (Lora 500, green-tinted border, white "New" badge, links to the Purdue article). One decorative **chip image** sits at the lower-right (see below).
 
-**Hero chip image** — a single `<img class="hero-chip" src="road_chip1.png">` (a screenshot of an in-app ride chip) is absolutely positioned at the lower-right of the hero (`right:4%; bottom:14%; width:325px; rotate(3deg)`, z-index 5) via an inline `style`. Hidden `@media (max-width:768px)` (`.route-chip, .hero-chip { display:none }`). This replaced an earlier pair of HTML/CSS glassmorphism route cards (`.route-card`/`.rc-*`) and, before that, the original glass-pill `.route-chip` placeholders — both now removed from the HTML (the `.route-card`/`.rc-*` and `.route-chip` CSS still lingers, unused).
+**Hero chip image** — a single `<img class="hero-chip" src="road_chip1.png">` (a screenshot of an in-app ride chip) is absolutely positioned at the lower-right of the hero (`right:4%; bottom:14%; width:325px; rotate(3deg)`, z-index 5) via an inline `style`. Hidden `@media (max-width:768px)` (`.hero-chip { display:none }`). This replaced an earlier pair of HTML/CSS glassmorphism route cards (`.route-card`/`.rc-*`) and, before that, the original glass-pill `.route-chip` placeholders — all of that HTML **and** its CSS have now been deleted.
 
 **Hero floating stats** — three `.hero-stat`s are absolutely positioned (z-index 5) over the hero photo, scattered into open corners and each given a random-looking tilt via an inline `transform: rotate(...)`: **0% commission taken** (top-left, `-12deg`) · **500+ Purdue students** (top-right, `13deg`) · **4.9★ average rating** (bottom-left, `-7deg`). Positions clear the chip image and the centered CTA. Each has a big Fraunces `.hero-stat-number` over a small uppercase Lora `.hero-stat-label`; `.hero-stat` is `align-items:center` so the number is centered above the label. Hidden `@media (max-width:768px)`. (These replaced the old standalone `#stat-bar` block, which is gone.)
 
-**How it works** (`#how-it-works`) — one section (was 4 cards). `.hiw-inner` is a centered column (`padding:100px 48px 80px`) holding the `.section-title` and a `.hiw-grid` (2×2; 1-col under 768px). Each `.hiw-item` = `.hiw-item-label` (Fraunces 700) + `.hiw-placeholder` (4:3 glass box, decorative app-element placeholder) + `.hiw-item-desc` (Lora). The 4 items: **Find a ride**, **Join communities**, **Unlock perks**, **Make a few bucks**. Has a **road animation** (`<svg class="road-svg">`) weaving through the grid; no route chips here.
+**How it works** (`#how-it-works`) — one section (was 4 cards). `.hiw-inner` is a centered column (`padding:100px 48px 80px`) holding the `.section-title` and a `.hiw-grid` (2×2; 1-col under 768px). Each `.hiw-item` is **center-aligned** (`text-align:center; align-items:center`) = `.hiw-item-label` (Fraunces 700, `1.4rem`) + `.hiw-placeholder` (4:3 glass box, decorative app-element placeholder) + `.hiw-item-desc` (Lora, centered). The 4 items, in order: **Find a ride**, **Make a few bucks**, **Join communities**, **Unlock perks** (Round 6 reorder). Has a **road animation** (`<svg class="road-svg">`) weaving through the grid; no route chips here.
 
-**Testimonials** (`#testimonials`) — `.testimonials-inner` centered column (heading + marquee). Has a **road animation** (`<svg class="road-svg">`) that now runs **right → left** (waypoints reversed). `.marquee-outer` clips the track and has left/right edge-fade gradients. `.testimonials-track` is the infinite `@keyframes testimonialScroll` marquee (12 cards = 6 + 6 duplicates). `.testimonial-card` is glass. Stars stay gold (`#FFB800`).
+**Testimonials** (`#testimonials`) — `.testimonials-inner` centered column (heading + marquee). Has a **road animation** (`<svg class="road-svg">`) that now runs **right → left** (waypoints reversed). `.marquee-outer` clips the track and has left/right edge-fade gradients. `.testimonials-track` is the infinite `@keyframes testimonialScroll` marquee (12 cards = 6 + 6 duplicates) with `align-items:stretch` so every card matches the tallest. `.testimonial-card` is glass and a **flex column** (`justify-content:space-between; min-height:200px`) laid out as three fixed zones: `.testimonial-stars` pinned top-left, `.testimonial-quote` flexing to fill the middle (centered), `.testimonial-author-row` pinned bottom-left. Stars stay gold (`#FFB800`).
 
-**Ambassador** (`#ambassador`) — `.ambassador-inner` centered. Has a **road animation** (`<svg class="road-svg">`) shaped as a vertical **S**: it enters above the top edge (`y=-0.10`) and exits below the bottom edge (`y=1.10`), so its ends are cropped by the section's `overflow:hidden` and it appears to slide out from under the top and disappear beneath the bottom. `.amb-feats` is a 3-up flex row of `.amb-feat` glass icon tiles (white SVG strokes). The "Apply Now" button is `.btn-glass`.
+**Ambassador** (`#ambassador`) — `.ambassador-inner` centered. Has a **road animation** (`<svg class="road-svg">`) shaped as a vertical **S**: it enters above the top edge (`y=-0.10`) and exits below the bottom edge (`y=1.10`), so its ends are cropped by the section's `overflow:hidden` and it appears to slide out from under the top and disappear beneath the bottom. `.amb-feats` is a 3-up flex row of `.amb-feat` glass icon tiles (white SVG strokes). The "Apply Now" button is `.btn-glass.btn-apply` — a **clear-glass pill** (rounded `999px`, faint fill over `.btn-glass`'s blur) whose **silver stroke is drawn by a masked `.btn-apply::after` ring** (`padding:0.75px` thickness; a `linear-gradient` silver, masked with `mask-composite:exclude` so only the border shows and no silver bleeds into the clear interior). Hover brightens the ring via `filter:brightness(1.25)` + a soft `box-shadow` glow. The hover transition lives on `.btn-glass.btn-apply` (higher specificity than `.reveal`, which would otherwise override `transition` and make hover snap) and includes the reveal `opacity`/`transform` easing so the entrance still works.
 
 **FAQ** (`#faq`) — an **accordion**. Each `.faq-item` has a clickable `.faq-question` (Fraunces 700 + `.faq-chevron` SVG) and a `.faq-answer`. Open/close is **animated** (the item gets `.open` on JS click): the answer transitions `max-height` (0 → 260px), `opacity`, and `margin-top` over `0.5s cubic-bezier(0.4,0,0.2,1)`, and the chevron rotates 180° over `0.5s`; the question turns `var(--bright-green)` when open (the only non-white heading on the page). `#faq` overrides `.site-section`'s centering with `align-items:flex-start` so the column is **top-anchored** — opening an item pushes the items below it down instead of shoving the title up (`.faq-inner` carries `padding:110px 48px 90px` for navbar clearance). All items start closed. **If a future answer is longer than ~260px it will clip** — bump the `max-height`.
 
 **Download** (`#download`) — a centered **neutral-glass** `.dl-card` (radius 28, `--glass-bg`/`--glass-border` — the green tint was removed), **two-column**: `.dl-info` (title + sub) on the left (`flex:1`), and the white `.dl-qr-card` (QR + App Store badge, `flex:0 0 auto`) on the right. The app screenshot (`final_ss.png` / `.dl-phone-col` / `.dl-screenshot`) was **removed**. Stacks to one centered column `@media (max-width:768px)`. Section is flex-centered in 100vh, so the wave clip never touches the card.
 
-**Route chips (legacy, unused)** — the old `.route-chip` glass-pill CSS (`.route-chip-route` / `.route-chip-meta`) and `#step-*` position rules still exist in the stylesheet but **nothing in the HTML uses them** anymore. The hero's decorative element is now the `road_chip1.png` chip image (see **Hero chip image**). Safe to delete in a cleanup.
-
 **Film grain** — `<div class="grain-overlay">` (last child of `<body>`, `position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0.045`) applies `filter:url(#grain)` — an SVG `feTurbulence` fractal-noise filter (defined in the hidden `<defs>` block) desaturated and `feBlend mode="overlay"`. Gives a subtle analog grain over the whole page. Lower the opacity (≈0.03) if it ever reads too heavy.
 
-**Buttons** — `.btn-primary` (green CTA, Fraunces 700, radius 10) and `.btn-glass` (glass secondary). Hero "Download the app" + nav "Get KOVA" are `<button>`s that `scrollToSection('download')`. Only `.appstore-btn` and the QR image link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
+**Buttons** — `.btn-primary` (green CTA, radius 10) and `.btn-glass` (glass secondary); all buttons use **Inter** (one rule: `button, .btn-primary, .btn-glass, .btn-purdue, .nav-btn { font-family:'Inter', sans-serif }`). The ambassador "Apply Now" adds `.btn-apply` (see Ambassador above). Hero "Download the app" + nav "Get KOVA" are `<button>`s that `scrollToSection('download')`. Only `.appstore-btn` and the QR image link to `https://apps.apple.com/us/app/ridekova/id6757269118`.
 
 **Smooth scrolling (Lenis)** — `lenis@1.1.18`, `lerp: 0.06`, `wheelMultiplier: 0.9`, rAF loop. Skipped under `prefers-reduced-motion`. Exposed as `window.lenis`. `scrollToSection(id)` / `scrollToTop()` route nav scrolls through `lenis.scrollTo(..., NAV_SCROLL)` (`duration:1.6`, easeInOutCubic), falling back to native `window.scrollTo` when Lenis is inactive.
 
@@ -130,7 +127,7 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 
 **Word-by-word body text** — `.word-reveal` splits text into `<span class="word" style="--wi:N">`, fading in reading order (`calc(var(--wi)*0.06s)`).
 
-**Bottom blur overlay** — `<div class="bottom-blur">` (fixed, bottom, `blur(14px)`, mask gradient). Hidden when `scrollY < 50` via `updateBottomBlur()`. Coalesced with `updateNavActive()` into one rAF-throttled scroll listener (`_uiRaf`).
+**Bottom blur overlay** — `<div class="bottom-blur">` (fixed, bottom, `blur(14px)`, mask gradient). Hidden when `scrollY < 50` via `updateBottomBlur()`. Coalesced with `updateNavActive()` and `updateNavGlass()` into one rAF-throttled scroll listener (`_uiRaf`).
 
 **Image loading** — below-fold images use `loading="lazy"`; all use `decoding="async"`. The hero/section backgrounds are CSS, so neither applies.
 
@@ -142,7 +139,7 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
   - `how-it-works`: `[[0,.5],[.28,.3],[.5,.5],[.72,.7],[1,.5]]` — left → right, weaving through the 2×2 grid.
   - `testimonials`: `[[.95,.5],[.7,.68],[.3,.32],[.05,.5]]` — **right → left** (reversed from the original L→R).
   - `ambassador`: `[[.92,-.10],[.45,.20],[.72,.50],[.30,.78],[.10,1.10]]` — a vertical **S** whose ends sit off the top/bottom edges so they're cropped by `overflow:hidden`.
-- **SVG** (built in JS, mask id `road-mask-<id>`): `<defs><mask><path class="road-reveal"/></mask></defs>`, a masked `<g>` with `.road-sheen`/`.road-base`/`.road-center` (shared `d`), and a `.road-brush` `<g>` holding the top-down **car sprite** (white-ish body, green outline/glass/headlights, red taillights, dark wheels; authored nose-toward +x).
+- **SVG** (built in JS, mask id `road-mask-<id>`): `<defs><mask><path class="road-reveal"/></mask></defs>`, a masked `<g>` with `.road-sheen`/`.road-base`/`.road-center` (shared `d`), and a `.road-brush` `<g>` holding the top-down **car sprite** (white-ish body, **grey `#a0a0a0` outline**, **grey `rgba(255,255,255,0.15)` headlights**, **one green-tint window `rgba(44,178,82,0.4)`** as the sole green accent, red taillights, dark wheels; authored nose-toward +x). The `SPRITE` const is **shared by all three roads** (Round 6 toned it down — formerly green outline/glass/headlights). Note the `bg` const that read `--bright-green` is now unused dead code.
 - **Model** — mask-wipe + rAF-lerp driven by scroll progress within the section. `build(inst)` turns the waypoints into a Catmull-Rom path, sets `viewBox = "0 0 W H"`, computes `totalLen` + dasharray/offset, stores `inst.top = absTop(card)` (true document offset) and `inst.h = H`, and fills a 601-point `cache` for cheap `pointAt()`.
 - **Scroll driver** — `updateTargets()` (rAF-throttled on scroll) maps progress off the **section center crossing the viewport**: `center = top + h/2`, `progress = clamp((scrollY - center + innerHeight) / innerHeight, 0, 1)`. So `p=0` when the center is at the viewport bottom, `p=0.5` when the section is centered (most visible), `p=1` when the center reaches the viewport top — the road's start and finish both land on-screen. (This replaced the older `(scrollY - top)/(innerHeight*0.8)` formula, which started the draw too late.)
 - **`tick()`** eases `drawnLen → targetLen` (`SMOOTH ≈ 0.14`), sets `strokeDashoffset`, positions/rotates the car at the tip; the car fades out at the very start and once the road is essentially complete. `resize` → rebuild all.
@@ -177,5 +174,3 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 ## Footer
 
 `<footer>` is dark (`var(--bg)`), `position: relative; z-index: 60` (above the bottom blur). Three flex columns: KOVA logo (inverted white) / `.footer-links` (Terms → `terms.html`, Privacy → `privacy.html`, `help@ridekova.com`) / `.footer-right` (Instagram → `instagram.com/ridekova/`, copyright `© 2026 KOVA Group, Inc. All rights reserved.`, "Built with love, at [purdue.png]"). Footer links Lora, `rgba(255,255,255,0.60)` → `#fff` on hover. `.footer-purdue` is `display:inline` to override the global `img{display:block}` reset.
-</content>
-</invoke>
