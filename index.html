@@ -383,19 +383,23 @@
       box-shadow: 0 -14px 48px rgba(0, 0, 0, 0.55);
     }
     /* Overlap stacking order */
-    #how-it-works { z-index: 10; }
-    #testimonials { z-index: 20; }
-    #ambassador   { z-index: 30; }
-    #faq          { z-index: 40; }
-    #download     { z-index: 50; }
-    footer        { z-index: 60; }
+    #how-it-works     { z-index: 10; }
+    #testimonials     { z-index: 20; }
+    #more-than-a-ride { z-index: 30; }
+    #safety           { z-index: 40; }
+    #ambassador       { z-index: 50; }
+    #faq              { z-index: 60; }
+    #download         { z-index: 70; }
+    footer            { z-index: 80; }
 
     /* Wave top-edge clip per section */
-    #how-it-works { clip-path: url(#wave-how-it-works); }
-    #testimonials { clip-path: url(#wave-testimonials); }
-    #ambassador   { clip-path: url(#wave-ambassador); }
-    #faq          { clip-path: url(#wave-faq); }
-    #download     { clip-path: url(#wave-download); }
+    #how-it-works     { clip-path: url(#wave-how-it-works); }
+    #testimonials     { clip-path: url(#wave-testimonials); }
+    #more-than-a-ride { clip-path: url(#wave-more); }
+    #safety           { clip-path: url(#wave-safety); }
+    #ambassador       { clip-path: url(#wave-ambassador); }
+    #faq              { clip-path: url(#wave-faq); }
+    #download         { clip-path: url(#wave-download); }
 
     /* Layer order: card-bg (0) → ::before overlay (1) → road (2) → chips (3) → content (4) */
     .card-bg {
@@ -443,6 +447,12 @@
     #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg); }
     #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
     #testimonials::before       { background: rgba(0, 0, 0, 0.72); }
+    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; background-color: #0d1117; filter: blur(8px); }
+    #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg'); }
+    #more-than-a-ride::before       { background: rgba(0, 0, 0, 0.72); }
+    #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; background-color: #0d1117; filter: blur(6px); }
+    #safety .card-bg-edge       { background-image: url('safety-bg.jpg'); }
+    #safety::before             { background: rgba(0, 0, 0, 0.75); }
     #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg); }
     #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
     #ambassador::before         { background: rgba(0, 0, 0, 0.75); }
@@ -460,53 +470,178 @@
     .road-reveal { fill: none; stroke: #fff; stroke-width: 56; stroke-linecap: round; stroke-linejoin: round; }
     .road-brush  { transition: opacity 0.25s ease-out; will-change: transform; }
 
-    /* ─── How it works (grid of placeholders) ────────────────── */
+    /* ─── How it works (alternating steps) ───────────────────── */
     .hiw-inner {
       position: relative;
       z-index: 4;
-      max-width: 920px;
       width: 100%;
-      padding: 100px 48px 80px;
+      max-width: 860px;
+      padding: 120px 48px 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 80px;
+    }
+    .hiw-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 72px;
+      width: 100%;
+    }
+    .hiw-step {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      position: relative;
+      width: 88%;
+    }
+    .hiw-step--left {
+      align-self: flex-start;
+      flex-direction: row;
+    }
+    .hiw-step--right {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .hiw-step-num {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(4rem, 8vw, 7rem);
+      font-weight: 700;
+      color: rgba(255,255,255,0.08);
+      line-height: 1;
+      position: absolute;
+      top: -20px;
+      left: -24px;
+      pointer-events: none;
+    }
+    .hiw-step--right .hiw-step-num {
+      left: auto;
+      right: -24px;
+    }
+    /* App-element shots (small UI snippets, randomly tilted, with depth) */
+    .app-shot {
+      display: block;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35), 0 24px 52px rgba(0,0,0,0.42);
+    }
+    .hiw-step-screen { flex-shrink: 0; }
+    .hiw-shot { width: 260px; max-width: 100%; }
+    .hiw-step-text {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hiw-step-heading {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+    }
+    .hiw-step-desc {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      max-width: 320px;
+    }
+
+    /* ─── More than a ride (bento) ───────────────────────────── */
+    .mtr-inner {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      max-width: 900px;
+      padding: 120px 48px 100px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 56px;
-      text-align: center;
     }
-    .hiw-grid {
+    .mtr-bento {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 48px 64px;
+      grid-template-rows: 1fr 1fr;
+      gap: 16px;
       width: 100%;
-      text-align: left;
+      min-height: 420px;
     }
-    .hiw-item {
+    .mtr-card {
+      position: relative;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      text-align: center;
-      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
     }
-    .hiw-item-label {
+    .mtr-shot { position: absolute; top: 22px; right: 22px; width: 116px; }
+    .mtr-card--earn .mtr-shot { width: 150px; }
+    .mtr-card--earn      { grid-column: 1; grid-row: 1 / 3; }
+    .mtr-card--community { grid-column: 2; grid-row: 1; }
+    .mtr-card--perks     { grid-column: 2; grid-row: 2; }
+    .mtr-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.40);
+    }
+    .mtr-heading {
       font-family: 'Fraunces', serif;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: #fff;
-      text-align: center;
+      line-height: 1.2;
     }
-    .hiw-img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 14px;
-      box-shadow: 0 12px 34px rgba(0,0,0,0.40);
-    }
-    .hiw-item-desc {
+    .mtr-card--earn .mtr-heading { font-size: 2rem; }
+    .mtr-desc {
       font-family: 'Lora', serif;
-      font-size: 0.92rem;
-      color: rgba(255,255,255,0.55);
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.50);
       line-height: 1.65;
-      text-align: center;
+    }
+
+    /* ─── Safety (pillars) ───────────────────────────────────── */
+    .safety-inner {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      max-width: 900px;
+      padding: 120px 48px 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+    }
+    .safety-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      width: 100%;
+    }
+    .safety-pillar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .safety-shot { width: 74%; align-self: center; }
+    .safety-pillar-heading {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .safety-pillar-desc {
+      font-family: 'Lora', serif;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
     }
 
     /* ─── Testimonials card ──────────────────────────────────── */
@@ -716,9 +851,9 @@
       gap: 20px;
     }
     .footer-logo { height: 30px; width: auto; filter: brightness(0) invert(1); }
-    .footer-copy { font-family: 'Lora', serif; font-size: 13px; color: rgba(255,255,255,0.40); }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 13px; color: rgba(255,255,255,0.40); }
     .footer-links { display: flex; gap: 28px; }
-    .footer-link { font-family: 'Lora', serif; font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.60); transition: color 0.2s; }
+    .footer-link { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.60); transition: color 0.2s; }
     .footer-link:hover { color: #fff; }
     .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
     .footer-social { color: rgba(255,255,255,0.60); transition: color 0.2s; line-height: 0; }
@@ -786,8 +921,17 @@
       .nav-logo { height: 24px; }
       .nav-btn { font-size: 12px; padding: 7px 10px; }
 
-      .hiw-grid { grid-template-columns: 1fr; gap: 36px; }
-      .hiw-inner { padding: 80px 24px 60px; }
+      .hiw-step, .hiw-step--left, .hiw-step--right { flex-direction: column; align-self: center; width: 100%; }
+      .hiw-shot { width: 78%; }
+      .hiw-inner { padding: 80px 24px 60px; gap: 56px; }
+      .hiw-step-num { font-size: 3.5rem; top: -12px; left: 0; }
+
+      .mtr-bento { grid-template-columns: 1fr; grid-template-rows: auto; min-height: unset; }
+      .mtr-card--earn, .mtr-card--community, .mtr-card--perks { grid-column: 1; grid-row: auto; }
+      .mtr-inner { padding: 80px 24px 60px; }
+
+      .safety-pillars { grid-template-columns: 1fr; }
+      .safety-inner { padding: 80px 24px 60px; }
 
       .hero-chip { display: none; }
 
@@ -834,6 +978,12 @@
       </clipPath>
       <clipPath id="wave-download" clipPathUnits="objectBoundingBox">
         <path d="M0,0.015 C0.08,0.028 0.18,0.038 0.28,0.02 C0.38,0.011 0.49,0.026 0.59,0.014 C0.68,0.034 0.78,0.024 0.87,0.037 C0.93,0.019 0.97,0.029 1,0.022 L1,1 L0,1 Z"/>
+      </clipPath>
+      <clipPath id="wave-more" clipPathUnits="objectBoundingBox">
+        <path d="M0,0.028 C0.08,0.012 0.16,0.035 0.27,0.019 C0.37,0.006 0.48,0.03 0.58,0.016 C0.69,0.034 0.79,0.013 0.88,0.029 C0.94,0.02 0.97,0.034 1,0.024 L1,1 L0,1 Z"/>
+      </clipPath>
+      <clipPath id="wave-safety" clipPathUnits="objectBoundingBox">
+        <path d="M0,0.018 C0.07,0.035 0.16,0.014 0.26,0.031 C0.36,0.04 0.47,0.016 0.56,0.028 C0.66,0.012 0.76,0.033 0.85,0.017 C0.92,0.03 0.97,0.015 1,0.026 L1,1 L0,1 Z"/>
       </clipPath>
       <filter id="grain" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" result="noise"/>
@@ -894,30 +1044,43 @@
   <section id="how-it-works" class="site-section">
     <div class="card-bg"></div>
     <div class="card-bg-edge"></div>
-    <svg class="road-svg" aria-hidden="true"></svg>
     <div class="hiw-inner">
-      <h2 class="section-title">How it works</h2>
-      <div class="hiw-grid">
-        <div class="hiw-item">
-          <span class="hiw-item-label">Find a ride</span>
-          <img class="hiw-img" src="find_a_ride.png" alt="A posted ride card from a verified Purdue student" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Browse rides from verified Purdue students. Text the driver, agree on a price, done. No payment processor in the middle.</p>
+      <h2 class="section-title reveal">How it works</h2>
+      <div class="hiw-steps">
+
+        <div class="hiw-step hiw-step--left reveal">
+          <div class="hiw-step-num">01</div>
+          <div class="hiw-step-screen">
+            <img class="app-shot hiw-shot" src="find_a_ride.png" alt="A posted ride from a verified Purdue student" style="transform:rotate(-8deg)" loading="lazy" decoding="async" />
+          </div>
+          <div class="hiw-step-text">
+            <h3 class="hiw-step-heading">Find a ride</h3>
+            <p class="hiw-step-desc">Browse rides posted by verified Purdue students.</p>
+          </div>
         </div>
-        <div class="hiw-item">
-          <span class="hiw-item-label">Make a few bucks</span>
-          <img class="hiw-img" src="make_bucks.png" alt="A ride request showing a driver can earn money" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Post your ride, work out a price with your riders, keep everything you make.</p>
+
+        <div class="hiw-step hiw-step--right reveal">
+          <div class="hiw-step-num">02</div>
+          <div class="hiw-step-screen">
+            <img class="app-shot hiw-shot" src="chat_price.png" alt="Chat thread agreeing on a ride price" style="transform:rotate(6deg)" loading="lazy" decoding="async" />
+          </div>
+          <div class="hiw-step-text">
+            <h3 class="hiw-step-heading">Settle the price</h3>
+            <p class="hiw-step-desc">Text the driver directly and agree on what works.</p>
+          </div>
         </div>
-        <div class="hiw-item">
-          <span class="hiw-item-label">Find your crew</span>
-          <img class="hiw-img" src="community.png" alt="An Airport Crew community card students can join" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Find people heading the same direction as you.</p>
+
+        <div class="hiw-step hiw-step--left reveal">
+          <div class="hiw-step-num">03</div>
+          <div class="hiw-step-screen">
+            <img class="app-shot hiw-shot" src="ride_live.png" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-7deg)" loading="lazy" decoding="async" />
+          </div>
+          <div class="hiw-step-text">
+            <h3 class="hiw-step-heading">Ride live and stay safe</h3>
+            <p class="hiw-step-desc">Track your trip in real time with the built-in safety toolkit.</p>
+          </div>
         </div>
-        <div class="hiw-item">
-          <span class="hiw-item-label">Unlock perks</span>
-          <img class="hiw-img" src="perks.png" alt="A Celsius X KOVA perks card with free samples and sponsored rides" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">KOVA partners throw in actual discounts just for riding.</p>
-        </div>
+
       </div>
     </div>
   </section>
@@ -1091,6 +1254,69 @@
       </div>
     </div>
 
+    <!-- More than a ride -->
+    <section id="more-than-a-ride" class="site-section">
+      <div class="card-bg"></div>
+      <div class="card-bg-edge"></div>
+      <div class="mtr-inner">
+        <h2 class="section-title reveal">More than a ride</h2>
+        <div class="mtr-bento">
+
+          <div class="mtr-card mtr-card--earn reveal">
+            <img class="app-shot mtr-shot" src="make_bucks.png" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
+            <span class="mtr-label">Earn</span>
+            <h3 class="mtr-heading">Make a few bucks</h3>
+            <p class="mtr-desc">Post your ride, work out a price with your riders, keep everything you make.</p>
+          </div>
+
+          <div class="mtr-card mtr-card--community reveal" style="--reveal-delay:0.1s">
+            <img class="app-shot mtr-shot" src="community.png" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
+            <span class="mtr-label">Community</span>
+            <h3 class="mtr-heading">Find your crew</h3>
+            <p class="mtr-desc">Find people heading the same direction as you.</p>
+          </div>
+
+          <div class="mtr-card mtr-card--perks reveal" style="--reveal-delay:0.2s">
+            <img class="app-shot mtr-shot" src="perks.png" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
+            <span class="mtr-label">Perks</span>
+            <h3 class="mtr-heading">Unlock perks</h3>
+            <p class="mtr-desc">KOVA partners throw in actual discounts just for riding.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Safety -->
+    <section id="safety" class="site-section">
+      <div class="card-bg"></div>
+      <div class="card-bg-edge"></div>
+      <div class="safety-inner">
+        <h2 class="section-title reveal">Built to keep you safe</h2>
+        <div class="safety-pillars">
+
+          <div class="safety-pillar reveal">
+            <img class="app-shot safety-shot" src="student_seal.png" alt="Verified-student seal" style="transform:rotate(-10deg)" loading="lazy" decoding="async" />
+            <h3 class="safety-pillar-heading">Verified students</h3>
+            <p class="safety-pillar-desc">Every account needs a .edu email to sign up. No exceptions.</p>
+          </div>
+
+          <div class="safety-pillar reveal" style="--reveal-delay:0.1s">
+            <img class="app-shot safety-shot" src="stars.png" alt="Trip rating stars" style="transform:rotate(12deg)" loading="lazy" decoding="async" />
+            <h3 class="safety-pillar-heading">Ratings and reviews</h3>
+            <p class="safety-pillar-desc">Riders and drivers both rate each trip. Profiles build trust over time.</p>
+          </div>
+
+          <div class="safety-pillar reveal" style="--reveal-delay:0.2s">
+            <img class="app-shot safety-shot" src="profile.png" alt="A rider profile with photo, rating and trip history" style="transform:rotate(-14deg)" loading="lazy" decoding="async" />
+            <h3 class="safety-pillar-heading">Check the profile</h3>
+            <p class="safety-pillar-desc">See who you're riding with before you commit — photo, rating, trip history.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Ambassador -->
     <div class="site-section" id="ambassador">
       <div class="card-bg"></div>
@@ -1135,7 +1361,7 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="faq-inner">
-        <h2 class="section-title letter-reveal">FAQ</h2>
+        <h2 class="section-title letter-reveal">Q&amp;A</h2>
 
         <div class="faq-list">
           <div class="faq-item">
@@ -1379,7 +1605,6 @@
 
       /* Waypoints per card, as fractions of card offsetWidth × offsetHeight. */
       const ROADS = {
-        'how-it-works': [[0.00, 0.50], [0.28, 0.30], [0.50, 0.50], [0.72, 0.70], [1.00, 0.50]],
         'testimonials': [[0.95, 0.50], [0.70, 0.68], [0.30, 0.32], [0.05, 0.50]],
         'ambassador':   [[0.92, -0.10], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
       };
