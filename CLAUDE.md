@@ -163,6 +163,7 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 ## Assets
 
 - `KOVA logo.png` — black "KOVA" text + bright green steering wheel (inverted to white in nav/footer)
+- `favicon.png` — browser-tab icon: just the **green steering wheel** (cropped from `KOVA logo.png`, centered on a transparent 256×256 square). Linked in `<head>` via `<link rel="icon">` + `apple-touch-icon`. The tab **title is `Ride KOVA`**.
 - `drive pic.jpg` — hero background (was also how-it-works; now hero only)
 - `hiw-bg.jpg` — how-it-works background
 - `concert pic.jpg` — testimonials background (was also faq; now testimonials only). **Downscaled** 5184×2540 (3.3 MB) → 2560×1254 (~480 KB) — it was a 13-megapixel outlier causing a first-scroll hitch into testimonials
