@@ -597,8 +597,8 @@
     }
     .ambassador-inner .section-title { color: #fff; margin-bottom: 10px; }
     .ambassador-inner .section-sub   { color: rgba(255,255,255,0.60); font-family: 'Lora', serif; font-size: 1.05rem; }
-    .amb-feats { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
-    .amb-feat { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 200px; }
+    .amb-feats { display: flex; gap: 64px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+    .amb-feat { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; width: 170px; }
     .amb-feat-icon {
       width: 52px; height: 52px;
       border-radius: 14px;
@@ -880,11 +880,11 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
-      <p class="hero-sub">Verified .edu rideshare with no commission. Drivers set their own price and keep every dollar.</p>
+      <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission, no middleman.</p>
       <div class="hero-ctas">
         <button class="btn-primary" onclick="scrollToSection('download')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
-          Download the app
+          Pull up
         </button>
       </div>
     </div>
@@ -901,22 +901,22 @@
         <div class="hiw-item">
           <span class="hiw-item-label">Find a ride</span>
           <img class="hiw-img" src="find_a_ride.png" alt="A posted ride card from a verified Purdue student" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Browse rides posted by verified Purdue students and book in seconds.</p>
+          <p class="hiw-item-desc">Browse rides from verified Purdue students. Text the driver, agree on a price, done. No payment processor in the middle.</p>
         </div>
         <div class="hiw-item">
           <span class="hiw-item-label">Make a few bucks</span>
           <img class="hiw-img" src="make_bucks.png" alt="A ride request showing a driver can earn money" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Post your own ride and keep every dollar. Zero commission.</p>
+          <p class="hiw-item-desc">Post your ride, work out a price with your riders, keep everything you make.</p>
         </div>
         <div class="hiw-item">
-          <span class="hiw-item-label">Join communities</span>
+          <span class="hiw-item-label">Find your crew</span>
           <img class="hiw-img" src="community.png" alt="An Airport Crew community card students can join" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Connect with people who share your route, major, or vibe.</p>
+          <p class="hiw-item-desc">Find people heading the same direction as you.</p>
         </div>
         <div class="hiw-item">
           <span class="hiw-item-label">Unlock perks</span>
           <img class="hiw-img" src="perks.png" alt="A Celsius X KOVA perks card with free samples and sponsored rides" loading="lazy" decoding="async" />
-          <p class="hiw-item-desc">Discounts and deals from KOVA partners, just for riding.</p>
+          <p class="hiw-item-desc">KOVA partners throw in actual discounts just for riding.</p>
         </div>
       </div>
     </div>
@@ -929,8 +929,8 @@
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="testimonials-inner">
         <div class="testimonials-heading">
-          <h2 class="section-title letter-reveal">From riders at Purdue</h2>
-          <p class="section-sub word-reveal">Real students, real rides.</p>
+          <h2 class="section-title letter-reveal">From the people using it</h2>
+          <p class="section-sub word-reveal">No paid reviews.</p>
         </div>
         <div class="marquee-outer">
           <div class="testimonials-track">
@@ -938,7 +938,7 @@
             <!-- Card 1 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"I was going home to Chicago for break and posted a ride on a whim. Ended up with two passengers who I still talk to. Way better than driving alone for four hours."</p>
+              <p class="testimonial-quote">"Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
@@ -951,7 +951,7 @@
             <!-- Card 2 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Honestly didn't expect much. Downloaded it, found a ride to Indy the next morning, and the driver was a senior in CS who gave me a referral for an internship. That was not on my bingo card."</p>
+              <p class="testimonial-quote">"Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
@@ -964,7 +964,7 @@
             <!-- Card 3 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★</div>
-              <p class="testimonial-quote">"Split a ride to O'Hare with three other people and paid like $30 total. Uber was quoting me $140. Pretty obvious choice."</p>
+              <p class="testimonial-quote">"Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
@@ -977,7 +977,7 @@
             <!-- Card 4 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"I drive back to Michigan every few weeks and used to just put it out on GroupMe. KOVA is way cleaner — I find riders in like ten minutes and cover most of my gas."</p>
+              <p class="testimonial-quote">"Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
                 <div>
@@ -990,7 +990,7 @@
             <!-- Card 5 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"The .edu verification actually matters to me. I feel better getting in a car with someone I know is a student. It's a small thing but it changes the vibe completely."</p>
+              <p class="testimonial-quote">"The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
                 <div>
@@ -1003,7 +1003,7 @@
             <!-- Card 6 -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Posted my first ride nervous it'd be awkward. It wasn't. We talked the whole way to Columbus. One of those people ended up being in my study group all semester."</p>
+              <p class="testimonial-quote">"Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
                 <div>
@@ -1016,7 +1016,7 @@
             <!-- Duplicates for seamless infinite loop -->
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"I was going home to Chicago for break and posted a ride on a whim. Ended up with two passengers who I still talk to. Way better than driving alone for four hours."</p>
+              <p class="testimonial-quote">"Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
@@ -1028,7 +1028,7 @@
 
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Honestly didn't expect much. Downloaded it, found a ride to Indy the next morning, and the driver was a senior in CS who gave me a referral for an internship. That was not on my bingo card."</p>
+              <p class="testimonial-quote">"Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
@@ -1040,7 +1040,7 @@
 
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★</div>
-              <p class="testimonial-quote">"Split a ride to O'Hare with three other people and paid like $30 total. Uber was quoting me $140. Pretty obvious choice."</p>
+              <p class="testimonial-quote">"Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
@@ -1052,7 +1052,7 @@
 
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"I drive back to Michigan every few weeks and used to just put it out on GroupMe. KOVA is way cleaner — I find riders in like ten minutes and cover most of my gas."</p>
+              <p class="testimonial-quote">"Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
                 <div>
@@ -1064,7 +1064,7 @@
 
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"The .edu verification actually matters to me. I feel better getting in a car with someone I know is a student. It's a small thing but it changes the vibe completely."</p>
+              <p class="testimonial-quote">"The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
                 <div>
@@ -1076,7 +1076,7 @@
 
             <div class="testimonial-card">
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Posted my first ride nervous it'd be awkward. It wasn't. We talked the whole way to Columbus. One of those people ended up being in my study group all semester."</p>
+              <p class="testimonial-quote">"Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester."</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
                 <div>
@@ -1099,7 +1099,7 @@
       <div class="ambassador-inner">
         <div>
           <h2 class="section-title letter-reveal">Become an Ambassador</h2>
-          <p class="section-sub word-reveal">KOVA Ambassadors are the people building this thing on the ground. You grow the community at Purdue, and we make it worth your while.</p>
+          <p class="section-sub word-reveal">If you're already telling people about KOVA, let's make it real. Grow it on campus, we've got you covered.</p>
         </div>
 
         <div class="amb-feats">
@@ -1107,19 +1107,19 @@
             <div class="amb-feat-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
-            <span class="amb-feat-label">KOVA merch &amp; swag</span>
+            <span class="amb-feat-label">Free merch</span>
           </div>
           <div class="amb-feat reveal" style="--reveal-delay:0.12s">
             <div class="amb-feat-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
             </div>
-            <span class="amb-feat-label">Resume-worthy experience</span>
+            <span class="amb-feat-label">Real campus experience</span>
           </div>
           <div class="amb-feat reveal" style="--reveal-delay:0.24s">
             <div class="amb-feat-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.70)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
-            <span class="amb-feat-label">Help build KOVA at Purdue</span>
+            <span class="amb-feat-label">Build something from scratch</span>
           </div>
         </div>
 
@@ -1140,6 +1140,13 @@
         <div class="faq-list">
           <div class="faq-item">
             <div class="faq-question">
+              How do I pay?
+              <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="faq-answer">Drivers post a starting price, you text them directly to work out the details. Pay however works for you, Venmo, cash, whatever. KOVA doesn't handle payments or take a cut.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
               Is KOVA only for Purdue students right now?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
@@ -1150,14 +1157,14 @@
               How does pricing work if there's no commission?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div class="faq-answer">Drivers set their own price per seat when they post a ride. Riders see the full cost upfront, no hidden fees. Whatever the driver charges, they keep.</div>
+            <div class="faq-answer">Drivers set their own price per seat. Riders see the full cost before confirming. The driver keeps all of it.</div>
           </div>
           <div class="faq-item">
             <div class="faq-question">
               Is it safe to ride with someone I don't know?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div class="faq-answer">Every account is verified with a .edu email. Riders and drivers have profiles with photos and ratings. You can see who you're riding with before you confirm.</div>
+            <div class="faq-answer">Every account needs a .edu email to sign up. Riders and drivers both have profiles, photos, and ratings. You can see who you're riding with before you commit.</div>
           </div>
         </div>
       </div>
@@ -1169,8 +1176,8 @@
       <div class="card-bg-edge"></div>
       <div class="dl-card reveal">
         <div class="dl-info">
-          <h2 class="section-title letter-reveal">Take KOVA everywhere.</h2>
-          <p class="section-sub">Student-verified riders and drivers, no commission, and a community built at Purdue. Download on the App Store.</p>
+          <h2 class="section-title letter-reveal">Get the app.</h2>
+          <p class="section-sub">Rides between verified Purdue students, zero commission. Free on the App Store.</p>
         </div>
         <div class="dl-qr-card">
           <img
