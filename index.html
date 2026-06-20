@@ -317,6 +317,15 @@
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.4s forwards;
     }
+    .hero-title .hl {
+      /* Top edge of the green brought down 20px; bottom edge unchanged */
+      background-image: linear-gradient(to bottom, transparent 20px, var(--bright-green) 20px);
+      color: #0D1117;
+      padding: 0.02em 0.14em;
+      border-radius: 0;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
     .hero-sub {
       font-family: 'Lora', serif;
       font-size: clamp(1rem, 2.2vw, 1.1rem);
@@ -485,12 +494,12 @@
       color: #fff;
       text-align: center;
     }
-    .hiw-placeholder {
+    .hiw-img {
       width: 100%;
-      aspect-ratio: 4/3;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 16px;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      box-shadow: 0 12px 34px rgba(0,0,0,0.40);
     }
     .hiw-item-desc {
       font-family: 'Lora', serif;
@@ -870,7 +879,7 @@
         As seen at Purdue
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <h1 class="hero-title">Your world just<br /><span>got bigger.</span></h1>
+      <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
       <p class="hero-sub">Verified .edu rideshare with no commission. Drivers set their own price and keep every dollar.</p>
       <div class="hero-ctas">
         <button class="btn-primary" onclick="scrollToSection('download')">
@@ -891,22 +900,22 @@
       <div class="hiw-grid">
         <div class="hiw-item">
           <span class="hiw-item-label">Find a ride</span>
-          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <img class="hiw-img" src="find_a_ride.png" alt="A posted ride card from a verified Purdue student" loading="lazy" decoding="async" />
           <p class="hiw-item-desc">Browse rides posted by verified Purdue students and book in seconds.</p>
         </div>
         <div class="hiw-item">
           <span class="hiw-item-label">Make a few bucks</span>
-          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <img class="hiw-img" src="make_bucks.png" alt="A ride request showing a driver can earn money" loading="lazy" decoding="async" />
           <p class="hiw-item-desc">Post your own ride and keep every dollar. Zero commission.</p>
         </div>
         <div class="hiw-item">
           <span class="hiw-item-label">Join communities</span>
-          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <img class="hiw-img" src="community.png" alt="An Airport Crew community card students can join" loading="lazy" decoding="async" />
           <p class="hiw-item-desc">Connect with people who share your route, major, or vibe.</p>
         </div>
         <div class="hiw-item">
           <span class="hiw-item-label">Unlock perks</span>
-          <div class="hiw-placeholder" aria-label="App element placeholder"></div>
+          <img class="hiw-img" src="perks.png" alt="A Celsius X KOVA perks card with free samples and sponsored rides" loading="lazy" decoding="async" />
           <p class="hiw-item-desc">Discounts and deals from KOVA partners, just for riding.</p>
         </div>
       </div>
