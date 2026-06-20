@@ -6,7 +6,7 @@
   <title>KOVA — Your world just got bigger</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&family=DM+Sans:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
   <style>
     /* ─── Tokens ─────────────────────────────────────────────── */
     :root {
@@ -300,7 +300,7 @@
       z-index: 5;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 4px;
     }
     .hero-stat-number {
@@ -651,9 +651,226 @@
     .route-chip-route { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.90); }
     .route-chip-meta  { font-family: 'Lora', serif; font-size: 11px; color: rgba(255,255,255,0.50); }
 
-    /* Hero chips */
-    #hero .route-chip.chip-1 { top: 28%; left: 6%;  transform: rotate(-3deg); opacity: 0.40; }
-    #hero .route-chip.chip-2 { bottom: 22%; right: 7%; transform: rotate(2deg); opacity: 0.40; }
+    /* ── Hero route cards (glassmorphism, from Figma) ── */
+    .route-card {
+      position: absolute;
+      z-index: 5;
+      width: 268px;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(44, 178, 82, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Positioning + rotation */
+    #card-ella {
+      left: 4%;
+      top: 35%;
+      transform: rotate(-3deg);
+    }
+    #card-nick {
+      right: 4%;
+      bottom: 14%;
+      transform: rotate(3deg);
+    }
+
+    /* "Looking for ride" badge */
+    .rc-badge {
+      position: absolute;
+      top: 11px;
+      right: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(197, 255, 115, 0.30);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 9px;
+      color: #2cb252;
+      white-space: nowrap;
+    }
+    .rc-badge-icon {
+      width: 11px;
+      height: 11px;
+    }
+
+    /* Header */
+    .rc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 100px; /* clear badge */
+    }
+    .rc-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid rgba(54, 103, 68, 0.8);
+    }
+    .rc-avatar img {
+      width: 100%;
+      height: 150%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .rc-name-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .rc-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      line-height: 1;
+    }
+    .rc-rating {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .rc-rating strong {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+    .rc-star {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Route */
+    .rc-route {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rc-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2cb252;
+      flex-shrink: 0;
+    }
+    .rc-from, .rc-to {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+    }
+    .rc-arrow {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Quote */
+    .rc-quote {
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.5;
+    }
+
+    /* Mutuals */
+    .rc-mutuals {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rc-avatar-stack {
+      display: flex;
+    }
+    .rc-mini-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      object-fit: cover;
+      margin-right: -7px;
+    }
+    .rc-mini-avatar:last-child {
+      margin-right: 0;
+    }
+    .rc-people-icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+      margin-left: 4px;
+    }
+    .rc-mutuals-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* Footer */
+    .rc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      padding-top: 8px;
+      gap: 6px;
+    }
+    .rc-date {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .rc-date-day {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .rc-date-time {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .rc-meta {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .rc-icon {
+      width: 13px;
+      height: 13px;
+      opacity: 0.7;
+    }
+    .rc-price {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #f8f8f6;
+      background: #366744;
+      border-radius: 999px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
     /* Step chips */
     #step-1 .route-chip { top: 24%; left: 8%;   transform: rotate(-3deg); opacity: 0.55; }
     #step-2 .route-chip { top: 26%; right: 8%;  transform: rotate(3deg);  opacity: 0.50; }
@@ -749,7 +966,7 @@
       .hiw-grid { grid-template-columns: 1fr; gap: 36px; }
       .hiw-inner { padding: 80px 24px 60px; }
 
-      .route-chip { display: none; }
+      .route-chip, .hero-chip { display: none; }
 
       .amb-feats { flex-direction: column; align-items: center; }
       .faq-inner, .ambassador-inner { padding: 80px 20px; }
@@ -823,7 +1040,7 @@
       <span class="hero-stat-label">commission taken</span>
     </div>
     <div class="hero-stat" style="top:18%;right:8%;transform:rotate(13deg)">
-      <span class="hero-stat-number">2,400+</span>
+      <span class="hero-stat-number">500+</span>
       <span class="hero-stat-label">Purdue students</span>
     </div>
     <div class="hero-stat" style="bottom:12%;left:10%;transform:rotate(-7deg)">
@@ -831,14 +1048,7 @@
       <span class="hero-stat-label">average rating</span>
     </div>
 
-    <div class="route-chip chip-1" aria-hidden="true">
-      <span class="route-chip-route">[Origin] → [Destination]</span>
-      <span class="route-chip-meta">[X] seats · $[XX]/seat · [Day] [Time]</span>
-    </div>
-    <div class="route-chip chip-2" aria-hidden="true">
-      <span class="route-chip-route">[Origin] → [Destination]</span>
-      <span class="route-chip-meta">[X] seats · $[XX]/seat</span>
-    </div>
+    <img class="hero-chip" src="road_chip1.png" alt="" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;transform:rotate(3deg)" />
 
     <div class="hero-content">
       <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="btn-purdue" target="_blank" rel="noopener noreferrer">

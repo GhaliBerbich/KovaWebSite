@@ -41,7 +41,7 @@ Everything is in `index.html`, organized top-to-bottom:
 5. **Per-section CSS** (how-it-works grid, road, testimonials, ambassador, faq, download, route chips)
 6. **Footer + animations + reduced-motion + responsive** CSS
 7. **Hidden wave-clip SVG** — first element in `<body>`; `<defs>` of 5 wave `clipPath`s (`objectBoundingBox`) + the `#grain` film-grain `<filter>`
-8. **HTML** — Navbar → `#hero` (with floating stats + route chips) → `#how-it-works` → `#testimonials` → `#ambassador` → `#faq` → `#download` → `<footer>`
+8. **HTML** — Navbar → `#hero` (with floating stats + a `road_chip1.png` chip image) → `#how-it-works` → `#testimonials` → `#ambassador` → `#faq` → `#download` → `<footer>`
 9. **JS** — Lenis, nav active + bottom blur, letter/word splitters, reveal observer, FAQ accordion, road animation (how-it-works + testimonials + ambassador)
 10. **`<div class="bottom-blur">`** then **`<div class="grain-overlay">`** — last two elements before `</body>`
 
@@ -67,6 +67,8 @@ Everything is in `index.html`, organized top-to-bottom:
 | **Lora** (serif; 400/500/600 + italic 400) | Body text, descriptions, testimonial quotes, FAQ answers, hero-stat labels, footer, route-chip meta |
 
 Loaded via Google Fonts CDN. Headings use `'Fraunces', serif`; body uses `'Lora', serif`. (Round 3 switched the display face from Space Grotesk to Fraunces; Round 4 switched the body face from Figtree to Lora — there is no Figtree or Syne in the codebase anymore.) The `Agrandir - Free For Personal Use/` package in the repo is **not wired up** (commercial license required for a public site).
+
+> The Google Fonts link also loads **Plus Jakarta Sans** and **DM Sans**. These were added for an HTML/CSS version of the hero route cards that was later reverted to a static image — they're now only referenced by the **leftover unused** `.route-card` / `.rc-*` CSS block. Safe to drop the fonts + that CSS in a future cleanup; left in place for now.
 
 ## Layout: site-sections, overlap & waves (core)
 
@@ -98,9 +100,11 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 
 **Navbar** — `position: fixed`, glass (`backdrop-filter: blur(24px)`, faint border), `border-radius: 16px`, 3-column grid (logo / centered `.nav-links` / Get KOVA). Fraunces 600 links; hover and `.active` (current section) go to `#fff`, `.active` also bold. The logo keeps `filter: invert(1) hue-rotate(180deg)` permanently (white text, green wheel). Nav targets: How it works → `how-it-works`, Testimonials → `testimonials`, Ambassador Program → `ambassador`, Get KOVA → `download`. Active state is set by `updateNavActive()` using `data-target` + `absTop`.
 
-**Hero** — `#hero` (z-index 1; not a `.site-section`, no wave clip). `drive pic.jpg` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)`). Title `.hero-title` is solid white Fraunces `clamp(3rem,7vw,5.5rem)`. `.btn-purdue` eyebrow is a glass pill (Lora 500, green-tinted border, white "New" badge, links to the Purdue article). Two floating `.route-chip`s sit at the edges (z-index 1, below content).
+**Hero** — `#hero` (z-index 1; not a `.site-section`, no wave clip). `drive pic.jpg` background + dot grid (`.hero-bg::after`) + dark overlay (`.hero-bg::before`, `rgba(0,0,0,0.35)`). Title `.hero-title` is solid white Fraunces `clamp(3rem,7vw,5.5rem)`. `.btn-purdue` eyebrow is a glass pill (Lora 500, green-tinted border, white "New" badge, links to the Purdue article). One decorative **chip image** sits at the lower-right (see below).
 
-**Hero floating stats** — three `.hero-stat`s are absolutely positioned (z-index 5) over the hero photo, scattered into open corners and each given a random-looking tilt via an inline `transform: rotate(...)`: **0% commission taken** (top-left, `-12deg`) · **2,400+ Purdue students** (top-right, `13deg`) · **4.9★ average rating** (bottom-left, `-7deg`). Positions are chosen to clear the two route chips and the centered CTA. Each has a big Fraunces `.hero-stat-number` and a small uppercase Lora `.hero-stat-label`. Hidden `@media (max-width:768px)`. (These replaced the old standalone `#stat-bar` block, which is gone.)
+**Hero chip image** — a single `<img class="hero-chip" src="road_chip1.png">` (a screenshot of an in-app ride chip) is absolutely positioned at the lower-right of the hero (`right:4%; bottom:14%; width:325px; rotate(3deg)`, z-index 5) via an inline `style`. Hidden `@media (max-width:768px)` (`.route-chip, .hero-chip { display:none }`). This replaced an earlier pair of HTML/CSS glassmorphism route cards (`.route-card`/`.rc-*`) and, before that, the original glass-pill `.route-chip` placeholders — both now removed from the HTML (the `.route-card`/`.rc-*` and `.route-chip` CSS still lingers, unused).
+
+**Hero floating stats** — three `.hero-stat`s are absolutely positioned (z-index 5) over the hero photo, scattered into open corners and each given a random-looking tilt via an inline `transform: rotate(...)`: **0% commission taken** (top-left, `-12deg`) · **500+ Purdue students** (top-right, `13deg`) · **4.9★ average rating** (bottom-left, `-7deg`). Positions clear the chip image and the centered CTA. Each has a big Fraunces `.hero-stat-number` over a small uppercase Lora `.hero-stat-label`; `.hero-stat` is `align-items:center` so the number is centered above the label. Hidden `@media (max-width:768px)`. (These replaced the old standalone `#stat-bar` block, which is gone.)
 
 **How it works** (`#how-it-works`) — one section (was 4 cards). `.hiw-inner` is a centered column (`padding:100px 48px 80px`) holding the `.section-title` and a `.hiw-grid` (2×2; 1-col under 768px). Each `.hiw-item` = `.hiw-item-label` (Fraunces 700) + `.hiw-placeholder` (4:3 glass box, decorative app-element placeholder) + `.hiw-item-desc` (Lora). The 4 items: **Find a ride**, **Join communities**, **Unlock perks**, **Make a few bucks**. Has a **road animation** (`<svg class="road-svg">`) weaving through the grid; no route chips here.
 
@@ -112,7 +116,7 @@ The content sections (`#how-it-works`, `#testimonials`, `#ambassador`, `#faq`, `
 
 **Download** (`#download`) — a centered **neutral-glass** `.dl-card` (radius 28, `--glass-bg`/`--glass-border` — the green tint was removed), **two-column**: `.dl-info` (title + sub) on the left (`flex:1`), and the white `.dl-qr-card` (QR + App Store badge, `flex:0 0 auto`) on the right. The app screenshot (`final_ss.png` / `.dl-phone-col` / `.dl-screenshot`) was **removed**. Stacks to one centered column `@media (max-width:768px)`. Section is flex-centered in 100vh, so the wave clip never touches the card.
 
-**Route chips** — `.route-chip` glass pills (`.route-chip-route` Fraunces 700 + `.route-chip-meta` Lora). Decorative placeholders. **Hero has 2** (the only ones left after the step cards were removed). Hidden `@media (max-width:768px)`.
+**Route chips (legacy, unused)** — the old `.route-chip` glass-pill CSS (`.route-chip-route` / `.route-chip-meta`) and `#step-*` position rules still exist in the stylesheet but **nothing in the HTML uses them** anymore. The hero's decorative element is now the `road_chip1.png` chip image (see **Hero chip image**). Safe to delete in a cleanup.
 
 **Film grain** — `<div class="grain-overlay">` (last child of `<body>`, `position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0.045`) applies `filter:url(#grain)` — an SVG `feTurbulence` fractal-noise filter (defined in the hidden `<defs>` block) desaturated and `feBlend mode="overlay"`. Gives a subtle analog grain over the whole page. Lower the opacity (≈0.03) if it ever reads too heavy.
 
@@ -154,6 +158,8 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 - `nightclub pic.jpg` — ambassador background (was also download; now ambassador only)
 - `faq-bg.jpg` — faq background
 - `download-bg.jpg` — download background
+- `road_chip1.png` — in-app ride-chip screenshot used as the hero's decorative chip image (lower-right)
+- `road_chip2.png` — second ride-chip screenshot, **not referenced** (was a second chip, since removed; kept locally, not tracked)
 - `download_appstore_svg.png` — App Store badge
 - `purdue.png` — Purdue logo in the footer (original colors)
 - `color palette.png` — reference swatches
