@@ -59,20 +59,6 @@
       filter: url(#grain);
     }
 
-    /* ─── Bottom blur overlay ───────────────────────────────── */
-    .bottom-blur {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 90px;
-      pointer-events: none;
-      z-index: 9999;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-      transition: opacity 0.3s ease;
-    }
-
     /* ─── Navbar ─────────────────────────────────────────────── */
     .nav {
       position: fixed;
@@ -142,8 +128,7 @@
       padding: 9px 24px;
       font-weight: 600;
       -webkit-backdrop-filter: blur(3px);
-      backdrop-filter: blur(3px);            /* fallback */
-      backdrop-filter: url(#container-glass); /* liquid distortion */
+      backdrop-filter: blur(3px);            /* glass blur — SVG url() filter dropped: this pill is fixed, so the costly turbulence filter would re-run over the scrolling page every frame */
       /* green-tinted glass rim */
       box-shadow:
         0 0 8px rgba(0,0,0,0.10),
@@ -249,13 +234,13 @@
     }
     /* Higher specificity than .reveal so hover transitions aren't overridden */
     .btn-glass.btn-apply {
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2),
+      transition: transform 0.3s ease,
                   box-shadow 0.4s ease,
                   background 0.4s ease,
                   opacity 0.6s ease var(--reveal-delay, 0s);
     }
-    .btn-apply:hover {
-      transform: scale(1.05);
+    .btn-glass.btn-apply:hover {
+      transform: scale(1.02);
       background: rgba(255, 255, 255, 0.08);
     }
 
@@ -380,6 +365,14 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
+      opacity: 0;
+      transform: translateY(24px) rotate(var(--tilt, 0deg));
+      animation: fadeUpTilt 0.9s ease-out var(--delay, 1s) forwards;
+    }
+    .hero-chip {
+      opacity: 0;
+      transform: translateY(24px) rotate(var(--tilt, 0deg));
+      animation: fadeUpTilt 0.9s ease-out var(--delay, 1s) forwards;
     }
     .hero-stat-number {
       font-family: 'Fraunces', serif;
@@ -449,6 +442,11 @@
       z-index: 2;
       pointer-events: none;
       opacity: 0.7;
+      /* Own compositor layer: the road's per-scroll-frame strokeDashoffset repaint
+         stays isolated here instead of re-rasterizing the whole section (heavy
+         .card-bg photos + wave clip-path) every frame. Visual no-op. */
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .site-section > *:not(.card-bg):not(.card-bg-edge):not(.road-svg) {
       position: relative;
@@ -464,21 +462,28 @@
       mask-image: radial-gradient(ellipse 60% 70% at center, transparent 40%, black 80%);
       -webkit-mask-image: radial-gradient(ellipse 60% 70% at center, transparent 40%, black 80%);
     }
+    /* Promote the edge-halo bitmap to its own layer in road-bearing sections, so the
+       per-frame road repaint never re-rasterizes it (the .card-bg of these sections
+       is promoted via translateZ(0) appended to its transform). Visual no-op. */
+    #how-it-works .card-bg-edge,
+    #testimonials .card-bg-edge,
+    #more-than-a-ride .card-bg-edge,
+    #ambassador .card-bg-edge { transform: translateZ(0); }
 
     /* Per-section background variation (image / crop / rotation / blur / overlay) */
-    #how-it-works .card-bg      { background-image: url('hiw-bg.jpg');        background-position: center 70%; transform: scale(1.05) rotate(-1deg); }
+    #how-it-works .card-bg      { background-image: url('hiw-bg.jpg');        background-position: center 70%; transform: scale(1.05) rotate(-1deg) translateZ(0); }
     #how-it-works .card-bg-edge { background-image: url('hiw-bg.jpg');        background-position: center 70%; }
     #how-it-works::before       { background: rgba(0, 0, 0, 0.75); }
-    #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg); }
+    #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg) translateZ(0); }
     #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
     #testimonials::before       { background: rgba(0, 0, 0, 0.72); }
-    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; transform: scale(1.05) rotate(-0.8deg); }
+    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; transform: scale(1.05) rotate(-0.8deg) translateZ(0); }
     #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg');  background-position: center center; }
     #more-than-a-ride::before       { background: rgba(0, 0, 0, 0.72); }
     #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; transform: scale(1.05) rotate(0.6deg); }
     #safety .card-bg-edge       { background-image: url('safety-bg.jpg');     background-position: center 60%; }
     #safety::before             { background: rgba(0, 0, 0, 0.75); }
-    #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg); }
+    #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg) translateZ(0); }
     #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
     #ambassador::before         { background: rgba(0, 0, 0, 0.75); }
     #faq .card-bg               { background-image: url('faq-bg.jpg');        background-position: center 65%; transform: scale(1.05) rotate(-1.1deg); }
@@ -489,10 +494,8 @@
     #download::before           { background: rgba(0, 0, 0, 0.80); }
 
     /* ─── Road (per card) ────────────────────────────────────── */
-    .road-base   { fill: none; stroke: var(--road-base);   stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; }
-    .road-sheen  { fill: none; stroke: var(--road-sheen);  stroke-width: 48; stroke-linecap: round; stroke-linejoin: round; }
-    .road-center { fill: none; stroke: var(--road-center); stroke-width: 5;  stroke-dasharray: 20 18; stroke-linecap: butt; stroke-linejoin: round; }
-    .road-reveal { fill: none; stroke: #fff; stroke-width: 56; stroke-linecap: round; stroke-linejoin: round; }
+    .road-base   { fill: none; stroke: var(--road-base);   stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; shape-rendering: optimizeSpeed; }
+    .road-center { fill: none; stroke: var(--road-center); stroke-width: 5;  stroke-linecap: butt; stroke-linejoin: round; }
     .road-brush  { transition: opacity 0.25s ease-out; will-change: transform; }
 
     /* ─── How it works (alternating steps) ───────────────────── */
@@ -649,7 +652,7 @@
       text-align: center;
       gap: 20px;
     }
-    .safety-shot { width: auto; height: 150px; max-width: 80%; object-fit: contain; align-self: center; }
+    .safety-shot { width: auto; height: 150px; max-width: 80%; object-fit: contain; align-self: center; border-radius: 0; box-shadow: none; }
     .safety-pillar-heading {
       font-family: 'Fraunces', serif;
       font-size: 1.2rem;
@@ -699,11 +702,13 @@
       will-change: transform;
       animation: testimonialScroll 40s linear infinite;
     }
+    /* Stop the infinite marquee (and its per-frame compositor work) when the
+       section is scrolled out of view — toggled by an IntersectionObserver. */
+    .testimonials-track.paused { animation-play-state: paused; }
     .testimonial-card {
-      background: var(--glass-bg);
+      background: rgba(255,255,255,0.09);
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      /* backdrop-filter dropped: these cards ride an infinite marquee, so a live blur would recompute the backdrop every frame */
       border-radius: 18px;
       padding: 24px;
       min-width: 280px;
@@ -889,6 +894,12 @@
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    /* Fade-up that preserves each element's resting tilt (--tilt) — used by the
+       scattered hero stats and the road chip, which are rotated individually. */
+    @keyframes fadeUpTilt {
+      from { opacity: 0; transform: translateY(24px) rotate(var(--tilt, 0deg)); }
+      to   { opacity: 1; transform: translateY(0)     rotate(var(--tilt, 0deg)); }
+    }
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50%      { transform: translateY(6px); }
@@ -897,7 +908,9 @@
     .reveal {
       opacity: 0;
       transform: translateY(24px);
-      will-change: transform, opacity;
+      /* will-change is applied lazily by the reveal observer right before the
+         entrance plays (and cleared after), so dozens of off-screen reveal
+         blocks don't sit pre-promoted on the compositor from page load. */
       transition: opacity 0.6s ease var(--reveal-delay, 0s),
                   transform 0.6s ease var(--reveal-delay, 0s);
     }
@@ -908,7 +921,7 @@
       display: inline-block;
       opacity: 0;
       transform: translateY(5px);
-      will-change: transform, opacity;
+      /* no will-change: there are now hundreds of char spans; permanently promoting each to its own GPU layer costs more than it saves for a one-time opacity/translate fade */
       transition: opacity 0.3s ease-out calc(var(--i) * 0.016s),
                   transform 0.3s ease-out calc(var(--i) * 0.016s);
     }
@@ -917,7 +930,6 @@
     .word-reveal .word {
       display: inline;
       opacity: 0;
-      will-change: opacity;
       transition: opacity 0.45s ease-out calc(var(--wi) * 0.06s);
     }
     .word-reveal.in-view .word { opacity: 1; }
@@ -925,6 +937,7 @@
     /* ─── Reduced motion ─────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       .btn-purdue, .hero-title, .hero-sub, .hero-ctas { animation: none !important; opacity: 1 !important; }
+      .hero-stat, .hero-chip { animation: none !important; opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; }
       .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
       .reveal.in-view { opacity: 1; }
       .letter-reveal .char { transition: opacity 0.3s ease-out; transform: none !important; }
@@ -1005,7 +1018,7 @@
         <path d="M0,0.018 C0.07,0.035 0.16,0.014 0.26,0.031 C0.36,0.04 0.47,0.016 0.56,0.028 C0.66,0.012 0.76,0.033 0.85,0.017 C0.92,0.03 0.97,0.015 1,0.026 L1,1 L0,1 Z"/>
       </clipPath>
       <filter id="grain" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" result="noise"/>
+        <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="2" stitchTiles="stitch" result="noise"/>
         <feColorMatrix type="saturate" values="0" in="noise" result="grey"/>
         <feBlend in="SourceGraphic" in2="grey" mode="overlay"/>
       </filter>
@@ -1035,20 +1048,20 @@
   <section id="hero">
     <div class="hero-bg"></div>
 
-    <div class="hero-stat" style="top:13%;left:7%;transform:rotate(-12deg)">
+    <div class="hero-stat" style="top:13%;left:7%;--tilt:-12deg;--delay:1s">
       <span class="hero-stat-number">0%</span>
       <span class="hero-stat-label">commission taken</span>
     </div>
-    <div class="hero-stat" style="top:18%;right:8%;transform:rotate(13deg)">
+    <div class="hero-stat" style="top:18%;right:8%;--tilt:13deg;--delay:1.15s">
       <span class="hero-stat-number">500+</span>
       <span class="hero-stat-label">Purdue students</span>
     </div>
-    <div class="hero-stat" style="bottom:12%;left:10%;transform:rotate(-7deg)">
+    <div class="hero-stat" style="bottom:12%;left:10%;--tilt:-7deg;--delay:1.3s">
       <span class="hero-stat-number">4.9★</span>
       <span class="hero-stat-label">average rating</span>
     </div>
 
-    <img class="hero-chip" src="road_chip1.png" alt="" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;transform:rotate(3deg)" />
+    <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <div class="hero-content">
       <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="btn-purdue" target="_blank" rel="noopener noreferrer">
@@ -1073,7 +1086,7 @@
     <div class="card-bg-edge"></div>
     <svg class="road-svg" aria-hidden="true"></svg>
     <div class="hiw-inner">
-      <h2 class="section-title reveal">How it works</h2>
+      <h2 class="section-title letter-reveal">How it works</h2>
       <div class="hiw-steps">
 
         <div class="hiw-step hiw-step--left reveal">
@@ -1082,8 +1095,8 @@
             <img class="app-shot hiw-shot" src="find_a_ride.png" width="1974" height="1312" alt="A posted ride from a verified Purdue student" style="transform:rotate(-8deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
-            <h3 class="hiw-step-heading">Find a ride</h3>
-            <p class="hiw-step-desc">Browse rides posted by verified Purdue students.</p>
+            <h3 class="hiw-step-heading letter-reveal">Find a ride</h3>
+            <p class="hiw-step-desc letter-reveal">Browse rides posted by verified Purdue students.</p>
           </div>
         </div>
 
@@ -1093,8 +1106,8 @@
             <img class="app-shot hiw-shot" src="chat_price.png" width="1974" height="1514" alt="Chat thread agreeing on a ride price" style="transform:rotate(6deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
-            <h3 class="hiw-step-heading">Settle the price</h3>
-            <p class="hiw-step-desc">Text the driver directly and agree on what works.</p>
+            <h3 class="hiw-step-heading letter-reveal">Settle the price</h3>
+            <p class="hiw-step-desc letter-reveal">Text the driver directly and agree on what works.</p>
           </div>
         </div>
 
@@ -1104,8 +1117,8 @@
             <img class="app-shot hiw-shot" src="ride_live.png" width="1974" height="1479" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-7deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
-            <h3 class="hiw-step-heading">Ride live and stay safe</h3>
-            <p class="hiw-step-desc">Track your trip in real time with the built-in safety toolkit.</p>
+            <h3 class="hiw-step-heading letter-reveal">Ride live and stay safe</h3>
+            <p class="hiw-step-desc letter-reveal">Track your trip in real time with the built-in safety toolkit.</p>
           </div>
         </div>
 
@@ -1288,26 +1301,26 @@
       <div class="card-bg-edge"></div>
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="mtr-inner">
-        <h2 class="section-title reveal">More than a ride</h2>
+        <h2 class="section-title letter-reveal">More than a ride</h2>
         <div class="mtr-bento">
 
           <div class="mtr-card mtr-card--earn reveal">
-            <img class="app-shot mtr-shot" src="make_bucks.png" width="1974" height="1308" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
-            <h3 class="mtr-heading">Make a few bucks</h3>
-            <p class="mtr-desc">Post your ride, work out a price with your riders, keep everything you make.</p>
+            <img class="app-shot mtr-shot" src="make_bucks.png" width="1080" height="716" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
+            <h3 class="mtr-heading letter-reveal">Make a few bucks</h3>
+            <p class="mtr-desc letter-reveal">Post your ride, work out a price with your riders, keep everything you make.</p>
           </div>
 
           <div class="mtr-right">
           <div class="mtr-card mtr-card--community reveal" style="--reveal-delay:0.1s">
-            <img class="app-shot mtr-shot" src="community.png" width="469" height="330" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
-            <h3 class="mtr-heading">Find your crew</h3>
-            <p class="mtr-desc">Find people heading the same direction as you.</p>
+            <img class="app-shot mtr-shot" src="community.png" width="1080" height="831" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
+            <h3 class="mtr-heading letter-reveal">Find your crew</h3>
+            <p class="mtr-desc letter-reveal">Find people heading the same direction as you.</p>
           </div>
 
           <div class="mtr-card mtr-card--perks reveal" style="--reveal-delay:0.2s">
-            <img class="app-shot mtr-shot" src="perks.png" width="1873" height="1221" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
-            <h3 class="mtr-heading">Unlock perks</h3>
-            <p class="mtr-desc">KOVA partners throw in actual discounts just for riding.</p>
+            <img class="app-shot mtr-shot" src="perks.png" width="1080" height="778" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
+            <h3 class="mtr-heading letter-reveal">Unlock perks</h3>
+            <p class="mtr-desc letter-reveal">KOVA partners throw in actual discounts just for riding.</p>
           </div>
           </div>
 
@@ -1320,25 +1333,25 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="safety-inner">
-        <h2 class="section-title reveal">Built to keep you safe</h2>
+        <h2 class="section-title letter-reveal">Built to keep you safe</h2>
         <div class="safety-pillars">
 
           <div class="safety-pillar reveal">
             <img class="app-shot safety-shot" src="student_seal.png" alt="Verified-student seal" style="transform:rotate(-10deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading">Verified students</h3>
-            <p class="safety-pillar-desc">Every account needs a .edu email to sign up. No exceptions.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Verified students</h3>
+            <p class="safety-pillar-desc letter-reveal">Every account needs a .edu email to sign up. No exceptions.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.1s">
             <img class="app-shot safety-shot" src="stars.png" alt="Trip rating stars" style="transform:rotate(12deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading">Ratings and reviews</h3>
-            <p class="safety-pillar-desc">Riders and drivers both rate each trip. Profiles build trust over time.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Ratings and reviews</h3>
+            <p class="safety-pillar-desc letter-reveal">Riders and drivers both rate each trip. Profiles build trust over time.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.2s">
             <img class="app-shot safety-shot" src="profile.png" alt="A rider profile with photo, rating and trip history" style="transform:rotate(-14deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading">Check the profile</h3>
-            <p class="safety-pillar-desc">See who you're riding with before you commit — photo, rating, trip history.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Check the profile</h3>
+            <p class="safety-pillar-desc letter-reveal">See who you're riding with before you commit — photo, rating, trip history.</p>
           </div>
 
         </div>
@@ -1450,7 +1463,7 @@
   <!-- ─── Footer ───────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
-      <img class="footer-logo reveal" src="KOVA logo.png" alt="KOVA" />
+      <img class="footer-logo reveal" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
 
       <div class="footer-links reveal">
         <a href="terms.html" class="footer-link">Terms of Service</a>
@@ -1467,7 +1480,7 @@
           </svg>
         </a>
         <p class="footer-copy">© 2026 KOVA Group, Inc. All rights reserved.</p>
-        <p class="footer-copy footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" decoding="async" /></p>
+        <p class="footer-copy footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" loading="lazy" decoding="async" /></p>
       </div>
     </div>
   </footer>
@@ -1517,37 +1530,47 @@
 
     /* ── Navbar active link + bottom blur (rAF-throttled) ── */
     const navButtons = [...document.querySelectorAll('.nav-btn[data-target]')];
+    // Cache each nav target's document-top once, so the per-frame scroll handler
+    // never reads offsetTop (which forces a synchronous layout). Refreshed only
+    // when geometry can change: resize, load, and web-font load.
+    const navTargets = navButtons
+      .map(btn => ({ btn, el: document.getElementById(btn.dataset.target), top: 0 }))
+      .filter(t => t.el);
+    function refreshNavOffsets() {
+      navTargets.forEach(t => { t.top = absTop(t.el); });
+    }
     function updateNavActive() {
       const y = window.scrollY + window.innerHeight * 0.4;
       let current = null;
-      navButtons.forEach(b => {
-        const el = document.getElementById(b.dataset.target);
-        if (el && absTop(el) <= y) current = b;
-      });
+      navTargets.forEach(t => { if (t.top <= y) current = t.btn; });
       navButtons.forEach(b => b.classList.toggle('active', b === current));
-    }
-    function updateBottomBlur() {
-      const bottomBlur = document.querySelector('.bottom-blur');
-      if (bottomBlur) bottomBlur.style.opacity = window.scrollY < 50 ? '0' : '1';
     }
     const navbar = document.getElementById('navbar');
     function updateNavGlass() {
       const p = Math.min(window.scrollY / 100, 1);
       if (navbar) navbar.style.setProperty('--nav-glass', p);
     }
+    // Single scroll listener / single rAF per burst for ALL scroll-coupled work.
+    // The road IIFE registers its per-frame draw target via window._roadScroll.
     let _uiRaf = null;
     window.addEventListener('scroll', () => {
       if (_uiRaf) return;
       _uiRaf = requestAnimationFrame(() => {
         _uiRaf = null;
         updateNavActive();
-        updateBottomBlur();
         updateNavGlass();
+        if (window._roadScroll) window._roadScroll();
       });
     }, { passive: true });
+    refreshNavOffsets();   // seed nav-target offsets before the first highlight pass
     updateNavActive();
-    updateBottomBlur();
     updateNavGlass();
+    // Keep nav-target offsets correct after layout/fonts/images settle. (The road
+    // build also refreshes these, but it's skipped under reduced motion — so do it
+    // here too, unconditionally.)
+    const _refreshNav = () => { refreshNavOffsets(); updateNavActive(); };
+    window.addEventListener('load', _refreshNav);
+    window.addEventListener('resize', _refreshNav, { passive: true });
 
     /* ── Letter-by-letter split (word-aware: chars animate, words never break mid-word) ── */
     document.querySelectorAll('.letter-reveal').forEach(el => {
@@ -1594,10 +1617,30 @@
     /* ── Scroll reveal observer ── */
     const revealObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
+        if (e.isIntersecting) {
+          // Promote to a GPU layer only for the .reveal transform/opacity entrance,
+          // and only just before it plays (not from page load for every block).
+          if (e.target.classList.contains('reveal')) {
+            e.target.style.willChange = 'transform, opacity';
+          }
+          e.target.classList.add('in-view');
+          revealObs.unobserve(e.target);
+          // Release the pre-promoted GPU layer once the one-time entrance has played,
+          // so dozens of revealed blocks don't sit on the compositor forever.
+          setTimeout(() => { e.target.style.willChange = 'auto'; }, 1300);
+        }
       });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal, .letter-reveal, .word-reveal').forEach(el => revealObs.observe(el));
+
+    /* ── Pause the testimonials marquee while it's off-screen ── */
+    const marqueeTrack = document.querySelector('.testimonials-track');
+    if (marqueeTrack) {
+      const marqueeObs = new IntersectionObserver((entries) => {
+        marqueeTrack.classList.toggle('paused', !entries[0].isIntersecting);
+      }, { threshold: 0 });
+      marqueeObs.observe(marqueeTrack);
+    }
 
     /* ── FAQ accordion ── */
     document.querySelectorAll('#faq .faq-item').forEach(item => {
@@ -1662,15 +1705,17 @@
         if (!card) return;
         const svg = card.querySelector('.road-svg');
         if (!svg) return;
-        const maskId = 'road-mask-' + id;
+        // No <mask>: a per-frame mask re-renders a full-section-sized offscreen
+        // buffer every scroll frame (the tall-section scroll stutter). Instead each
+        // stroke reveals itself via stroke-dashoffset (solid paths) / a computed
+        // dash pattern (centre line) — same look, no offscreen buffer.
         svg.innerHTML =
-          `<defs><mask id="${maskId}" maskUnits="userSpaceOnUse"><path class="road-reveal"/></mask></defs>` +
-          `<g mask="url(#${maskId})"><path class="road-sheen"/><path class="road-base"/><path class="road-center"/></g>` +
+          `<path class="road-base"/><path class="road-center"/>` +
           `<g class="road-brush">${SPRITE}</g>`;
         const inst = {
           card, svg,
-          reveal: svg.querySelector('.road-reveal'),
-          vPaths: svg.querySelectorAll('.road-base, .road-sheen, .road-center'),
+          base:   svg.querySelector('.road-base'),
+          center: svg.querySelector('.road-center'),
           brush:  svg.querySelector('.road-brush'),
           wp: ROADS[id],
           totalLen: 0, drawnLen: 0, targetLen: 0, cache: null, top: 0,
@@ -1692,11 +1737,14 @@
         inst.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
         const pts = inst.wp.map(([fx, fy]) => [fx * W, fy * H]);
         const d = catmullRomPath(pts);
-        inst.vPaths.forEach(p => p.setAttribute('d', d));
-        inst.reveal.setAttribute('d', d);
-        inst.totalLen = inst.reveal.getTotalLength();
-        inst.reveal.style.strokeDasharray  = inst.totalLen;
-        inst.reveal.style.strokeDashoffset = inst.totalLen;
+        inst.base.setAttribute('d', d);
+        inst.center.setAttribute('d', d);
+        inst.totalLen = inst.base.getTotalLength();
+        // Solid base path: one big dash the length of the road, hidden by offset.
+        inst.base.style.strokeDasharray  = inst.totalLen;
+        inst.base.style.strokeDashoffset = inst.totalLen;   // fully hidden until drawn
+        inst.center.style.strokeDasharray = '0 100000'; // hidden; set per-frame in tick
+        inst._lastDrawn = -1;
         inst.drawnLen = 0;
         inst.targetLen = 0;
         inst.brush.style.opacity = '0';
@@ -1704,8 +1752,30 @@
         inst.h = H;
         inst.cache = new Array(CACHE_N + 1);
         for (let i = 0; i <= CACHE_N; i++) {
-          inst.cache[i] = inst.reveal.getPointAtLength(i * inst.totalLen / CACHE_N);
+          inst.cache[i] = inst.base.getPointAtLength(i * inst.totalLen / CACHE_N);
         }
+        // Length at which the road exits the section bottom (y ≥ H). The tail
+        // beyond is cropped by overflow:hidden and covered by the next section's
+        // overlap, so we stop re-rasterizing the path past here — that kills the
+        // "topping off" stutter at the bottom of tall roads. (Roads that never
+        // reach the bottom, e.g. testimonials, keep maxLen = totalLen.)
+        let mi = CACHE_N;
+        for (let i = 0; i <= CACHE_N; i++) { if (inst.cache[i].y >= H) { mi = i; break; } }
+        inst.maxLen = (mi / CACHE_N) * inst.totalLen;
+        inst._lastReveal = -1;
+      }
+
+      // Centre dashes (20 on / 18 off) drawn up to length D, remainder hidden —
+      // a maskless progressive reveal of the dashed line.
+      const C_ON = 20, C_OFF = 18, C_PERIOD = C_ON + C_OFF;
+      function centerDash(D) {
+        if (D <= 0) return '0 100000';
+        const full = Math.floor(D / C_PERIOD);
+        const rem  = D - full * C_PERIOD;
+        const parts = [];
+        for (let i = 0; i < full; i++) parts.push(C_ON, C_OFF);
+        parts.push(rem > 0 ? Math.min(rem, C_ON) : 0, 100000);
+        return parts.join(' ');
       }
 
       let animating = false;
@@ -1716,7 +1786,19 @@
           const diff = inst.targetLen - inst.drawnLen;
           if (Math.abs(diff) < 0.5) { inst.drawnLen = inst.targetLen; }
           else                      { inst.drawnLen += diff * SMOOTH; active = true; }
-          inst.reveal.style.strokeDashoffset = inst.totalLen - inst.drawnLen;
+          // Skip all DOM writes for roads that haven't moved since last frame.
+          if (inst.drawnLen === inst._lastDrawn) return;
+          inst._lastDrawn = inst.drawnLen;
+
+          // Reveal only the on-screen portion; once the visible road is fully
+          // drawn the reveal freezes (off-screen tail never re-rasterizes), while
+          // the car keeps travelling the full path below.
+          const revealLen = inst.drawnLen < inst.maxLen ? inst.drawnLen : inst.maxLen;
+          if (revealLen !== inst._lastReveal) {
+            inst._lastReveal = revealLen;
+            inst.base.style.strokeDashoffset  = inst.totalLen - revealLen;
+            inst.center.style.strokeDasharray = centerDash(revealLen);
+          }
 
           if (inst.drawnLen > 4 && inst.drawnLen < inst.totalLen - 2) {
             const tip  = pointAt(inst, inst.drawnLen);
@@ -1748,27 +1830,38 @@
         startLoop();
       }
 
-      let sRaf = null;
-      window.addEventListener('scroll', () => {
-        if (sRaf === null) {
-          sRaf = requestAnimationFrame(() => { updateTargets(); sRaf = null; });
-        }
-      }, { passive: true });
+      // Driven by the single shared scroll loop (see window-scroll handler above)
+      // instead of a second scroll listener + rAF.
+      window._roadScroll = updateTargets;
 
-      function buildAll() { instances.forEach(build); updateTargets(); }
-      window.addEventListener('resize', buildAll);
-      // Section heights (and the positions of everything below them) depend on
-      // the screenshot images. Rebuild after load, and whenever any of those
-      // images finishes loading, so road geometry/timing uses correct heights.
-      window.addEventListener('load', buildAll);
-      document.querySelectorAll('.app-shot').forEach((img) => {
-        if (!img.complete) img.addEventListener('load', buildAll, { once: true });
-      });
-      buildAll();
+      // Coalesce rebuilds into one rAF; each rebuild is ~2,400 getPointAtLength
+      // reads, so we keep them OFF the scroll path. We deliberately do NOT rebuild
+      // per lazy .app-shot load: those images carry explicit width/height (the box
+      // height is reserved via aspect-ratio before load), so a lazy image arriving
+      // as you scroll how-it-works / more-than-a-ride into view no longer changes
+      // section height — the per-image rebuild was a heavy long-task landing right
+      // at the scroll-into-view moment (the first-load stutter). The real
+      // layout-affecting events are font swap, full load, and resize.
+      let buildRaf = null;
+      function scheduleBuild() {
+        if (buildRaf !== null) return;
+        buildRaf = requestAnimationFrame(() => {
+          buildRaf = null;
+          instances.forEach(build);
+          updateTargets();
+          // Section heights just settled — refresh nav-target offsets too.
+          if (typeof refreshNavOffsets === 'function') { refreshNavOffsets(); updateNavActive(); }
+        });
+      }
+      window.addEventListener('resize', scheduleBuild);
+      window.addEventListener('load', scheduleBuild);
+      // Web fonts change text height (and thus section height) after first paint —
+      // rebuild once when they're ready instead of on every image load.
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBuild);
+      scheduleBuild();
     })();
 
   </script>
-  <div class="bottom-blur" aria-hidden="true"></div>
   <div class="grain-overlay" aria-hidden="true"></div>
 </body>
 </html>
