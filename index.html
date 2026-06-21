@@ -335,25 +335,34 @@
       border-radius: 0;
       box-decoration-break: clone;
       -webkit-box-decoration-break: clone;
-      /* Clip-path wipe: reveals left-to-right in sync with when "bigger." chars start (char index 19, delay 0.304s) */
-      clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.45s ease-out 0.304s;
+      clip-path: inset(0 100% 0 0); /* stays clipped; .hero-visible triggers the reveal */
     }
-    #hero-headline.in-view .hl {
-      clip-path: inset(0 0% 0 0);
+    #hero-headline.hero-visible .hl {
+      animation: hlWipe 0.45s ease-out 0.65s forwards;
     }
 
-    /* Char animation for the hero sequence — mirrors .letter-reveal .char but scoped to #hero-headline so the existing letter-reveal system is not modified */
-    #hero-headline .char {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(5px);
-      transition: opacity 0.5s ease-out calc(var(--i) * 0.016s),
-                  transform 0.5s ease-out calc(var(--i) * 0.016s);
+    @keyframes hlWipe {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0% 0 0); }
     }
-    #hero-headline.in-view .char {
-      opacity: 1;
-      transform: translateY(0);
+
+    /* ── Hero sequence descriptor lines ── */
+    .hero-seq-wrap {
+      display: flex;       /* two words on one line ("rides for students") */
+      gap: 1em;            /* word-space between the two descriptor words */
+      transform: translateX(28px); /* nudge the descriptor lines right (headline unaffected) */
+      min-height: 2.4em;   /* prevents press-link jump when wrap swaps to headline */
+      margin-bottom: 24px; /* matches .hero-title margin-bottom */
+    }
+    .hero-seq-line {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      white-space: nowrap;
+      opacity: 0; /* WAAPI controls visibility; never shows without animation */
     }
     .hero-ctas {
       display: flex;
@@ -947,8 +956,9 @@
     /* ─── Reduced motion ─────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       .hero-title, .hero-sub, .hero-press-link { animation: none !important; opacity: 1 !important; }
-      #hero-headline .char { transition: none !important; opacity: 1 !important; transform: none !important; }
-      .hero-title .hl { clip-path: none !important; transition: none !important; }
+      #hero-headline { animation: none !important; }
+      #hero-headline .hl { clip-path: none !important; animation: none !important; }
+      .hero-seq-line { animation: none !important; }
       .hero-stat, .hero-chip { animation: none !important; opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; }
       .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
       .reveal.in-view { opacity: 1; }
@@ -1080,7 +1090,11 @@
     <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <div class="hero-content">
-      <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger."></h1>
+      <div class="hero-seq-wrap" id="hero-seq-wrap">
+        <div class="hero-seq-line" id="hl-top"></div>
+        <div class="hero-seq-line" id="hl-bottom"></div>
+      </div>
+      <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
       <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
     </div>
   </section>
@@ -1880,103 +1894,105 @@
 
     /* ── Hero headline sequence ── */
     (function () {
+      const wrap      = document.getElementById('hero-seq-wrap');
+      const hlTop     = document.getElementById('hl-top');
+      const hlBottom  = document.getElementById('hl-bottom');
       const el        = document.getElementById('hero-headline');
       const pressLink = document.querySelector('.hero-press-link');
-      if (!el) return;
+      if (!wrap || !hlTop || !hlBottom || !el) return;
 
-      // Reduced motion: skip the cycle, render the final headline + press-link immediately
+      // Reduced motion: skip the cycle, show the final headline immediately
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        wrap.style.display = 'none';
+        el.style.display   = '';
         el.innerHTML = 'Your world just<br />got <span class="hl">bigger.</span>';
+        el.classList.add('hero-visible');
         if (pressLink) pressLink.style.opacity = '1';
         return;
       }
 
-      // Splits element innerHTML into animated char spans.
-      // Mirrors the page's letter-reveal logic; handles text, <br />, and child elements (e.g. span.hl).
-      function splitChars(element) {
-        let ci = 0;
-        const parts = [];
-        element.childNodes.forEach(node => {
-          if (node.nodeType === Node.TEXT_NODE) {
-            node.textContent.split(/(\s+)/).forEach(token => {
-              if (token === '') return;
-              if (/^\s+$/.test(token)) { parts.push(' '); return; }
-              let inner = '';
-              token.split('').forEach(ch => {
-                inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
-              });
-              parts.push(`<span class="lr-word">${inner}</span>`);
-            });
-          } else if (node.nodeName === 'BR') {
-            parts.push('<br />');
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // Preserve wrapper (e.g. span.hl) but animate chars inside it
-            let inner = '';
-            node.textContent.split('').forEach(ch => {
-              inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
-            });
-            const tag = node.tagName.toLowerCase();
-            const cls = node.getAttribute('class') || '';
-            parts.push(`<${tag} class="${cls}">${inner}</${tag}>`);
-          }
+      const SPRING = 'cubic-bezier(0.22, 1, 0.36, 1)'; // overshoots slightly, spring feel
+      const SNAP   = 'cubic-bezier(0.4, 0, 1, 1)';     // fast ease-in for exits
+
+      function clearAnims(elem) {
+        elem.getAnimations().forEach(a => a.cancel());
+      }
+
+      function slideIn(elem, fromY, duration) {
+        clearAnims(elem);
+        return elem.animate(
+          [{ transform: `translateY(${fromY}px)`, opacity: 0 },
+           { transform: 'translateY(0)',           opacity: 1 }],
+          { duration, easing: SPRING, fill: 'forwards' }
+        );
+      }
+
+      function slideOut(elem, toY, duration) {
+        clearAnims(elem);
+        return elem.animate(
+          [{ transform: 'translateY(0)',         opacity: 1 },
+           { transform: `translateY(${toY}px)`, opacity: 0 }],
+          { duration, easing: SNAP, fill: 'forwards' }
+        );
+      }
+
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function runSequence() {
+        // Wait for Fraunces so the reserved width below is measured in the real font, not a fallback.
+        if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+        // Reserve a constant width for the cycling slot (widest of the two words). The hero column
+        // is centered, so without this the line's width would change on "for students" → "by students"
+        // and re-center the whole column, dragging "rides" sideways. Fixed slot = "rides" stays static.
+        let slotW = 0;
+        ['for students', 'by students'].forEach(w => {
+          hlBottom.textContent = w;
+          slotW = Math.max(slotW, hlBottom.scrollWidth);
         });
-        element.innerHTML = parts.join('');
-        return ci; // total char count
+        hlBottom.textContent  = '';
+        hlBottom.style.width     = slotW + 'px';
+        hlBottom.style.textAlign = 'left'; // word anchored at slot start → gap to "rides" stays constant
+        hlBottom.style.flexShrink = '0';
+
+        // Phase 1 — "rides" drops from above, "for students" rises from below 150ms later
+        hlTop.textContent    = 'rides';
+        hlBottom.textContent = 'for students';
+        slideIn(hlTop, -70, 500);
+        await wait(150);
+        slideIn(hlBottom, 70, 500);
+        await wait(500 + 900); // bottom settles + hold
+
+        // Phase 2 — "for students" exits up, "by students" enters from below
+        slideOut(hlBottom, -70, 350);
+        await wait(400); // exit completes + small buffer
+        hlBottom.textContent = 'by students';
+        slideIn(hlBottom, 70, 500);
+        await wait(500 + 900); // settles + hold
+
+        // Phase 3 — both exit simultaneously (rides up, by students down)
+        slideOut(hlTop,    -70, 400);
+        slideOut(hlBottom,  70, 400);
+        await wait(400);
+
+        // Phase 4 — show final headline, slide it up, wipe the green highlight
+        wrap.style.display = 'none';
+        el.style.display   = '';
+        el.innerHTML = 'Your world just<br />got <span class="hl">bigger.</span>';
+        el.classList.add('hero-visible'); // triggers CSS hlWipe animation on .hl (0.65s delay)
+        el.animate(
+          [{ transform: 'translateY(70px)', opacity: 0 },
+           { transform: 'translateY(0)',    opacity: 1 }],
+          { duration: 650, easing: SPRING, fill: 'forwards' }
+        );
+
+        // Press link fades in after headline settles
+        await wait(650 + 300);
+        if (pressLink) pressLink.style.opacity = '1';
       }
 
-      // Time (ms) for all chars to finish their opacity transition
-      // (0.5 = per-char transition duration; keep in sync with #hero-headline .char in CSS)
-      function fullRevealMs(charCount) {
-        return Math.round(((charCount - 1) * 0.016 + 0.5) * 1000);
-      }
-
-      const HOLD_MS  = 800;  // pause after line is fully visible before fading out
-      const BUFFER_MS = 200; // extra buffer after fade-out before next step
-
-      const steps = [
-        { html: 'rides' },
-        { html: 'for students' },
-        { html: 'by students' },
-        { html: 'Your world just<br />got <span class="hl">bigger.</span>', final: true },
-      ];
-
-      let step = 0;
-
-      function runStep() {
-        const { html, final } = steps[step];
-
-        // Set content and split into chars
-        el.innerHTML = html;
-        const charCount = splitChars(el);
-        const dur = fullRevealMs(charCount);
-
-        // Two rAF calls ensure the browser has painted the new DOM before triggering transitions
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            el.classList.add('in-view');
-          });
-        });
-
-        if (final) {
-          // Reveal and stay; show press-link after headline finishes
-          if (pressLink) {
-            setTimeout(() => { pressLink.style.opacity = '1'; }, dur + 300);
-          }
-          return;
-        }
-
-        // Fade out after hold, then move to next step
-        setTimeout(() => {
-          el.classList.remove('in-view');
-          setTimeout(() => {
-            step++;
-            runStep();
-          }, dur + BUFFER_MS);
-        }, dur + HOLD_MS);
-      }
-
-      // Small initial delay before the sequence starts
-      setTimeout(runStep, 400);
+      setTimeout(runSequence, 400);
     })();
 
   </script>
