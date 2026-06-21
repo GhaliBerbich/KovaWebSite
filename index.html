@@ -131,6 +131,7 @@
       font-family: 'Fraunces', serif;
       font-size: 0.95rem;
       font-weight: 400;
+      text-decoration: none;
       transition: color 0.4s ease;
       cursor: pointer;
     }
@@ -1043,13 +1044,9 @@
   <nav class="nav" id="navbar" aria-label="Main navigation">
     <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
     <div class="nav-links">
-      <!--
-        Middle nav buttons removed. To add a nav link back, drop a button here using
-        this template — it inherits the shared .nav-btn look + hover/active animations
-        and the JS scroll-spy automatically (data-target must match a section id):
-
-        <button class="nav-btn" data-target="SECTION_ID" onclick="scrollToSection('SECTION_ID')">Label</button>
-      -->
+      <button class="nav-btn" data-target="ambassador" onclick="scrollToSection('ambassador')">Ambassadors</button>
+      <a href="businesses.html" class="nav-btn">For Businesses</a>
+      <a href="manifesto.html" class="nav-btn">Manifesto</a>
     </div>
     <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
   </nav>
@@ -1059,11 +1056,11 @@
     <div class="hero-bg"></div>
 
     <div class="hero-stat" style="top:13%;left:7%;--tilt:-12deg;--delay:1s">
-      <span class="hero-stat-number">0%</span>
-      <span class="hero-stat-label">commission taken</span>
+      <span class="hero-stat-number" style="font-size: clamp(0.9rem, 2vw, 1.2rem)">Keep 100%</span>
+      <span class="hero-stat-label">of what you earn</span>
     </div>
     <div class="hero-stat" style="top:18%;right:8%;--tilt:13deg;--delay:1.15s">
-      <span class="hero-stat-number">500+</span>
+      <span class="hero-stat-number">1000+</span>
       <span class="hero-stat-label">Purdue students</span>
     </div>
     <div class="hero-stat" style="bottom:12%;left:10%;--tilt:-7deg;--delay:1.3s">
@@ -1306,7 +1303,7 @@
           <div class="mtr-card mtr-card--earn reveal">
             <img class="app-shot mtr-shot" src="make_bucks.png" width="1080" height="716" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading letter-reveal">Make a few bucks</h3>
-            <p class="mtr-desc letter-reveal">Post your ride, work out a price with your riders, keep everything you make.</p>
+            <p class="mtr-desc letter-reveal">Post your route and set your price. Whatever riders pay goes straight to you.</p>
           </div>
 
           <div class="mtr-right">
@@ -1444,6 +1441,7 @@
         <div class="dl-info">
           <h2 class="section-title letter-reveal">Get the app.</h2>
           <p class="section-sub">Starting at Purdue. More schools soon. Free on the App Store.</p>
+          <p class="section-sub" style="margin-top: 8px; opacity: 0.65;">Driving? Same app.</p>
         </div>
         <div class="dl-qr-card">
           <img
@@ -1468,6 +1466,9 @@
         <a href="terms.html" class="footer-link">Terms of Service</a>
         <a href="privacy.html" class="footer-link">Privacy Policy</a>
         <a href="mailto:help@ridekova.com" class="footer-link">help@ridekova.com</a>
+        <a href="businesses.html" class="footer-link">Partner with KOVA</a>
+        <a href="#ambassador" class="footer-link">Ambassadors</a>
+        <a href="manifesto.html" class="footer-link">Manifesto</a>
       </div>
 
       <div class="footer-right reveal" style="--reveal-delay:0.1s">
