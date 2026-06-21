@@ -219,9 +219,8 @@
       margin: 0 auto;
       border-bottom: 1px solid rgba(255,255,255,0.3);
       padding-bottom: 1px;
-      transition: color 0.2s ease, border-color 0.2s ease;
+      transition: color 0.2s ease, border-color 0.2s ease, opacity 0.8s ease-out;
       opacity: 0;
-      animation: fadeUp 0.9s ease-out 0.8s forwards;
     }
     .hero-press-link:hover {
       color: rgba(255,255,255,0.85);
@@ -317,7 +316,7 @@
       z-index: 2;
       max-width: 780px;
       padding: 0 24px;
-      transform: translateY(7vh);
+      transform: translateY(calc(7vh - 24px));
     }
     .hero-title {
       font-family: 'Fraunces', serif;
@@ -325,29 +324,36 @@
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.025em;
+      line-height: 1.1;
       margin-bottom: 24px;
-      opacity: 0;
-      animation: fadeUp 0.9s ease-out 0.4s forwards;
+      min-height: 2.4em; /* reserve space during sequence so press-link doesn't jump */
     }
     .hero-title .hl {
-      /* Top edge of the green brought down 20px; bottom edge unchanged */
       background-image: linear-gradient(to bottom, transparent 20px, var(--bright-green) 20px);
       color: #0D1117;
       padding: 0.02em 0.14em;
       border-radius: 0;
       box-decoration-break: clone;
       -webkit-box-decoration-break: clone;
+      /* Clip-path wipe: reveals left-to-right in sync with when "bigger." chars start (char index 19, delay 0.304s) */
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.45s ease-out 0.304s;
     }
-    .hero-sub {
-      font-family: 'Lora', serif;
-      font-size: clamp(1rem, 2.2vw, 1.1rem);
-      font-weight: 500;
-      color: rgba(255,255,255,0.60);
-      max-width: 520px;
-      margin: 0 auto 6px;
-      line-height: 1.7;
+    #hero-headline.in-view .hl {
+      clip-path: inset(0 0% 0 0);
+    }
+
+    /* Char animation for the hero sequence — mirrors .letter-reveal .char but scoped to #hero-headline so the existing letter-reveal system is not modified */
+    #hero-headline .char {
+      display: inline-block;
       opacity: 0;
-      animation: fadeUp 0.9s ease-out 0.6s forwards;
+      transform: translateY(5px);
+      transition: opacity 0.5s ease-out calc(var(--i) * 0.016s),
+                  transform 0.5s ease-out calc(var(--i) * 0.016s);
+    }
+    #hero-headline.in-view .char {
+      opacity: 1;
+      transform: translateY(0);
     }
     .hero-ctas {
       display: flex;
@@ -926,8 +932,8 @@
       opacity: 0;
       transform: translateY(5px);
       /* no will-change: there are now hundreds of char spans; permanently promoting each to its own GPU layer costs more than it saves for a one-time opacity/translate fade */
-      transition: opacity 0.3s ease-out calc(var(--i) * 0.016s),
-                  transform 0.3s ease-out calc(var(--i) * 0.016s);
+      transition: opacity 0.3s ease-out calc(var(--line-delay, 0s) + var(--i) * 0.016s),
+                  transform 0.3s ease-out calc(var(--line-delay, 0s) + var(--i) * 0.016s);
     }
     .letter-reveal.in-view .char { opacity: 1; transform: translateY(0); }
 
@@ -941,6 +947,8 @@
     /* ─── Reduced motion ─────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       .hero-title, .hero-sub, .hero-press-link { animation: none !important; opacity: 1 !important; }
+      #hero-headline .char { transition: none !important; opacity: 1 !important; transform: none !important; }
+      .hero-title .hl { clip-path: none !important; transition: none !important; }
       .hero-stat, .hero-chip { animation: none !important; opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; }
       .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
       .reveal.in-view { opacity: 1; }
@@ -1056,7 +1064,8 @@
     <div class="hero-bg"></div>
 
     <div class="hero-stat" style="top:13%;left:7%;--tilt:-12deg;--delay:1s">
-      <span class="hero-stat-number" style="font-size: clamp(0.9rem, 2vw, 1.2rem)">Keep 100%</span>
+      <span class="hero-stat-label" style="margin-bottom:-6px">Keep</span>
+      <span class="hero-stat-number">100%</span>
       <span class="hero-stat-label">of what you earn</span>
     </div>
     <div class="hero-stat" style="top:18%;right:8%;--tilt:13deg;--delay:1.15s">
@@ -1071,8 +1080,7 @@
     <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <div class="hero-content">
-      <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
-      <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission.</p>
+      <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger."></h1>
       <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
     </div>
   </section>
@@ -1589,6 +1597,15 @@
           });
         } else if (node.nodeName === 'BR') {
           parts.push('<br />');
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          // Preserve the wrapper element (e.g. span.hl) but animate its chars too
+          let inner = '';
+          node.textContent.split('').forEach(ch => {
+            inner += `<span class="char" style="--i:${charIndex++}">${ch}</span>`;
+          });
+          const tag = node.tagName.toLowerCase();
+          const cls = node.getAttribute('class') || '';
+          parts.push(`<${tag} class="${cls}">${inner}</${tag}>`);
         }
       });
       el.innerHTML = parts.join('');
@@ -1859,6 +1876,107 @@
       // rebuild once when they're ready instead of on every image load.
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBuild);
       scheduleBuild();
+    })();
+
+    /* ── Hero headline sequence ── */
+    (function () {
+      const el        = document.getElementById('hero-headline');
+      const pressLink = document.querySelector('.hero-press-link');
+      if (!el) return;
+
+      // Reduced motion: skip the cycle, render the final headline + press-link immediately
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.innerHTML = 'Your world just<br />got <span class="hl">bigger.</span>';
+        if (pressLink) pressLink.style.opacity = '1';
+        return;
+      }
+
+      // Splits element innerHTML into animated char spans.
+      // Mirrors the page's letter-reveal logic; handles text, <br />, and child elements (e.g. span.hl).
+      function splitChars(element) {
+        let ci = 0;
+        const parts = [];
+        element.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            node.textContent.split(/(\s+)/).forEach(token => {
+              if (token === '') return;
+              if (/^\s+$/.test(token)) { parts.push(' '); return; }
+              let inner = '';
+              token.split('').forEach(ch => {
+                inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+              });
+              parts.push(`<span class="lr-word">${inner}</span>`);
+            });
+          } else if (node.nodeName === 'BR') {
+            parts.push('<br />');
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Preserve wrapper (e.g. span.hl) but animate chars inside it
+            let inner = '';
+            node.textContent.split('').forEach(ch => {
+              inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+            });
+            const tag = node.tagName.toLowerCase();
+            const cls = node.getAttribute('class') || '';
+            parts.push(`<${tag} class="${cls}">${inner}</${tag}>`);
+          }
+        });
+        element.innerHTML = parts.join('');
+        return ci; // total char count
+      }
+
+      // Time (ms) for all chars to finish their opacity transition
+      // (0.5 = per-char transition duration; keep in sync with #hero-headline .char in CSS)
+      function fullRevealMs(charCount) {
+        return Math.round(((charCount - 1) * 0.016 + 0.5) * 1000);
+      }
+
+      const HOLD_MS  = 800;  // pause after line is fully visible before fading out
+      const BUFFER_MS = 200; // extra buffer after fade-out before next step
+
+      const steps = [
+        { html: 'rides' },
+        { html: 'for students' },
+        { html: 'by students' },
+        { html: 'Your world just<br />got <span class="hl">bigger.</span>', final: true },
+      ];
+
+      let step = 0;
+
+      function runStep() {
+        const { html, final } = steps[step];
+
+        // Set content and split into chars
+        el.innerHTML = html;
+        const charCount = splitChars(el);
+        const dur = fullRevealMs(charCount);
+
+        // Two rAF calls ensure the browser has painted the new DOM before triggering transitions
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            el.classList.add('in-view');
+          });
+        });
+
+        if (final) {
+          // Reveal and stay; show press-link after headline finishes
+          if (pressLink) {
+            setTimeout(() => { pressLink.style.opacity = '1'; }, dur + 300);
+          }
+          return;
+        }
+
+        // Fade out after hold, then move to next step
+        setTimeout(() => {
+          el.classList.remove('in-view');
+          setTimeout(() => {
+            step++;
+            runStep();
+          }, dur + BUFFER_MS);
+        }, dur + HOLD_MS);
+      }
+
+      // Small initial delay before the sequence starts
+      setTimeout(runStep, 400);
     })();
 
   </script>
