@@ -880,29 +880,65 @@
     /* ─── Footer ─────────────────────────────────────────────── */
     footer {
       background: var(--bg);
-      padding: 48px 32px;
+      padding: 40px 32px 32px;
       position: relative;
       z-index: 10000;
     }
     .footer-inner {
       max-width: 1320px;
       margin: 0 auto;
+    }
+
+    /* Top row */
+    .footer-top {
+      display: flex;
+      align-items: flex-start; /* Instagram top-aligned with the logo */
+      justify-content: space-between;
+      padding-bottom: 28px;
+    }
+    .footer-top-left { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; } /* logo, then nav row beneath it; flex-start so the logo keeps its natural width */
+    .footer-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .footer-nav { display: flex; gap: 36px; }
+    .footer-social-group { display: flex; align-items: center; gap: 16px; }
+    .footer-social { color: rgba(255,255,255,0.50); transition: color 0.2s; line-height: 0; }
+    .footer-social:hover { color: #fff; }
+
+    /* Nav links */
+    .footer-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: #fff; }
+    .footer-link--legal {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.30);
+    }
+    .footer-link--legal:hover { color: rgba(255,255,255,0.65); }
+
+    /* Divider */
+    .footer-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    /* Bottom row */
+    .footer-bottom {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 20px;
+      padding-top: 28px;
+      gap: 16px;
     }
-    .footer-logo { height: 30px; width: auto; filter: brightness(0) invert(1); }
-    .footer-copy { font-family: 'Inter', sans-serif; font-size: 13px; color: rgba(255,255,255,0.40); }
-    .footer-links { display: flex; gap: 28px; }
-    .footer-link { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.60); transition: color 0.2s; }
-    .footer-link:hover { color: #fff; }
-    .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .footer-social { color: rgba(255,255,255,0.60); transition: color 0.2s; line-height: 0; }
-    .footer-social:hover { color: #fff; }
-    .footer-location { font-size: 11px; color: rgba(255,255,255,0.30); }
-    .footer-purdue { display: inline; height: 13px; width: auto; vertical-align: middle; margin-left: 3px; }
+    .footer-bottom-left { display: flex; flex-direction: column; gap: 4px; }
+    .footer-bottom-right { display: flex; align-items: center; gap: 24px; }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(255,255,255,0.30); }
+    .footer-location { font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(255,255,255,0.20); display: flex; align-items: center; }
+    .footer-purdue { height: 10px; width: auto; margin-left: 3px; opacity: 0.75; }
 
     /* ─── Animations ─────────────────────────────────────────── */
     @keyframes testimonialScroll {
@@ -1001,9 +1037,10 @@
         -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
       }
 
-      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
-      .footer-links { justify-content: center; }
-      .footer-right { align-items: center; }
+      .footer-top { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .footer-nav { flex-wrap: wrap; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer-bottom-right { flex-wrap: wrap; gap: 16px; }
     }
 
     @media (max-width: 768px) {
@@ -1482,28 +1519,45 @@
   <!-- ─── Footer ───────────────────────────────────────────────── -->
   <footer>
     <div class="footer-inner">
-      <img class="footer-logo reveal" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
 
-      <div class="footer-links reveal">
-        <a href="terms.html" class="footer-link">Terms of Service</a>
-        <a href="privacy.html" class="footer-link">Privacy Policy</a>
-        <a href="mailto:help@ridekova.com" class="footer-link">help@ridekova.com</a>
-        <a href="businesses.html" class="footer-link">Partner with KOVA</a>
-        <a href="#ambassador" class="footer-link">Ambassadors</a>
-        <a href="manifesto.html" class="footer-link">Manifesto</a>
+      <!-- Top row: logo | nav | social -->
+      <div class="footer-top reveal">
+        <div class="footer-top-left">
+          <img class="footer-logo" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
+
+          <nav class="footer-nav">
+            <a href="#ambassador" class="footer-link">Ambassadors</a>
+            <a href="businesses.html" class="footer-link">For Businesses</a>
+            <a href="manifesto.html" class="footer-link">Manifesto</a>
+            <a href="terms.html" class="footer-link">Terms of Service</a>
+            <a href="privacy.html" class="footer-link">Privacy Policy</a>
+          </nav>
+        </div>
+
+        <div class="footer-social-group">
+          <a href="https://www.instagram.com/ridekova/" class="footer-social" aria-label="KOVA on Instagram" target="_blank" rel="noopener noreferrer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+        </div>
       </div>
 
-      <div class="footer-right reveal" style="--reveal-delay:0.1s">
-        <a href="https://www.instagram.com/ridekova/" class="footer-social" aria-label="KOVA on Instagram" target="_blank" rel="noopener noreferrer">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-            <circle cx="12" cy="12" r="4"/>
-            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-          </svg>
-        </a>
-        <p class="footer-copy">© 2026 KOVA Group, Inc. All rights reserved.</p>
-        <p class="footer-copy footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" loading="lazy" decoding="async" /></p>
+      <!-- Divider -->
+      <div class="footer-divider"></div>
+
+      <!-- Bottom row: copyright | built-with-love -->
+      <div class="footer-bottom reveal" style="--reveal-delay:0.1s">
+        <div class="footer-bottom-left">
+          <p class="footer-copy">© 2026 KOVA Group, Inc. All rights reserved.</p>
+        </div>
+        <div class="footer-bottom-right">
+          <p class="footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" loading="lazy" decoding="async" /></p>
+        </div>
       </div>
+
     </div>
   </footer>
 
