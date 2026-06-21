@@ -1039,9 +1039,13 @@
   <nav class="nav" id="navbar" aria-label="Main navigation">
     <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
     <div class="nav-links">
-      <button class="nav-btn" data-target="how-it-works" onclick="scrollToSection('how-it-works')">How it works</button>
-      <button class="nav-btn" data-target="testimonials" onclick="scrollToSection('testimonials')">Testimonials</button>
-      <button class="nav-btn" data-target="ambassador" onclick="scrollToSection('ambassador')">Ambassador Program</button>
+      <!--
+        Middle nav buttons removed. To add a nav link back, drop a button here using
+        this template — it inherits the shared .nav-btn look + hover/active animations
+        and the JS scroll-spy automatically (data-target must match a section id):
+
+        <button class="nav-btn" data-target="SECTION_ID" onclick="scrollToSection('SECTION_ID')">Label</button>
+      -->
     </div>
     <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
   </nav>
@@ -1072,7 +1076,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
-      <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission, no middleman.</p>
+      <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission.</p>
       <div class="hero-ctas">
         <button class="btn-primary" onclick="scrollToSection('how-it-works')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
@@ -1120,7 +1124,7 @@
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading letter-reveal">Ride live and stay safe</h3>
-            <p class="hiw-step-desc letter-reveal">Track your trip in real time with the built-in safety toolkit.</p>
+            <p class="hiw-step-desc letter-reveal">Track your trip live. Safety tools are right there if you need them.</p>
           </div>
         </div>
 
@@ -1303,7 +1307,6 @@
       <div class="card-bg-edge"></div>
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="mtr-inner">
-        <h2 class="section-title letter-reveal">More than a ride</h2>
         <div class="mtr-bento">
 
           <div class="mtr-card mtr-card--earn reveal">
@@ -1335,25 +1338,25 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="safety-inner">
-        <h2 class="section-title letter-reveal">Built to keep you safe</h2>
+        <h2 class="section-title letter-reveal">You know who's driving</h2>
         <div class="safety-pillars">
 
           <div class="safety-pillar reveal">
             <img class="app-shot safety-shot" src="student_seal.png" alt="Verified-student seal" style="transform:rotate(-10deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading letter-reveal">Verified students</h3>
-            <p class="safety-pillar-desc letter-reveal">Every account needs a .edu email to sign up. No exceptions.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Students only</h3>
+            <p class="safety-pillar-desc letter-reveal">Every account needs a .edu email to sign up.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.1s">
             <img class="app-shot safety-shot" src="stars.png" alt="Trip rating stars" style="transform:rotate(12deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading letter-reveal">Ratings and reviews</h3>
-            <p class="safety-pillar-desc letter-reveal">Riders and drivers both rate each trip. Profiles build trust over time.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Real ratings</h3>
+            <p class="safety-pillar-desc letter-reveal">Riders and drivers both rate each trip. Your reputation rides with you.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.2s">
             <img class="app-shot safety-shot" src="profile.png" alt="A rider profile with photo, rating and trip history" style="transform:rotate(-14deg)" loading="lazy" decoding="async" />
-            <h3 class="safety-pillar-heading letter-reveal">Check the profile</h3>
-            <p class="safety-pillar-desc letter-reveal">See who you're riding with before you commit — photo, rating, trip history.</p>
+            <h3 class="safety-pillar-heading letter-reveal">Know your driver</h3>
+            <p class="safety-pillar-desc letter-reveal">See who you're riding with before you commit. Photo, rating, trip history.</p>
           </div>
 
         </div>
@@ -1368,7 +1371,7 @@
       <div class="ambassador-inner">
         <div>
           <h2 class="section-title letter-reveal">Become an Ambassador</h2>
-          <p class="section-sub word-reveal">If you're already telling people about KOVA, let's make it real. Grow it on campus, we've got you covered.</p>
+          <p class="section-sub word-reveal">If you're already telling people about KOVA, let's make it real. Grow it on campus, KOVA takes care of the rest.</p>
         </div>
 
         <div class="amb-feats">
@@ -1412,7 +1415,7 @@
               How do I pay?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div class="faq-answer">Drivers post a starting price, you text them directly to work out the details. Pay however works for you, Venmo, cash, whatever. KOVA doesn't handle payments or take a cut.</div>
+            <div class="faq-answer">Drivers post a starting price, you text them directly to work out the details. Pay however works for you, Venmo, cash, whatever.</div>
           </div>
           <div class="faq-item">
             <div class="faq-question">
@@ -1423,17 +1426,17 @@
           </div>
           <div class="faq-item">
             <div class="faq-question">
-              How does pricing work if there's no commission?
+              How do I become a driver?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div class="faq-answer">Drivers set their own price per seat. Riders see the full cost before confirming. The driver keeps all of it.</div>
+            <div class="faq-answer">Sign up with your .edu email and complete a driver verification. We check your license and student standing. Once you're cleared, you're ready to go.</div>
           </div>
           <div class="faq-item">
             <div class="faq-question">
               Is it safe to ride with someone I don't know?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </div>
-            <div class="faq-answer">Every account needs a .edu email to sign up. Riders and drivers both have profiles, photos, and ratings. You can see who you're riding with before you commit.</div>
+            <div class="faq-answer">Every account needs a .edu email. Drivers go through a verification check before their first ride. Profiles, ratings, and photos are all visible before you commit.</div>
           </div>
         </div>
       </div>
@@ -1446,7 +1449,7 @@
       <div class="dl-card reveal">
         <div class="dl-info">
           <h2 class="section-title letter-reveal">Get the app.</h2>
-          <p class="section-sub">Rides between verified Purdue students, zero commission. Free on the App Store.</p>
+          <p class="section-sub">Starting at Purdue. More schools soon. Free on the App Store.</p>
         </div>
         <div class="dl-qr-card">
           <img
