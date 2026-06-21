@@ -167,26 +167,45 @@
     }
 
     /* ─── Buttons ────────────────────────────────────────────── */
-    .btn-primary {
+    .btn-pull-up {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: var(--bright-green);
-      color: #0D1117;
-      border: none;
-      border-radius: 10px;
-      padding: 14px 32px;
-      font-family: 'Fraunces', serif;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.6s, box-shadow 0.6s, background 0.2s;
-      box-shadow: 0 4px 24px rgba(40,196,90,0.35);
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.65);
+      border-radius: 999px;
+      padding: 14px 40px;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: background 0.25s ease, border-color 0.25s ease;
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(40,196,90,0.45);
-      background: #34d468;
+    .btn-pull-up:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.9);
+    }
+
+    .hero-press-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.84rem;
+      color: rgba(255,255,255,0.58);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 1px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.8s forwards;
+    }
+    .hero-press-link:hover {
+      color: rgba(255,255,255,0.85);
+      border-bottom-color: rgba(255,255,255,0.55);
     }
     .btn-glass {
       display: inline-flex;
@@ -210,7 +229,7 @@
       border-color: rgba(255,255,255,0.24);
     }
     /* Buttons + nav links use Inter */
-    button, .btn-primary, .btn-glass, .btn-purdue, .nav-btn {
+    button, .btn-glass, .btn-pull-up, .nav-btn {
       font-family: 'Inter', sans-serif;
     }
     /* Apply Now — liquid glass pill (ported from 21st.dev liquid-glass-button) */
@@ -273,51 +292,12 @@
       inset: 0;
       background: rgba(0,0,0,0.35);
     }
-    .hero-bg::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
     .hero-content {
       position: relative;
       z-index: 2;
       max-width: 780px;
       padding: 0 24px;
-    }
-    .btn-purdue {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Lora', serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.88);
-      padding: 6px 22px;
-      border-radius: 100px;
-      border: 1.5px solid rgba(40,196,90,0.50);
-      background: rgba(255,255,255,0.07);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      cursor: pointer;
-      transition: background 0.6s, border-color 0.6s, color 0.6s;
-      margin-bottom: 24px;
-      opacity: 0;
-      animation: fadeUp 0.8s ease-out 0.2s forwards;
-    }
-    .btn-purdue:hover {
-      background: var(--bright-green);
-      border-color: var(--bright-green);
-      color: #0D1117;
-    }
-    .btn-purdue-new {
-      background: #fff;
-      color: #0D1117;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 100px;
+      transform: translateY(7vh);
     }
     .hero-title {
       font-family: 'Fraunces', serif;
@@ -344,7 +324,7 @@
       font-weight: 500;
       color: rgba(255,255,255,0.60);
       max-width: 520px;
-      margin: 0 auto 20px;
+      margin: 0 auto 6px;
       line-height: 1.7;
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.6s forwards;
@@ -938,7 +918,7 @@
 
     /* ─── Reduced motion ─────────────────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
-      .btn-purdue, .hero-title, .hero-sub, .hero-ctas { animation: none !important; opacity: 1 !important; }
+      .hero-title, .hero-sub, .hero-press-link { animation: none !important; opacity: 1 !important; }
       .hero-stat, .hero-chip { animation: none !important; opacity: 1 !important; transform: rotate(var(--tilt, 0deg)) !important; }
       .reveal { transition: opacity 0.4s ease-out; transform: none !important; }
       .reveal.in-view { opacity: 1; }
@@ -989,7 +969,7 @@
 
     @media (max-width: 480px) {
       .hero-ctas { flex-direction: column; align-items: center; }
-      .btn-primary { width: 100%; max-width: 280px; justify-content: center; }
+      .btn-pull-up { width: 100%; max-width: 280px; }
     }
   </style>
 </head>
@@ -1070,19 +1050,9 @@
     <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <div class="hero-content">
-      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="btn-purdue" target="_blank" rel="noopener noreferrer">
-        <span class="btn-purdue-new">New</span>
-        As seen at Purdue
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
       <h1 class="hero-title">Your world just<br />got <span class="hl">bigger.</span></h1>
       <p class="hero-sub">Rides between Purdue students. Agree on a price with your driver directly, no commission.</p>
-      <div class="hero-ctas">
-        <button class="btn-primary" onclick="scrollToSection('how-it-works')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 12l4 4 4-4M12 8v8"/></svg>
-          Pull up
-        </button>
-      </div>
+      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
     </div>
   </section>
 
