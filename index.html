@@ -683,6 +683,8 @@
       position: relative;
       width: 100%;
       overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
     }
     .marquee-outer::before, .marquee-outer::after {
       content: '';
@@ -692,8 +694,8 @@
       z-index: 2;
       pointer-events: none;
     }
-    .marquee-outer::before { left: 0;  background: linear-gradient(to right, rgba(0,0,0,0.80), transparent); }
-    .marquee-outer::after  { right: 0; background: linear-gradient(to left,  rgba(0,0,0,0.80), transparent); }
+    .marquee-outer::before { left: 0; }
+    .marquee-outer::after  { right: 0; }
     .testimonials-track {
       display: flex;
       align-items: stretch;
@@ -975,7 +977,10 @@
       .dl-info { align-items: center; }
       .dl-card .section-sub { max-width: 100%; }
 
-      .marquee-outer::before, .marquee-outer::after { width: 60px; }
+      .marquee-outer {
+        mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+      }
 
       .footer-inner { flex-direction: column; align-items: center; text-align: center; }
       .footer-links { justify-content: center; }
@@ -1670,10 +1675,10 @@
 
       /* Waypoints per card, as fractions of card offsetWidth × offsetHeight. */
       const ROADS = {
-        'how-it-works':    [[0.46, -0.10], [0.72, 0.24], [0.28, 0.50], [0.70, 0.76], [0.48, 1.10]],
-        'testimonials':    [[0.95, 0.50], [0.70, 0.68], [0.30, 0.32], [0.05, 0.50]],
-        'more-than-a-ride':[[0.40, -0.08], [0.70, 0.26], [0.30, 0.54], [0.68, 0.80], [0.42, 1.08]],
-        'ambassador':      [[0.92, -0.10], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
+        'how-it-works':    [[0.46, -0.45], [0.72, 0.24], [0.28, 0.50], [0.70, 0.76], [0.48, 1.10]],
+        'testimonials':    [[1.12, 0.50], [0.70, 0.68], [0.30, 0.32], [-0.12, 0.50]],
+        'more-than-a-ride':[[0.40, -0.45], [0.70, 0.26], [0.30, 0.54], [0.68, 0.80], [0.42, 1.08]],
+        'ambassador':      [[0.92, -0.45], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
       };
 
       function catmullRomPath(pts) {
