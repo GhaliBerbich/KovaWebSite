@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,800;1,9..144,800&family=Inter:wght@400;500;600&family=Lora:wght@400&display=swap" rel="stylesheet" />
 
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; }
@@ -175,12 +178,23 @@
     .manifesto-body      { margin-bottom: 36px; }
     .manifesto-statement { margin-bottom: 48px; }
 
+    /* Header */
+    .manifesto-header {
+      font-family: 'Lora', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.90);
+      margin-bottom: 56px;
+    }
+
     /* Thin rule */
     .manifesto-rule {
       width: 32px;
       height: 1px;
       background: rgba(255,255,255,0.14);
-      margin-bottom: 44px;
+      margin-bottom: 20px;
     }
 
     /* ── Letter reveal ── */
@@ -197,9 +211,74 @@
     }
     .m-reveal .lr-word { display: inline; }
 
+    /* Block fade-in (footer) — same as index.html .reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease var(--reveal-delay, 0s),
+                  transform 0.6s ease var(--reveal-delay, 0s);
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
     @media (prefers-reduced-motion: reduce) {
       .m-reveal .char { transition: none !important; opacity: 1 !important; transform: none !important; }
+      .reveal { transition: none !important; opacity: 1 !important; transform: none !important; }
     }
+
+    /* ── Footer (ported from index.html) ── */
+    footer {
+      background: #0D1117;
+      padding: 40px 32px 32px;
+      position: relative;
+      z-index: 10000;
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-bottom: 28px;
+    }
+    .footer-top-left { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
+    .footer-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .footer-nav { display: flex; gap: 36px; }
+    .footer-social-group { display: flex; align-items: center; gap: 16px; }
+    .footer-social { color: rgba(255,255,255,0.50); transition: color 0.35s ease; line-height: 0; }
+    .footer-social:hover { color: rgba(255,255,255,0.85); }
+    .footer-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.35s ease;
+    }
+    .footer-link:hover { color: rgba(255,255,255,0.85); }
+    .footer-link--legal {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.30);
+    }
+    .footer-link--legal:hover { color: rgba(255,255,255,0.65); }
+    .footer-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 28px;
+      gap: 16px;
+    }
+    .footer-bottom-left { display: flex; flex-direction: column; gap: 4px; }
+    .footer-bottom-right { display: flex; align-items: center; gap: 24px; }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(255,255,255,0.30); }
+    .footer-location { font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(255,255,255,0.20); display: flex; align-items: center; }
+    .footer-purdue { height: 10px; width: auto; margin-left: 3px; opacity: 0.75; }
 
     /* ── Grain ── */
     .grain {
@@ -221,6 +300,10 @@
       .page-bg::after {
         background: rgba(13,17,23,0.92);
       }
+      .footer-top { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .footer-nav { flex-wrap: wrap; gap: 20px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer-bottom-right { flex-wrap: wrap; gap: 16px; }
     }
   </style>
 </head>
@@ -244,32 +327,90 @@
   <main>
     <div class="manifesto-content">
 
+      <p class="manifesto-header m-reveal">by students. for students.</p>
+
       <p class="manifesto-opener m-reveal">
-        You've seen it. The group chat fills up for a show, a game, a weekend trip — then one by one, people drop. No ride. Too expensive. No one to go with.
+        A group chat text.<br>
+        A show. A game. A weekend trip.
       </p>
-
-      <p class="manifesto-punch m-reveal">So you stay home and scroll instead.</p>
 
       <p class="manifesto-body m-reveal">
-        Gen Z is stranded. The gap is almost always cost — and having no one to make the trip with.
+        You get excited.<br>
+        Then no one commits.
       </p>
-
-      <p class="manifesto-statement m-reveal">
-        KOVA exists because of <span class="hl">that gap.</span>
-      </p>
-
-      <div class="manifesto-rule"></div>
 
       <p class="manifesto-body m-reveal">
-        Rides between verified Purdue students, at prices you negotiate directly. No platform taking a cut. Just you and someone heading the same direction, sharing a trip, maybe more than that.
+        Uber's $100.<br>
+        Bus doesn't go there.<br>
+        No one else to go with.
       </p>
+
+      <p class="manifesto-punch m-reveal">So you stay home and doomscroll instead.</p>
+
+      <p class="manifesto-statement m-reveal">This is why we built KOVA.</p>
+
+      <p class="manifesto-body m-reveal">
+        Students driving students.<br>
+        Set a price. Pick up someone.<br>
+        Keep everything.<br>
+        No platform taking a cut.
+      </p>
+
+      <p class="manifesto-body m-reveal">Just you and someone heading the same direction.</p>
 
       <p class="manifesto-close m-reveal">
-        We built this so students show up to the concerts, the games, the festivals — and to each other.
+        We built this for the concerts you missed,<br>
+        the road trips that fell through,<br>
+        the people you could meet.
       </p>
 
     </div>
   </main>
+
+  <!-- ─── Footer (same as index.html) ─────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+
+      <!-- Top row: logo | nav | social -->
+      <div class="footer-top reveal">
+        <div class="footer-top-left">
+          <img class="footer-logo" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
+
+          <nav class="footer-nav">
+            <a href="index.html#ambassador" class="footer-link">Ambassadors</a>
+            <a href="businesses.html" class="footer-link">For Businesses</a>
+            <a href="manifesto.html" class="footer-link">Manifesto</a>
+            <a href="terms.html" class="footer-link">Terms of Service</a>
+            <a href="privacy.html" class="footer-link">Privacy Policy</a>
+          </nav>
+        </div>
+
+        <div class="footer-social-group">
+          <a href="https://www.instagram.com/ridekova/" class="footer-social" aria-label="KOVA on Instagram" target="_blank" rel="noopener noreferrer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="footer-divider"></div>
+
+      <!-- Bottom row: copyright | built-with-love -->
+      <div class="footer-bottom reveal" style="--reveal-delay:0.1s">
+        <div class="footer-bottom-left">
+          <p class="footer-copy">© 2026 KOVA Group, Inc. All rights reserved.</p>
+        </div>
+        <div class="footer-bottom-right">
+          <p class="footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" loading="lazy" decoding="async" /></p>
+        </div>
+      </div>
+
+    </div>
+  </footer>
 
   <div class="grain" aria-hidden="true"></div>
 
@@ -340,6 +481,8 @@
       }, { threshold: 0.1 });
 
       document.querySelectorAll('.m-reveal').forEach(el => observer.observe(el));
+      // Block-level fade-in (footer) — observed by the same observer, no char-splitting
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     })();
   </script>
 
