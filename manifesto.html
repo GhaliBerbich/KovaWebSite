@@ -6,46 +6,342 @@
   <title>Manifesto — KOVA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,800;1,9..144,800&family=Inter:wght@400;500;600&family=Lora:wght@400&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #0c0c0c; color: #fff; font-family: 'Inter', sans-serif; }
+    html, body { min-height: 100%; }
+    body {
+      background: #0D1117;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
+    :root { --green: #3EE06F; }
+
+    /* Lenis smooth-scroll resets (match index.html; Lenis manages scrolling) */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-stopped { overflow: hidden; }
+
+    /* ── Nav — exact match to index.html ── */
     .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 28px;
-      background: rgba(12,12,12,0.80);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      isolation: isolate;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      padding: 12px 32px;
+      white-space: nowrap;
+    }
+    .nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
+      opacity: var(--nav-glass, 0);
     }
-    .nav-logo { height: 28px; width: auto; cursor: pointer; }
-    .nav-back {
-      font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.55);
-      text-decoration: none; letter-spacing: 0.02em;
-      transition: color 0.2s;
+    .nav-logo {
+      height: 28px; width: auto;
+      cursor: pointer;
+      filter: invert(1) hue-rotate(180deg);
     }
-    .nav-back:hover { color: #fff; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .nav > .nav-btn.primary { justify-self: end; }
+    .nav-btn {
+      color: rgba(255,255,255,0.55);
+      background: transparent;
+      border: none;
+      padding: 8px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      text-decoration: none;
+      transition: color 0.4s ease;
+      cursor: pointer;
+    }
+    .nav-btn:hover { color: #fff; }
+    .nav-btn.active { color: #fff; }
+    .nav-btn.primary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: rgba(255,255,255,0.04);
+      color: #9af0b8;
+      border: 1px solid rgba(125,242,166,0.30);
+      border-radius: 999px;
+      padding: 9px 24px;
+      font-weight: 600;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      box-shadow:
+        0 0 8px rgba(0,0,0,0.10),
+        0 2px 6px rgba(0,0,0,0.18),
+        inset 3px 3px 0.5px -3.5px rgba(125,242,166,0.9),
+        inset -3px -3px 0.5px -3.5px rgba(125,242,166,0.85),
+        inset 1px 1px 1px -0.5px rgba(125,242,166,0.6),
+        inset -1px -1px 1px -0.5px rgba(125,242,166,0.6),
+        inset 0 0 6px 6px rgba(125,242,166,0.12),
+        inset 0 0 2px 2px rgba(125,242,166,0.06);
+      transition: transform 0.3s ease, box-shadow 0.4s ease, background 0.4s ease, color 0.4s ease;
+    }
+    .nav-btn.primary:hover {
+      transform: scale(1.02);
+      background: rgba(255,255,255,0.08);
+      color: #bff8d2;
+    }
 
-    main {
+    /* ── Background image ── */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: url('concert pic.jpg');
+      background-size: cover;
+      background-position: right center;
+      background-repeat: no-repeat;
+    }
+    .page-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(13,17,23,0.98) 0%,
+        rgba(13,17,23,0.93) 38%,
+        rgba(13,17,23,0.72) 58%,
+        rgba(13,17,23,0.32) 100%
+      );
+    }
+
+    /* ── Green highlight ── */
+    .hl {
+      background-image: linear-gradient(to bottom, transparent 16px, var(--green) 16px);
+      color: #0D1117;
+      padding: 0.02em 0.1em;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    /* ── Content column ── */
+    .manifesto-content {
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 136px 24px 120px;
+    }
+
+    .manifesto-tag {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 44px;
+    }
+
+    /* Uniform text — every block shares one font + size (Round 19) */
+    .manifesto-opener,
+    .manifesto-punch,
+    .manifesto-body,
+    .manifesto-statement,
+    .manifesto-close {
+      font-family: 'Lora', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      font-style: normal;
+      line-height: 1.8;
+      letter-spacing: normal;
+      color: rgba(255,255,255,0.80);
+    }
+    .manifesto-opener    { margin-bottom: 36px; }
+    .manifesto-punch     { margin-bottom: 48px; }
+    .manifesto-body      { margin-bottom: 36px; }
+    .manifesto-statement { margin-bottom: 48px; }
+
+    /* Thin rule */
+    .manifesto-rule {
+      width: 32px;
+      height: 1px;
+      background: rgba(255,255,255,0.14);
+      margin-bottom: 44px;
+    }
+
+    /* ── Letter reveal ── */
+    .m-reveal .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.35s ease-out calc(var(--i) * 0.014s),
+                  transform 0.35s ease-out calc(var(--i) * 0.014s);
+    }
+    .m-reveal.in-view .char {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .m-reveal .lr-word { display: inline; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .m-reveal .char { transition: none !important; opacity: 1 !important; transform: none !important; }
+    }
+
+    /* ── Grain ── */
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .nav { padding: 8px 16px; }
+      .nav-logo { height: 24px; }
+      .nav-btn { font-size: 12px; padding: 7px 10px; }
+      .manifesto-content { padding: 110px 24px 80px; }
+      .page-bg::after {
+        background: rgba(13,17,23,0.92);
+      }
     }
   </style>
 </head>
 <body>
 
-  <nav class="nav">
+  <div class="page-bg"></div>
+
+  <!-- Nav — same structure as index.html -->
+  <nav class="nav" aria-label="Main navigation">
     <a href="index.html">
       <img class="nav-logo" src="KOVA logo.png" alt="KOVA" decoding="async" />
     </a>
-    <a href="index.html" class="nav-back">← Back</a>
+    <div class="nav-links">
+      <a href="index.html#ambassador" class="nav-btn">Ambassadors</a>
+      <a href="businesses.html" class="nav-btn">For Businesses</a>
+      <a href="manifesto.html" class="nav-btn active">Manifesto</a>
+    </div>
+    <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
   </nav>
 
   <main>
-    <!-- content coming soon -->
+    <div class="manifesto-content">
+
+      <p class="manifesto-opener m-reveal">
+        You've seen it. The group chat fills up for a show, a game, a weekend trip — then one by one, people drop. No ride. Too expensive. No one to go with.
+      </p>
+
+      <p class="manifesto-punch m-reveal">So you stay home and scroll instead.</p>
+
+      <p class="manifesto-body m-reveal">
+        Gen Z is stranded. The gap is almost always cost — and having no one to make the trip with.
+      </p>
+
+      <p class="manifesto-statement m-reveal">
+        KOVA exists because of <span class="hl">that gap.</span>
+      </p>
+
+      <div class="manifesto-rule"></div>
+
+      <p class="manifesto-body m-reveal">
+        Rides between verified Purdue students, at prices you negotiate directly. No platform taking a cut. Just you and someone heading the same direction, sharing a trip, maybe more than that.
+      </p>
+
+      <p class="manifesto-close m-reveal">
+        We built this so students show up to the concerts, the games, the festivals — and to each other.
+      </p>
+
+    </div>
   </main>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script>
+    /* ── Lenis smooth scroll (match index.html: lerp 0.06, wheelMultiplier 0.9) ── */
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.Lenis) return;
+      const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.9, smoothWheel: true });
+      const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+      window.lenis = lenis;
+    })();
+
+    /* ── Nav glass on scroll ── */
+    (function () {
+      const nav = document.querySelector('.nav');
+      if (!nav) return;
+      function updateGlass() {
+        nav.style.setProperty('--nav-glass', Math.min(window.scrollY / 100, 1));
+      }
+      window.addEventListener('scroll', updateGlass, { passive: true });
+      updateGlass();
+    })();
+
+    /* ── Letter-by-letter reveal on scroll ── */
+    (function () {
+      // Split an element's children into animated char spans.
+      // Handles: TEXT_NODE, BR, and ELEMENT_NODE (preserves wrapper like span.hl).
+      function splitChars(el) {
+        let ci = 0;
+        const parts = [];
+        el.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            node.textContent.split(/(\s+)/).forEach(token => {
+              if (token === '') return;
+              if (/^\s+$/.test(token)) { parts.push(' '); return; }
+              let inner = '';
+              token.split('').forEach(ch => {
+                inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+              });
+              parts.push(`<span class="lr-word">${inner}</span>`);
+            });
+          } else if (node.nodeName === 'BR') {
+            parts.push('<br />');
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            let inner = '';
+            node.textContent.split('').forEach(ch => {
+              inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+            });
+            const tag = node.tagName.toLowerCase();
+            const cls = node.getAttribute('class') || '';
+            parts.push(`<${tag} class="${cls}">${inner}</${tag}>`);
+          }
+        });
+        el.innerHTML = parts.join('');
+      }
+
+      document.querySelectorAll('.m-reveal').forEach(el => splitChars(el));
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.m-reveal').forEach(el => observer.observe(el));
+    })();
+  </script>
 
 </body>
 </html>
