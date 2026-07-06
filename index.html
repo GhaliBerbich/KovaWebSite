@@ -186,26 +186,7 @@
       color: var(--text-body);
       line-height: 1.7;
     }
-    /* Numbered editorial kicker above section titles */
-    .section-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 14px;
-    }
-    .section-eyebrow::before {
-      content: '';
-      width: 26px;
-      height: 1px;
-      background: rgba(255,255,255,0.35);
-    }
-    /* Wraps eyebrow + title so flex-gap parents don't split them; left-anchored on desktop in hiw/safety */
+    /* Wraps the section title so it can be left-anchored on desktop in hiw/safety */
     .section-head {
       display: flex;
       flex-direction: column;
@@ -240,25 +221,17 @@
       color: rgba(255,255,255,0.58);
       text-decoration: none;
       letter-spacing: 0.03em;
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      display: block;
       width: fit-content;
       margin: 0 auto;
       border-bottom: 1px solid rgba(255,255,255,0.3);
-      padding-bottom: 2px;
+      padding-bottom: 1px;
       transition: color 0.2s ease, border-color 0.2s ease, opacity 0.8s ease-out;
       opacity: 0;
     }
     .hero-press-link:hover {
       color: rgba(255,255,255,0.85);
       border-bottom-color: rgba(255,255,255,0.55);
-    }
-    /* Small gold Purdue "P" beside the press-link text (original colors read fine on the dark photo) */
-    .press-purdue {
-      height: 16px;
-      width: auto;
-      display: block;
     }
     .btn-glass {
       display: inline-flex;
@@ -584,9 +557,14 @@
     }
     /* Irregular horizontal placement (desktop only — mobile stacks full-width) */
     @media (min-width: 769px) {
-      /* Left-anchor the eyebrow + title in hiw/safety (breaks the all-centered rhythm; desktop only) */
+      /* Left-anchor the title in hiw/safety (breaks the all-centered rhythm; desktop only) */
       #how-it-works .section-head,
       #safety .section-head { align-self: flex-start; align-items: flex-start; text-align: left; }
+      /* Fixed height budget: one open answer never outgrows the section, so the
+         section box (and the .card-bg sized off it) never resizes during the
+         accordion transition — that resize was re-scaling the background photo
+         every frame of the 0.5s animation (the jitter). */
+      #faq { min-height: max(100vh, 840px); }
       .hiw-step:nth-of-type(1) { width: 78%; margin-left: 0; }
       .hiw-step:nth-of-type(2) { width: 92%; margin-right: 1%; }
       .hiw-step:nth-of-type(3) { width: 74%; margin-left: 13%; }
@@ -889,8 +867,9 @@
                   opacity 0.4s ease,
                   margin-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    /* max-height is driven inline by JS (measured scrollHeight), so the open/close
+       motion matches the real answer height exactly — no overshoot-then-snap. */
     .faq-item.open .faq-answer {
-      max-height: 260px;
       opacity: 1;
       margin-top: 12px;
     }
@@ -1188,7 +1167,7 @@
         <div class="hero-seq-line" id="hl-bottom"></div>
       </div>
       <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
-      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer"><img src="purdue.png" alt="" class="press-purdue" decoding="async" /><span>Featured on Purdue.edu ↗</span></a>
+      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
     </div>
   </section>
 
@@ -1199,7 +1178,6 @@
     <svg class="road-svg" aria-hidden="true"></svg>
     <div class="hiw-inner">
       <div class="section-head">
-        <span class="section-eyebrow reveal">01 — The basics</span>
         <h2 class="section-title letter-reveal">How it works</h2>
       </div>
       <div class="hiw-steps">
@@ -1248,7 +1226,6 @@
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="testimonials-inner">
         <div class="testimonials-heading">
-          <span class="section-eyebrow reveal">02 — Word of mouth</span>
           <h2 class="section-title letter-reveal">From the people using it</h2>
           <p class="section-sub word-reveal">No paid reviews.</p>
         </div>
@@ -1417,7 +1394,6 @@
       <div class="card-bg-edge"></div>
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="mtr-inner">
-        <span class="section-eyebrow reveal">03 — More than a ride</span>
         <div class="mtr-bento">
 
           <div class="mtr-card mtr-card--earn reveal">
@@ -1450,7 +1426,6 @@
       <div class="card-bg-edge"></div>
       <div class="safety-inner">
         <div class="section-head">
-          <span class="section-eyebrow reveal">04 — Safety</span>
           <h2 class="section-title letter-reveal">You know who's driving</h2>
         </div>
         <div class="safety-pillars">
@@ -1484,7 +1459,6 @@
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="ambassador-inner">
         <div>
-          <span class="section-eyebrow reveal">05 — The team</span>
           <h2 class="section-title letter-reveal">Become an Ambassador</h2>
           <p class="section-sub word-reveal">Already talking about it? Make it official. You grow it on campus, we handle the rest.</p>
         </div>
@@ -1522,10 +1496,7 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="faq-inner">
-        <div class="section-head">
-          <span class="section-eyebrow reveal">06 — Questions</span>
-          <h2 class="section-title letter-reveal">Questions, answered.</h2>
-        </div>
+        <h2 class="section-title letter-reveal">Questions, answered.</h2>
 
         <div class="faq-list">
           <div class="faq-item">
@@ -1795,12 +1766,25 @@
       marqueeObs.observe(marqueeTrack);
     }
 
-    /* ── FAQ accordion ── */
-    document.querySelectorAll('#faq .faq-item').forEach(item => {
+    /* ── FAQ accordion (exclusive; answer height measured so the transition
+          tracks the real content height instead of a hardcoded max-height) ── */
+    const faqItems = [...document.querySelectorAll('#faq .faq-item')];
+    faqItems.forEach(item => {
       const q = item.querySelector('.faq-question');
+      const a = item.querySelector('.faq-answer');
       q.addEventListener('click', () => {
-        const open = item.classList.toggle('open');
-        q.setAttribute('aria-expanded', open ? 'true' : 'false');
+        const opening = !item.classList.contains('open');
+        // One open at a time — bounds the section's content height (see #faq min-height)
+        faqItems.forEach(other => {
+          if (other !== item && other.classList.contains('open')) {
+            other.classList.remove('open');
+            other.querySelector('.faq-answer').style.maxHeight = '0px';
+            other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          }
+        });
+        item.classList.toggle('open', opening);
+        a.style.maxHeight = opening ? a.scrollHeight + 'px' : '0px';
+        q.setAttribute('aria-expanded', opening ? 'true' : 'false');
       });
     });
 
