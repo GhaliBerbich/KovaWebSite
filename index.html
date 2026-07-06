@@ -27,7 +27,7 @@
   <meta name="twitter:image" content="og-image.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     /* ─── Tokens ─────────────────────────────────────────────── */
     :root {
@@ -173,9 +173,10 @@
     /* ─── Shared section type ────────────────────────────────── */
     .section-title {
       font-family: 'Fraunces', serif;
-      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
       color: #fff;
       margin-bottom: 16px;
     }
@@ -184,6 +185,31 @@
       font-size: 1.05rem;
       color: var(--text-body);
       line-height: 1.7;
+    }
+    /* Numbered editorial kicker above section titles */
+    .section-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 26px;
+      height: 1px;
+      background: rgba(255,255,255,0.35);
+    }
+    /* Wraps eyebrow + title so flex-gap parents don't split them; left-anchored on desktop in hiw/safety */
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     /* ─── Buttons ────────────────────────────────────────────── */
@@ -214,17 +240,25 @@
       color: rgba(255,255,255,0.58);
       text-decoration: none;
       letter-spacing: 0.03em;
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 7px;
       width: fit-content;
       margin: 0 auto;
       border-bottom: 1px solid rgba(255,255,255,0.3);
-      padding-bottom: 1px;
+      padding-bottom: 2px;
       transition: color 0.2s ease, border-color 0.2s ease, opacity 0.8s ease-out;
       opacity: 0;
     }
     .hero-press-link:hover {
       color: rgba(255,255,255,0.85);
       border-bottom-color: rgba(255,255,255,0.55);
+    }
+    /* Small gold Purdue "P" beside the press-link text (original colors read fine on the dark photo) */
+    .press-purdue {
+      height: 16px;
+      width: auto;
+      display: block;
     }
     .btn-glass {
       display: inline-flex;
@@ -309,7 +343,8 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.35);
+      /* Grounds the headline at the bottom, opens the sky at mid-frame */
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.38) 100%);
     }
     .hero-content {
       position: relative;
@@ -490,25 +525,25 @@
     /* Per-section background variation (image / crop / rotation / blur / overlay) */
     #how-it-works .card-bg      { background-image: url('hiw-bg.jpg');        background-position: center 70%; transform: scale(1.05) rotate(-1deg) translateZ(0); }
     #how-it-works .card-bg-edge { background-image: url('hiw-bg.jpg');        background-position: center 70%; }
-    #how-it-works::before       { background: rgba(0, 0, 0, 0.75); }
+    #how-it-works::before       { background: linear-gradient(105deg, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.62) 100%); }
     #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg) translateZ(0); }
     #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
-    #testimonials::before       { background: rgba(0, 0, 0, 0.72); }
+    #testimonials::before       { background: linear-gradient(to top, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.55) 100%); }
     #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; transform: scale(1.05) rotate(-0.8deg) translateZ(0); }
     #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg');  background-position: center center; }
-    #more-than-a-ride::before       { background: rgba(0, 0, 0, 0.72); }
+    #more-than-a-ride::before       { background: linear-gradient(285deg, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.60) 100%); }
     #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; transform: scale(1.05) rotate(0.6deg); }
     #safety .card-bg-edge       { background-image: url('safety-bg.jpg');     background-position: center 60%; }
-    #safety::before             { background: rgba(0, 0, 0, 0.75); }
+    #safety::before             { background: linear-gradient(to bottom, rgba(0,0,0,0.60), rgba(0,0,0,0.85) 70%); }
     #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg) translateZ(0); }
     #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
-    #ambassador::before         { background: rgba(0, 0, 0, 0.75); }
+    #ambassador::before         { background: linear-gradient(75deg, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.58) 100%); }
     #faq .card-bg               { background-image: url('faq-bg.jpg');        background-position: center 65%; transform: scale(1.05) rotate(-1.1deg); }
     #faq .card-bg-edge          { background-image: url('faq-bg.jpg');        background-position: center 65%; }
-    #faq::before                { background: rgba(0, 0, 0, 0.85); }
+    #faq::before                { background: linear-gradient(to bottom, rgba(0,0,0,0.82), rgba(0,0,0,0.88)); }
     #download .card-bg          { background-image: url('download-bg.jpg');   background-position: 40% center; transform: scale(1.03) rotate(0.3deg); }
     #download .card-bg-edge     { background-image: url('download-bg.jpg');   background-position: 40% center; }
-    #download::before           { background: rgba(0, 0, 0, 0.80); }
+    #download::before           { background: linear-gradient(100deg, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.62) 100%); }
 
     /* ─── Road (per card) ────────────────────────────────────── */
     .road-base   { fill: none; stroke: var(--road-base);   stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; shape-rendering: optimizeSpeed; }
@@ -549,6 +584,9 @@
     }
     /* Irregular horizontal placement (desktop only — mobile stacks full-width) */
     @media (min-width: 769px) {
+      /* Left-anchor the eyebrow + title in hiw/safety (breaks the all-centered rhythm; desktop only) */
+      #how-it-works .section-head,
+      #safety .section-head { align-self: flex-start; align-items: flex-start; text-align: left; }
       .hiw-step:nth-of-type(1) { width: 78%; margin-left: 0; }
       .hiw-step:nth-of-type(2) { width: 92%; margin-right: 1%; }
       .hiw-step:nth-of-type(3) { width: 74%; margin-left: 13%; }
@@ -590,8 +628,8 @@
     }
     .hiw-step-desc {
       font-family: 'Lora', serif;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.55);
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.62);
       line-height: 1.7;
       max-width: 320px;
     }
@@ -639,8 +677,8 @@
     .mtr-card--earn .mtr-heading { font-size: 2rem; }
     .mtr-desc {
       font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.50);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.62);
       line-height: 1.65;
     }
 
@@ -678,8 +716,8 @@
     }
     .safety-pillar-desc {
       font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.55);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.62);
       line-height: 1.7;
     }
 
@@ -719,7 +757,7 @@
       width: max-content;
       padding: 8px 0;
       will-change: transform;
-      animation: testimonialScroll 40s linear infinite;
+      animation: testimonialScroll 55s linear infinite;
     }
     /* Stop the infinite marquee (and its per-frame compositor work) when the
        section is scrolled out of view — toggled by an IntersectionObserver. */
@@ -738,10 +776,23 @@
       justify-content: space-between;
       min-height: 200px;
     }
-    .testimonial-stars { color: #FFB800; font-size: 13px; letter-spacing: 3px; align-self: flex-start; }
+    /* Slight width variation — hand-set editorial rhythm. The 3-card period divides
+       the 6-card loop halves, so both marquee halves stay identical (seamless loop). */
+    .testimonial-card:nth-child(3n+2) { min-width: 320px; }
+    .testimonial-card:nth-child(3n)   { min-width: 300px; }
+    /* Oversized Fraunces open-quote glyph (replaces the old star rows) */
+    .testimonial-mark {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 0.6;
+      color: rgba(255,255,255,0.28);
+      align-self: flex-start;
+    }
     .testimonial-quote {
       color: rgba(255,255,255,0.80);
       font-family: 'Lora', serif;
+      font-style: italic;
       font-size: 0.95rem;
       line-height: 1.6;
       flex: 1;
@@ -810,6 +861,11 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
       cursor: pointer;
       font-family: 'Fraunces', serif;
       font-size: 1.05rem;
@@ -1110,16 +1166,16 @@
   <section id="hero">
     <div class="hero-bg"></div>
 
-    <div class="hero-stat" style="top:13%;left:7%;--tilt:-12deg;--delay:1s">
+    <div class="hero-stat" style="top:13%;left:7%;--tilt:-6deg;--delay:1s">
       <span class="hero-stat-label" style="margin-bottom:-6px">Keep</span>
       <span class="hero-stat-number">100%</span>
       <span class="hero-stat-label">of what you earn</span>
     </div>
-    <div class="hero-stat" style="top:18%;right:8%;--tilt:13deg;--delay:1.15s">
+    <div class="hero-stat" style="top:18%;right:8%;--tilt:7deg;--delay:1.15s">
       <span class="hero-stat-number">1000+</span>
       <span class="hero-stat-label">Purdue students</span>
     </div>
-    <div class="hero-stat" style="bottom:12%;left:10%;--tilt:-7deg;--delay:1.3s">
+    <div class="hero-stat" style="bottom:12%;left:10%;--tilt:-4deg;--delay:1.3s">
       <span class="hero-stat-number">4.9★</span>
       <span class="hero-stat-label">average rating</span>
     </div>
@@ -1132,7 +1188,7 @@
         <div class="hero-seq-line" id="hl-bottom"></div>
       </div>
       <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
-      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
+      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer"><img src="purdue.png" alt="" class="press-purdue" decoding="async" /><span>Featured on Purdue.edu ↗</span></a>
     </div>
   </section>
 
@@ -1142,39 +1198,42 @@
     <div class="card-bg-edge"></div>
     <svg class="road-svg" aria-hidden="true"></svg>
     <div class="hiw-inner">
-      <h2 class="section-title letter-reveal">How it works</h2>
+      <div class="section-head">
+        <span class="section-eyebrow reveal">01 — The basics</span>
+        <h2 class="section-title letter-reveal">How it works</h2>
+      </div>
       <div class="hiw-steps">
 
         <div class="hiw-step hiw-step--left reveal">
           <div class="hiw-step-num">01</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="find_a_ride.png" width="1974" height="1312" alt="A posted ride from a verified Purdue student" style="transform:rotate(-8deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="find_a_ride.png" width="1974" height="1312" alt="A posted ride from a verified Purdue student" style="transform:rotate(-2.5deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading letter-reveal">See what's up</h3>
-            <p class="hiw-step-desc letter-reveal">All drivers are Purdue students. No randoms.</p>
+            <p class="hiw-step-desc word-reveal">All drivers are Purdue students. No randoms.</p>
           </div>
         </div>
 
         <div class="hiw-step hiw-step--right reveal">
           <div class="hiw-step-num">02</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="chat_price.png" width="1974" height="1514" alt="Chat thread agreeing on a ride price" style="transform:rotate(6deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="chat_price.png" width="1974" height="1514" alt="Chat thread agreeing on a ride price" style="transform:rotate(2deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading letter-reveal">Sort out the price</h3>
-            <p class="hiw-step-desc letter-reveal">Text them, agree on a number, done.</p>
+            <p class="hiw-step-desc word-reveal">Text them, agree on a number, done.</p>
           </div>
         </div>
 
         <div class="hiw-step hiw-step--left reveal">
           <div class="hiw-step-num">03</div>
           <div class="hiw-step-screen">
-            <img class="app-shot hiw-shot" src="ride_live.png" width="1974" height="1479" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-7deg)" loading="lazy" decoding="async" />
+            <img class="app-shot hiw-shot" src="ride_live.png" width="1974" height="1479" alt="Live trip tracking with the safety toolkit" style="transform:rotate(-2deg)" loading="lazy" decoding="async" />
           </div>
           <div class="hiw-step-text">
             <h3 class="hiw-step-heading letter-reveal">Ride and track it live</h3>
-            <p class="hiw-step-desc letter-reveal">Track the ride in real time.</p>
+            <p class="hiw-step-desc word-reveal">Track the ride in real time.</p>
           </div>
         </div>
 
@@ -1189,16 +1248,17 @@
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="testimonials-inner">
         <div class="testimonials-heading">
+          <span class="section-eyebrow reveal">02 — Word of mouth</span>
           <h2 class="section-title letter-reveal">From the people using it</h2>
           <p class="section-sub word-reveal">No paid reviews.</p>
         </div>
-        <div class="marquee-outer">
+        <div class="marquee-outer" role="region" aria-label="Student testimonials">
           <div class="testimonials-track">
 
             <!-- Card 1 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
@@ -1210,8 +1270,8 @@
 
             <!-- Card 2 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
@@ -1223,8 +1283,8 @@
 
             <!-- Card 3 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★</div>
-              <p class="testimonial-quote">"Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
@@ -1236,10 +1296,10 @@
 
             <!-- Card 4 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
+                <div class="testimonial-avatar" style="background:#1F4633;">M</div>
                 <div>
                   <div class="testimonial-name">Marcus T.</div>
                   <div class="testimonial-location">Junior, Mechanical Eng</div>
@@ -1249,10 +1309,10 @@
 
             <!-- Card 5 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
+                <div class="testimonial-avatar" style="background:#587F6A;">C</div>
                 <div>
                   <div class="testimonial-name">Claire L.</div>
                   <div class="testimonial-location">Freshman, Psychology</div>
@@ -1262,10 +1322,10 @@
 
             <!-- Card 6 -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
+                <div class="testimonial-avatar" style="background:#3D5A4C;">P</div>
                 <div>
                   <div class="testimonial-name">Priya S.</div>
                   <div class="testimonial-location">Sophomore, Data Science</div>
@@ -1275,8 +1335,8 @@
 
             <!-- Duplicates for seamless infinite loop -->
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
@@ -1287,8 +1347,8 @@
             </div>
 
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
@@ -1299,8 +1359,8 @@
             </div>
 
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★</div>
-              <p class="testimonial-quote">"Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean.</p>
               <div class="testimonial-author-row">
                 <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
@@ -1311,10 +1371,10 @@
             </div>
 
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#5B8FF9;">M</div>
+                <div class="testimonial-avatar" style="background:#1F4633;">M</div>
                 <div>
                   <div class="testimonial-name">Marcus T.</div>
                   <div class="testimonial-location">Junior, Mechanical Eng</div>
@@ -1323,10 +1383,10 @@
             </div>
 
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#FF7A5C;">C</div>
+                <div class="testimonial-avatar" style="background:#587F6A;">C</div>
                 <div>
                   <div class="testimonial-name">Claire L.</div>
                   <div class="testimonial-location">Freshman, Psychology</div>
@@ -1335,10 +1395,10 @@
             </div>
 
             <div class="testimonial-card">
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">"Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester."</p>
+              <span class="testimonial-mark" aria-hidden="true">“</span>
+              <p class="testimonial-quote">Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#A78BFA;">P</div>
+                <div class="testimonial-avatar" style="background:#3D5A4C;">P</div>
                 <div>
                   <div class="testimonial-name">Priya S.</div>
                   <div class="testimonial-location">Sophomore, Data Science</div>
@@ -1357,25 +1417,26 @@
       <div class="card-bg-edge"></div>
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="mtr-inner">
+        <span class="section-eyebrow reveal">03 — More than a ride</span>
         <div class="mtr-bento">
 
           <div class="mtr-card mtr-card--earn reveal">
-            <img class="app-shot mtr-shot" src="make_bucks.png" width="1080" height="716" alt="A ride request a driver can earn from" style="transform:rotate(13deg)" loading="lazy" decoding="async" />
-            <h3 class="mtr-heading letter-reveal">Make a few bucks</h3>
-            <p class="mtr-desc letter-reveal">Post your route, name your price. Every dollar is yours.</p>
+            <img class="app-shot mtr-shot" src="make_bucks.png" width="1080" height="716" alt="A ride request a driver can earn from" style="transform:rotate(3.5deg)" loading="lazy" decoding="async" />
+            <h3 class="mtr-heading letter-reveal">Sell your empty seats.</h3>
+            <p class="mtr-desc word-reveal">Post your route, name your price. Every dollar is yours.</p>
           </div>
 
           <div class="mtr-right">
           <div class="mtr-card mtr-card--community reveal" style="--reveal-delay:0.1s">
-            <img class="app-shot mtr-shot" src="community.png" width="1080" height="831" alt="A community students can join" style="transform:rotate(-16deg)" loading="lazy" decoding="async" />
+            <img class="app-shot mtr-shot" src="community.png" width="1080" height="831" alt="A community students can join" style="transform:rotate(-3deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading letter-reveal">Find your crew</h3>
-            <p class="mtr-desc letter-reveal">See who else is heading your way.</p>
+            <p class="mtr-desc word-reveal">See who else is heading your way.</p>
           </div>
 
           <div class="mtr-card mtr-card--perks reveal" style="--reveal-delay:0.2s">
-            <img class="app-shot mtr-shot" src="perks.png" width="1080" height="778" alt="A KOVA partner perks card" style="transform:rotate(18deg)" loading="lazy" decoding="async" />
+            <img class="app-shot mtr-shot" src="perks.png" width="1080" height="778" alt="A KOVA partner perks card" style="transform:rotate(2.5deg)" loading="lazy" decoding="async" />
             <h3 class="mtr-heading letter-reveal">Unlock perks</h3>
-            <p class="mtr-desc letter-reveal">KOVA partners throw in actual discounts just for riding.</p>
+            <p class="mtr-desc word-reveal">KOVA partners throw in actual discounts just for riding.</p>
           </div>
           </div>
 
@@ -1388,25 +1449,28 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="safety-inner">
-        <h2 class="section-title letter-reveal">You know who's driving</h2>
+        <div class="section-head">
+          <span class="section-eyebrow reveal">04 — Safety</span>
+          <h2 class="section-title letter-reveal">You know who's driving</h2>
+        </div>
         <div class="safety-pillars">
 
           <div class="safety-pillar reveal">
-            <img class="app-shot safety-shot" src="student_seal.png" alt="Verified-student seal" style="transform:rotate(-10deg)" loading="lazy" decoding="async" />
+            <img class="app-shot safety-shot" src="student_seal.png" alt="Verified-student seal" style="transform:rotate(-3deg)" loading="lazy" decoding="async" />
             <h3 class="safety-pillar-heading letter-reveal">Students only</h3>
-            <p class="safety-pillar-desc letter-reveal">You need a Purdue email to get in. That's it.</p>
+            <p class="safety-pillar-desc word-reveal">You need a Purdue email to get in. That's it.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.1s">
-            <img class="app-shot safety-shot" src="stars.png" alt="Trip rating stars" style="transform:rotate(12deg)" loading="lazy" decoding="async" />
+            <img class="app-shot safety-shot" src="stars.png" alt="Trip rating stars" style="transform:rotate(2.5deg)" loading="lazy" decoding="async" />
             <h3 class="safety-pillar-heading letter-reveal">Real ratings</h3>
-            <p class="safety-pillar-desc letter-reveal">Both sides rate every trip. Your rep goes with you.</p>
+            <p class="safety-pillar-desc word-reveal">Both sides rate every trip. Your rep goes with you.</p>
           </div>
 
           <div class="safety-pillar reveal" style="--reveal-delay:0.2s">
-            <img class="app-shot safety-shot" src="profile.png" alt="A rider profile with photo, rating and trip history" style="transform:rotate(-14deg)" loading="lazy" decoding="async" />
+            <img class="app-shot safety-shot" src="profile.png" alt="A rider profile with photo, rating and trip history" style="transform:rotate(-3deg)" loading="lazy" decoding="async" />
             <h3 class="safety-pillar-heading letter-reveal">Know your driver</h3>
-            <p class="safety-pillar-desc letter-reveal">Photo, rating, trip history. All there before you say yes.</p>
+            <p class="safety-pillar-desc word-reveal">Photo, rating, trip history. All there before you say yes.</p>
           </div>
 
         </div>
@@ -1420,6 +1484,7 @@
       <svg class="road-svg" aria-hidden="true"></svg>
       <div class="ambassador-inner">
         <div>
+          <span class="section-eyebrow reveal">05 — The team</span>
           <h2 class="section-title letter-reveal">Become an Ambassador</h2>
           <p class="section-sub word-reveal">Already talking about it? Make it official. You grow it on campus, we handle the rest.</p>
         </div>
@@ -1457,35 +1522,38 @@
       <div class="card-bg"></div>
       <div class="card-bg-edge"></div>
       <div class="faq-inner">
-        <h2 class="section-title letter-reveal">Q&amp;A</h2>
+        <div class="section-head">
+          <span class="section-eyebrow reveal">06 — Questions</span>
+          <h2 class="section-title letter-reveal">Questions, answered.</h2>
+        </div>
 
         <div class="faq-list">
           <div class="faq-item">
-            <div class="faq-question">
+            <button type="button" class="faq-question" aria-expanded="false">
               How do I pay?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
+            </button>
             <div class="faq-answer">Drivers post a starting price, you text them directly to work out the details. Pay however works for you, Venmo, cash, whatever.</div>
           </div>
           <div class="faq-item">
-            <div class="faq-question">
+            <button type="button" class="faq-question" aria-expanded="false">
               Is KOVA only for Purdue students right now?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
+            </button>
             <div class="faq-answer">Just Purdue for now. More schools coming soon. Sign up to hear when yours goes live.</div>
           </div>
           <div class="faq-item">
-            <div class="faq-question">
+            <button type="button" class="faq-question" aria-expanded="false">
               How do I become a driver?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
+            </button>
             <div class="faq-answer">Sign up with your Purdue email and do a quick driver check. License, student status. Once you're good, you're good.</div>
           </div>
           <div class="faq-item">
-            <div class="faq-question">
+            <button type="button" class="faq-question" aria-expanded="false">
               Is it safe to ride with someone I don't know?
               <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
+            </button>
             <div class="faq-answer">Every account needs a Purdue email. Drivers go through a verification check before their first ride. Profiles, ratings, and photos are all there before you commit.</div>
           </div>
         </div>
@@ -1730,7 +1798,10 @@
     /* ── FAQ accordion ── */
     document.querySelectorAll('#faq .faq-item').forEach(item => {
       const q = item.querySelector('.faq-question');
-      q.addEventListener('click', () => { item.classList.toggle('open'); });
+      q.addEventListener('click', () => {
+        const open = item.classList.toggle('open');
+        q.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
     });
 
     /* ── Road animation — per card ── */
@@ -1965,6 +2036,11 @@
         return;
       }
 
+      // Repeat visits in the same session skip the descriptor cycle and go
+      // straight to the headline (still with its slide-up + green wipe).
+      let heroSeen = false;
+      try { heroSeen = sessionStorage.getItem('kovaHero') === '1'; } catch (e) {}
+
       const SPRING = 'cubic-bezier(0.22, 1, 0.36, 1)'; // overshoots slightly, spring feel
       const SNAP   = 'cubic-bezier(0.4, 0, 1, 1)';     // fast ease-in for exits
 
@@ -1994,6 +2070,19 @@
         return new Promise(resolve => setTimeout(resolve, ms));
       }
 
+      // Final headline: slide up + trigger the CSS hlWipe on .hl (0.65s delay)
+      function showHeadline() {
+        wrap.style.display = 'none';
+        el.style.display   = '';
+        el.innerHTML = 'Your world just<br />got <span class="hl">bigger.</span>';
+        el.classList.add('hero-visible');
+        el.animate(
+          [{ transform: 'translateY(70px)', opacity: 0 },
+           { transform: 'translateY(0)',    opacity: 1 }],
+          { duration: 650, easing: SPRING, fill: 'forwards' }
+        );
+      }
+
       async function runSequence() {
         // Wait for Fraunces so the reserved width below is measured in the real font, not a fallback.
         if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
@@ -2016,14 +2105,14 @@
         slideIn(hlTop, -70, 500);
         await wait(150);
         slideIn(hlBottom, 70, 500);
-        await wait(500 + 900); // bottom settles + hold
+        await wait(500 + 350); // bottom settles + short hold
 
         // Phase 2 — "for students" exits up, "by students" enters from below
         slideOut(hlBottom, -70, 350);
-        await wait(400); // exit completes + small buffer
+        await wait(360); // exit completes + small buffer
         hlBottom.textContent = 'by students';
         slideIn(hlBottom, 70, 500);
-        await wait(500 + 900); // settles + hold
+        await wait(500 + 350); // settles + short hold
 
         // Phase 3 — both exit simultaneously (rides up, by students down)
         slideOut(hlTop,    -70, 400);
@@ -2031,22 +2120,21 @@
         await wait(400);
 
         // Phase 4 — show final headline, slide it up, wipe the green highlight
-        wrap.style.display = 'none';
-        el.style.display   = '';
-        el.innerHTML = 'Your world just<br />got <span class="hl">bigger.</span>';
-        el.classList.add('hero-visible'); // triggers CSS hlWipe animation on .hl (0.65s delay)
-        el.animate(
-          [{ transform: 'translateY(70px)', opacity: 0 },
-           { transform: 'translateY(0)',    opacity: 1 }],
-          { duration: 650, easing: SPRING, fill: 'forwards' }
-        );
+        showHeadline();
+        try { sessionStorage.setItem('kovaHero', '1'); } catch (e) {}
 
         // Press link fades in after headline settles
         await wait(650 + 300);
         if (pressLink) pressLink.style.opacity = '1';
       }
 
-      setTimeout(runSequence, 400);
+      if (heroSeen) {
+        // Straight to the headline — no descriptor cycle on repeat visits.
+        showHeadline();
+        setTimeout(() => { if (pressLink) pressLink.style.opacity = '1'; }, 950);
+      } else {
+        setTimeout(runSequence, 250);
+      }
     })();
 
   </script>
