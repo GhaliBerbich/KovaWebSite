@@ -432,26 +432,11 @@
        and both are absolutely positioned against .hero-content, so relocating
        the originals would change what their percentages resolve against on
        desktop. Hidden here = no desktop impact at all. */
-    /* Stat sits above the headline, chip below it — each nudged off-centre and
-       tilted so they read hand-placed, matching the desktop scatter (the desktop
-       stats use -6/7/-4deg and the chip 3deg). */
-    .hero-mobile-stat {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      width: fit-content;
-      margin: 0 auto 26px;
-      transform: translateX(-18%) rotate(-7deg);
-    }
-    .hero-mobile-chip {
-      display: none;
-      width: 190px;
-      max-width: 62%;
-      height: auto;
-      margin: 34px auto 0;
-      transform: translateX(14%) rotate(4deg);
-    }
+    /* Pinned to the hero corners on mobile and tilted, matching the desktop
+       scatter (desktop stats use -6/7/-4deg, chip 3deg). display:none here means
+       desktop never sees them; the mobile query does the positioning. */
+    .hero-mobile-stat { display: none; }
+    .hero-mobile-chip { display: none; }
     .hero-stat-number {
       font-family: 'Fraunces', serif;
       font-size: clamp(2rem, 4vw, 3.2rem);
@@ -1158,8 +1143,33 @@
       /* Both must match so the swap from the sequence to the headline is seamless. */
       .hero-seq-line, .hero-title { font-size: clamp(2.3rem, 10vw, 3.5rem); }
       .hero-chip { display: none; }
-      .hero-mobile-stat { display: flex; }
-      .hero-mobile-chip { display: block; }
+      /* Green marker sits ~10px taller: the gradient's transparent run above the
+         fill shortens from 20px to 10px. */
+      .hero-title .hl { background-image: linear-gradient(to bottom, transparent 10px, var(--bright-green) 10px); }
+      /* Corner-pinned, absolute against #hero (they're siblings of .hero-content).
+         Vertical positions clear the centred headline block on a ~700px viewport. */
+      .hero-mobile-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        position: absolute;
+        top: 11%; left: 5%;
+        z-index: 5;
+        transform: rotate(-7deg);
+      }
+      .hero-mobile-stat .hero-stat-number { font-size: 2.6rem; }
+      .hero-mobile-stat .hero-stat-label  { font-size: 0.82rem; }
+      .hero-mobile-chip {
+        display: block;
+        position: absolute;
+        bottom: 7%; right: 3%;
+        width: 250px;
+        max-width: 66%;
+        height: auto;
+        z-index: 5;
+        transform: rotate(4deg);
+      }
 
       /* ── How it works ──
          One shared left edge for number, screenshot and text. The number goes
@@ -1209,26 +1219,54 @@
         mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
       }
-      /* Slower: the same travel past a narrow screen reads much faster than on a
-         wide one. Duration only — keyframes, pause observer and loop maths unchanged. */
-      .testimonials-track { animation-duration: 85s; padding: 20px 0; }
-      /* Narrower cards + halved stagger. Still on the 6-card cycle, so both
-         marquee halves stay identical widths and translateX(-50%) loops clean. */
-      .testimonial-card:nth-child(6n+1) { flex-basis: 250px; --drop: 0px; }
-      .testimonial-card:nth-child(6n+2) { flex-basis: 268px; --drop: 9px; }
-      .testimonial-card:nth-child(6n+3) { flex-basis: 238px; --drop: 4px; }
-      .testimonial-card:nth-child(6n+4) { flex-basis: 260px; --drop: 12px; }
-      .testimonial-card:nth-child(6n+5) { flex-basis: 246px; --drop: 2px; }
-      .testimonial-card:nth-child(6n+6) { flex-basis: 256px; --drop: 7px; }
+      /* Slower still — the same travel past a narrow screen reads much faster
+         than on a wide one. Duration only; keyframes and pause observer unchanged. */
+      .testimonials-track {
+        animation-duration: 120s;
+        padding: 20px 0;
+        /* Seam fix: with `gap`, 12 cards have only 11 gaps, so translateX(-50%)
+           lands 1/2 a gap short of where card 7 starts — a visible jolt each loop.
+           Moving the spacing to margin-right gives every card an identical
+           width+margin unit, so half the track is exactly 6 units. */
+        gap: 0;
+        /* Not promoted here: the track is ~2900px wide, which at a phone's 3x DPR
+           is a very large composited layer. Letting the browser manage it avoids
+           the missing-tile blanking that forced layers can hit on mobile. */
+        will-change: auto;
+      }
+      .testimonial-card { margin-right: 20px; }
+      /* Narrower cards + halved stagger, and a smaller total track. Still on the
+         6-card cycle, so both halves stay identical widths. */
+      .testimonial-card:nth-child(6n+1) { flex-basis: 220px; --drop: 0px; }
+      .testimonial-card:nth-child(6n+2) { flex-basis: 236px; --drop: 9px; }
+      .testimonial-card:nth-child(6n+3) { flex-basis: 210px; --drop: 4px; }
+      .testimonial-card:nth-child(6n+4) { flex-basis: 228px; --drop: 12px; }
+      .testimonial-card:nth-child(6n+5) { flex-basis: 216px; --drop: 2px; }
+      .testimonial-card:nth-child(6n+6) { flex-basis: 224px; --drop: 7px; }
 
-      /* ── Footer ── */
-      .footer-top { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .footer-top-left { gap: 20px; }
+      /* ── Footer: tighter, with Terms/Privacy stacked and right-aligned ── */
+      footer { padding: 28px 20px 24px; }
+      /* stretch (not flex-start) so .footer-top-left spans the full width and the
+         right-hand column can actually reach the right edge. */
+      .footer-top { flex-direction: column; align-items: stretch; gap: 16px; padding-bottom: 18px; }
+      .footer-top-left { gap: 14px; width: 100%; }
       .footer-logo { height: 24px; }
-      .footer-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
-      .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 40px; }
-      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .footer-bottom-right { flex-wrap: wrap; gap: 16px; }
+      .footer-nav {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        column-gap: 20px;
+        row-gap: 0;
+        width: 100%;
+      }
+      .footer-nav .footer-link:nth-child(1) { grid-area: 1 / 1; }
+      .footer-nav .footer-link:nth-child(2) { grid-area: 2 / 1; }
+      .footer-nav .footer-link:nth-child(3) { grid-area: 3 / 1; }
+      .footer-nav .footer-link:nth-child(4) { grid-area: 1 / 2; justify-self: end; }
+      .footer-nav .footer-link:nth-child(5) { grid-area: 2 / 2; justify-self: end; }
+      .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 30px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; padding-top: 18px; }
+      .footer-bottom-right { flex-wrap: wrap; gap: 12px; }
     }
 
     @media (max-width: 768px) {
@@ -1317,14 +1355,19 @@
 
     <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
+    <!-- Mobile only (hidden ≥769px): pinned to the hero's top-left / bottom-right
+         corners. Siblings of .hero-content (not children) so they position against
+         #hero itself — .hero-content is position:relative and only as tall as its
+         text, so its "corners" are not the screen's. The desktop floating
+         .hero-stat / .hero-chip are display:none on phones. -->
+    <div class="hero-mobile-stat">
+      <span class="hero-stat-label" style="margin-bottom:-6px">Keep</span>
+      <span class="hero-stat-number">100%</span>
+      <span class="hero-stat-label">of what you earn</span>
+    </div>
+    <img class="hero-mobile-chip" src="road_chip1.png" alt="" decoding="async" width="250" height="156" />
+
     <div class="hero-content">
-      <!-- Mobile only (hidden ≥769px): stat above the headline, chip below it.
-           The desktop floating .hero-stat / .hero-chip are display:none on phones. -->
-      <div class="hero-mobile-stat">
-        <span class="hero-stat-label" style="margin-bottom:-6px">Keep</span>
-        <span class="hero-stat-number">100%</span>
-        <span class="hero-stat-label">of what you earn</span>
-      </div>
       <div class="hero-seq-wrap" id="hero-seq-wrap">
         <div class="hero-seq-line" id="hl-top"></div>
         <div class="hero-seq-line" id="hl-bottom"></div>
@@ -1332,7 +1375,6 @@
       <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
       <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗&#xFE0E;</a>
 
-      <img class="hero-mobile-chip" src="road_chip1.png" alt="" decoding="async" width="190" height="119" />
     </div>
   </section>
 
