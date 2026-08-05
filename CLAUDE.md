@@ -232,6 +232,7 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 - `download_appstore_svg.png` — App Store badge
 - `purdue.png` — Purdue logo in the footer (original colors)
 - `color palette.png` — reference swatches
+- `sitemap.xml` / `robots.txt` — crawler files at the repo root (Round 27); `sitemap.xml` lists all 5 page URLs and must be updated when pages are added or removed
 - `final_ss.png` — old download-section app screenshot, **no longer referenced** (the screenshot was removed; file kept in repo)
 - `Agrandir - Free For Personal Use/` — fonts, **personal use only**, not wired up
 
@@ -240,6 +241,14 @@ Roads (and Lenis) are skipped entirely under `prefers-reduced-motion` (IIFE earl
 ## Deploying
 
 **"Save and push" means the domain repo.** Remote **`live`** → `https://github.com/GhaliBerbich/KovaWebSite.git`, branch **`Main`** (capital M): `git push live master:Main`. That repo serves **ridekova.com** via **GitHub Pages** (source: `Main` / root). `origin` (`melmansar/kova-website`) is the old demo repo and is being retired — don't push there by default.
+
+**URLs are extensionless (Round 27).** GitHub Pages already serves `/terms`, `/privacy`, `/manifesto` and `/businesses` without the `.html` — no files were moved and none need to be. **Write internal links without the extension**: `href="/terms"`, and `href="/"` for the homepage (never `index.html`, which is what used to expose a filename in the URL bar). The root file must stay named `index.html`.
+
+> **Local-preview gotcha:** because internal links are now root-relative, `python -m http.server` **404s when you click between pages** — it serves files literally and doesn't strip extensions. The pages themselves preview fine; only navigation between them fails locally. Test navigation against the live site.
+
+**SEO / head (Round 27).** Every page carries, in this order: `<link rel="canonical">` → `<meta name="theme-color" content="#0D1117">` → favicon links. Canonicals point at the **www** URLs (that's what the CNAME serves). Root also has **`sitemap.xml`** (all 5 URLs) and **`robots.txt`** (points at the sitemap) — update `sitemap.xml` if a page is ever added or removed. `theme-color` exists because without it the browser picks its own colour for the load transition and appeared to sample the green-steering-wheel favicon, causing a green flash before the hero painted; there is **no green background in any stylesheet**, so don't go looking for one.
+
+> If Google shows a stale title/description, that's a **cached copy of the previous site at this domain**, not a markup problem — the `<title>`/`<meta name="description">` are correct. Fix is a re-crawl: Search Console → URL Inspection → Request indexing.
 
 **The root `CNAME` file (`www.ridekova.com`) is load-bearing.** GitHub Pages reads the custom domain from it; deleting it unsets the domain and the site 404s. This already happened once, when a force push replaced `Main` with a branch that lacked the file. Before any history-rewriting push, check `gh api repos/GhaliBerbich/KovaWebSite/pages`. The old project that previously occupied `Main` is preserved on the **`main-backup`** branch (52 commits, tip `6c17e47`).
 
