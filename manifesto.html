@@ -353,7 +353,17 @@
         display: flex; align-items: center; justify-content: flex-start;
         min-height: 44px; padding: 0 12px; font-size: 14px;
       }
-      .manifesto-content { padding: 110px 24px 80px; }
+      .manifesto-content { padding: 110px 20px 80px; }
+      /* The header is Lora *italic*, and every .char is an inline-block whose box
+         stops at the glyph's advance width — italic ink leans past that, so the
+         last letter of a line can lose its tail. Smaller type leaves slack before
+         the line ever reaches the edge, and padding-right gives the lean room. */
+      .manifesto-header { font-size: 1.2rem; padding-right: 0.35em; margin-bottom: 44px; }
+      .manifesto-opener,
+      .manifesto-punch,
+      .manifesto-body,
+      .manifesto-statement,
+      .manifesto-close { padding-right: 0.2em; }
       .page-bg::after {
         background: rgba(13,17,23,0.92);
       }
@@ -554,9 +564,18 @@
           } else if (node.nodeName === 'BR') {
             parts.push('<br />');
           } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Word-wrap here too: the chars are inline-block, so without an
+            // unbreakable .lr-word around each word the browser can break a line
+            // between any two letters (this path handles spans like .hl).
             let inner = '';
-            node.textContent.split('').forEach(ch => {
-              inner += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+            node.textContent.split(/(\s+)/).forEach(token => {
+              if (token === '') return;
+              if (/^\s+$/.test(token)) { inner += ' '; return; }
+              let word = '';
+              token.split('').forEach(ch => {
+                word += `<span class="char" style="--i:${ci++}">${ch}</span>`;
+              });
+              inner += `<span class="lr-word">${word}</span>`;
             });
             const tag = node.tagName.toLowerCase();
             const cls = node.getAttribute('class') || '';

@@ -256,6 +256,16 @@
       transition: color 0.2s ease, border-color 0.2s ease, opacity 0.8s ease-out;
       opacity: 0;
     }
+    /* Inline SVG, not a character: U+2197 isn't in Inter, so every OS substituted
+       a different fallback font — Windows drew one arrow, iOS a thin elongated
+       one. An SVG renders identically everywhere and inherits the link colour. */
+    .hero-press-arrow {
+      width: 0.8em;
+      height: 0.8em;
+      display: inline-block;
+      vertical-align: -0.04em;
+      margin-left: 0.18em;
+    }
     .hero-press-link:hover {
       color: rgba(255,255,255,0.85);
       border-bottom-color: rgba(255,255,255,0.55);
@@ -1373,7 +1383,7 @@
         <div class="hero-seq-line" id="hl-bottom"></div>
       </div>
       <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
-      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗&#xFE0E;</a>
+      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu <svg class="hero-press-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg></a>
 
     </div>
   </section>
