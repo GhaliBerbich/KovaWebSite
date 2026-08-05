@@ -234,7 +234,11 @@
       opacity: 1;
       transform: translateY(0);
     }
-    .m-reveal .lr-word { display: inline; }
+    /* inline-block + nowrap (matching index.html's .letter-reveal .lr-word):
+       each .char is inline-block, so an `inline` wrapper lets the browser break
+       the line between ANY two letters — words got chopped mid-word on narrow
+       screens. The word wrapper has to be unbreakable. */
+    .m-reveal .lr-word { display: inline-block; white-space: nowrap; }
 
     /* Block fade-in (footer) — same as index.html .reveal */
     .reveal {
@@ -389,7 +393,7 @@
       <img class="nav-logo" src="KOVA logo.png" alt="KOVA" decoding="async" />
     </a>
     <div class="nav-links" id="nav-links">
-      <a href="index.html#ambassador" class="nav-btn">Ambassadors</a>
+      <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="nav-btn">Ambassadors</a>
       <a href="businesses.html" class="nav-btn">For Businesses</a>
       <a href="manifesto.html" class="nav-btn active">Manifesto</a>
     </div>
@@ -452,7 +456,7 @@
           <img class="footer-logo" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
 
           <nav class="footer-nav">
-            <a href="index.html#ambassador" class="footer-link">Ambassadors</a>
+            <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="footer-link">Ambassadors</a>
             <a href="businesses.html" class="footer-link">For Businesses</a>
             <a href="manifesto.html" class="footer-link">Manifesto</a>
             <a href="terms.html" class="footer-link">Terms of Service</a>
