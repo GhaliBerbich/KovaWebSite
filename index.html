@@ -709,8 +709,7 @@
       padding: 80px 48px;
     }
     .testimonials-heading { text-align: center; }
-    .testimonials-heading .section-title { color: #fff; margin-bottom: 10px; }
-    .testimonials-heading .section-sub  { color: rgba(255,255,255,0.60); font-family: 'Lora', serif; font-size: 1.05rem; }
+    .testimonials-heading .section-title { color: #fff; }
     .marquee-outer {
       position: relative;
       width: 100%;
@@ -718,77 +717,89 @@
       mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
       -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
     }
-    .marquee-outer::before, .marquee-outer::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 120px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .marquee-outer::before { left: 0; }
-    .marquee-outer::after  { right: 0; }
     .testimonials-track {
       display: flex;
-      align-items: stretch;
+      /* flex-start (not stretch) so each card ends where its text ends — the
+         unequal heights are the point; equal-height cards read as a template. */
+      align-items: flex-start;
       gap: 24px;
       width: max-content;
-      padding: 8px 0;
+      /* Vertical room for the per-card stagger (up to 24px), the corner
+         overhang from the tilt, and the drop shadow — .marquee-outer clips. */
+      padding: 30px 0;
       will-change: transform;
       animation: testimonialScroll 55s linear infinite;
     }
     /* Stop the infinite marquee (and its per-frame compositor work) when the
        section is scrolled out of view — toggled by an IntersectionObserver. */
     .testimonials-track.paused { animation-play-state: paused; }
+    /* Quiet shell — the per-card cycle below is what carries the character, so the
+       base stays understated and the *variation* between cards is what registers. */
     .testimonial-card {
-      background: rgba(255,255,255,0.09);
-      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.055);
       /* backdrop-filter dropped: these cards ride an infinite marquee, so a live blur would recompute the backdrop every frame */
-      border-radius: 18px;
-      padding: 24px;
-      min-width: 280px;
-      max-width: 320px;
+      padding: 22px 22px 20px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      min-height: 200px;
+      gap: 18px;
+      /* Static transform: no layer promotion, rasterized once into the track's
+         existing composited layer — the marquee moves that layer, not these. */
+      transform: rotate(var(--tilt, 0deg));
+      margin-top: var(--drop, 0px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.28);
     }
-    /* Slight width variation — hand-set editorial rhythm. The 3-card period divides
-       the 6-card loop halves, so both marquee halves stay identical (seamless loop). */
-    .testimonial-card:nth-child(3n+2) { min-width: 320px; }
-    .testimonial-card:nth-child(3n)   { min-width: 300px; }
-    /* Oversized Fraunces open-quote glyph (replaces the old star rows) */
-    .testimonial-mark {
-      font-family: 'Fraunces', serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      line-height: 0.6;
-      color: rgba(255,255,255,0.28);
-      align-self: flex-start;
+    /* Hand-cut variation: width, tilt, vertical offset, uneven corners and one of
+       three surface treatments, so no two adjacent cards read as the same object.
+       The 6-card period matches the 6-card loop halves exactly, so both halves stay
+       identical widths and the translateX(-50%) marquee still loops seamlessly.
+       Tilts stay inside ±1.5° — these cards are already moving horizontally, and a
+       larger rotation on a moving element reads as sloppy rather than hand-placed. */
+    .testimonial-card:nth-child(6n+1) {
+      flex: 0 0 300px; --tilt: -1.2deg; --drop: 0px;
+      border-radius: 20px 14px 18px 15px;
+      border: 1px solid rgba(255,255,255,0.11);
     }
+    .testimonial-card:nth-child(6n+2) {
+      flex: 0 0 336px; --tilt: 0.9deg; --drop: 18px;
+      border-radius: 13px 21px 14px 19px;
+      background: rgba(255,255,255,0.075);
+    }
+    .testimonial-card:nth-child(6n+3) {
+      flex: 0 0 284px; --tilt: -0.6deg; --drop: 8px;
+      border-radius: 18px 16px 22px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.13);
+    }
+    .testimonial-card:nth-child(6n+4) {
+      flex: 0 0 320px; --tilt: 1.4deg; --drop: 24px;
+      border-radius: 15px 19px 13px 20px;
+      border: 1px solid rgba(255,255,255,0.11);
+    }
+    .testimonial-card:nth-child(6n+5) {
+      flex: 0 0 296px; --tilt: -1.5deg; --drop: 4px;
+      border-radius: 21px 14px 17px 16px;
+      background: rgba(255,255,255,0.075);
+    }
+    .testimonial-card:nth-child(6n+6) {
+      flex: 0 0 312px; --tilt: 0.7deg; --drop: 14px;
+      border-radius: 16px 20px 15px 21px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.13);
+    }
+    /* Left-aligned and upright: a quote centered in the middle of a box is a
+       template tell, not how anyone sets a pull-quote. */
     .testimonial-quote {
-      color: rgba(255,255,255,0.80);
+      color: rgba(255,255,255,0.82);
       font-family: 'Lora', serif;
-      font-style: italic;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 12px 0;
+      font-size: 1rem;
+      line-height: 1.65;
     }
-    .testimonial-author-row { display: flex; align-items: center; gap: 12px; align-self: flex-start; }
-    .testimonial-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Fraunces', serif;
-      font-size: 13px; font-weight: 700; color: #fff;
-      flex-shrink: 0;
-    }
-    .testimonial-name     { color: #fff; font-family: 'Fraunces', serif; font-weight: 600; font-size: 0.9rem; }
+    /* Name over major, flush with the quote's left edge (the colored
+       circle-with-an-initial avatars were the section's strongest AI tell). */
+    .testimonial-author-row { display: flex; align-items: flex-start; }
+    .testimonial-name     { color: #fff; font-family: 'Fraunces', serif; font-weight: 600; font-size: 0.88rem; }
+    /* 0.50 is the floor here — dimmer drops below 4.5:1 on the section overlay */
     .testimonial-location { color: rgba(255,255,255,0.50); font-family: 'Lora', serif; font-size: 0.8rem; margin-top: 2px; }
 
     /* ─── Ambassador card ────────────────────────────────────── */
@@ -972,8 +983,8 @@
     .footer-bottom-left { display: flex; flex-direction: column; gap: 4px; }
     .footer-bottom-right { display: flex; align-items: center; gap: 24px; }
     .footer-copy { font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(255,255,255,0.30); }
-    .footer-location { font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(255,255,255,0.20); display: flex; align-items: center; }
-    .footer-purdue { height: 10px; width: auto; margin-left: 3px; opacity: 0.75; }
+    .footer-location { font-family: 'Inter', sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.20); display: flex; align-items: center; }
+    .footer-purdue { height: 11.5px; width: auto; margin-left: 3px; opacity: 0.75; }
 
     /* ─── Animations ─────────────────────────────────────────── */
     @keyframes testimonialScroll {
@@ -1227,17 +1238,14 @@
       <div class="testimonials-inner">
         <div class="testimonials-heading">
           <h2 class="section-title letter-reveal">From the people using it</h2>
-          <p class="section-sub word-reveal">No paid reviews.</p>
         </div>
         <div class="marquee-outer" role="region" aria-label="Student testimonials">
           <div class="testimonials-track">
 
             <!-- Card 1 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
               <p class="testimonial-quote">Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
                   <div class="testimonial-name">Sofia M.</div>
                   <div class="testimonial-location">Junior, Engineering</div>
@@ -1247,10 +1255,8 @@
 
             <!-- Card 2 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card.</p>
+              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on my bingo card.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
                   <div class="testimonial-name">James K.</div>
                   <div class="testimonial-location">Sophomore, Business</div>
@@ -1260,10 +1266,8 @@
 
             <!-- Card 3 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean.</p>
+              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
                   <div class="testimonial-name">Aisha R.</div>
                   <div class="testimonial-location">Senior, Pre-Med</div>
@@ -1273,10 +1277,8 @@
 
             <!-- Card 4 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered.</p>
+              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA made it way easier. Riders in ten minutes, gas basically covered.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#1F4633;">M</div>
                 <div>
                   <div class="testimonial-name">Marcus T.</div>
                   <div class="testimonial-location">Junior, Mechanical Eng</div>
@@ -1286,10 +1288,8 @@
 
             <!-- Card 5 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does.</p>
+              <p class="testimonial-quote">Knowing everyone's a student made a big difference for me. Felt way more comfortable riding with people and talking to them.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#587F6A;">C</div>
                 <div>
                   <div class="testimonial-name">Claire L.</div>
                   <div class="testimonial-location">Freshman, Psychology</div>
@@ -1299,10 +1299,8 @@
 
             <!-- Card 6 -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
               <p class="testimonial-quote">Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#3D5A4C;">P</div>
                 <div>
                   <div class="testimonial-name">Priya S.</div>
                   <div class="testimonial-location">Sophomore, Data Science</div>
@@ -1312,10 +1310,8 @@
 
             <!-- Duplicates for seamless infinite loop -->
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
               <p class="testimonial-quote">Was heading home to Chicago for break, threw up a ride last minute. Ended with two passengers I'm still in a groupchat with. Four hours alone would've been rough.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#28C45A;">S</div>
                 <div>
                   <div class="testimonial-name">Sofia M.</div>
                   <div class="testimonial-location">Junior, Engineering</div>
@@ -1324,10 +1320,8 @@
             </div>
 
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on the bingo card.</p>
+              <p class="testimonial-quote">Didn't expect much tbh. Booked a ride to Indy, driver was a CS senior. Left with an internship referral. Didn't have that on my bingo card.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#4A8C65;">J</div>
                 <div>
                   <div class="testimonial-name">James K.</div>
                   <div class="testimonial-location">Sophomore, Business</div>
@@ -1336,10 +1330,8 @@
             </div>
 
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140. I mean.</p>
+              <p class="testimonial-quote">Shared a ride to O'Hare, split it four ways, paid $30. Uber wanted $140.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#2E6B4A;">A</div>
                 <div>
                   <div class="testimonial-name">Aisha R.</div>
                   <div class="testimonial-location">Senior, Pre-Med</div>
@@ -1348,10 +1340,8 @@
             </div>
 
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA is so much cleaner. Riders in ten minutes, gas basically covered.</p>
+              <p class="testimonial-quote">Used to spam GroupMe every time I drove back to Michigan. KOVA made it way easier. Riders in ten minutes, gas basically covered.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#1F4633;">M</div>
                 <div>
                   <div class="testimonial-name">Marcus T.</div>
                   <div class="testimonial-location">Junior, Mechanical Eng</div>
@@ -1360,10 +1350,8 @@
             </div>
 
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
-              <p class="testimonial-quote">The .edu thing genuinely matters. Knowing everyone's a verified student just changes how it feels. Hard to explain but it does.</p>
+              <p class="testimonial-quote">Knowing everyone's a student made a big difference for me. Felt way more comfortable riding with people and talking to them.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#587F6A;">C</div>
                 <div>
                   <div class="testimonial-name">Claire L.</div>
                   <div class="testimonial-location">Freshman, Psychology</div>
@@ -1372,10 +1360,8 @@
             </div>
 
             <div class="testimonial-card">
-              <span class="testimonial-mark" aria-hidden="true">“</span>
               <p class="testimonial-quote">Was kind of nervous for my first ride. It wasn't weird at all. Talked the whole way to Columbus, and one of them ended up in my study group the whole semester.</p>
               <div class="testimonial-author-row">
-                <div class="testimonial-avatar" style="background:#3D5A4C;">P</div>
                 <div>
                   <div class="testimonial-name">Priya S.</div>
                   <div class="testimonial-location">Sophomore, Data Science</div>
