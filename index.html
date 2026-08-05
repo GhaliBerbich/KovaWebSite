@@ -122,6 +122,33 @@
       justify-content: center;
       gap: 4px;
     }
+    /* Mobile menu button — hidden on desktop; the mobile query below turns it on.
+       Three bars that rotate into an X when .nav.menu-open is set (transform +
+       opacity only, so the morph stays off the layout/paint path). */
+    .nav-toggle {
+      display: none;
+      position: relative;
+      width: 44px; height: 44px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      justify-self: end;
+    }
+    .nav-toggle span {
+      position: absolute;
+      left: 12px;
+      width: 20px; height: 2px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.85);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease;
+    }
+    .nav-toggle span:nth-child(1) { top: 15px; }
+    .nav-toggle span:nth-child(2) { top: 21px; }
+    .nav-toggle span:nth-child(3) { top: 27px; }
+    .nav.menu-open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
     .nav > .nav-btn.primary { justify-self: end; }
     .nav-btn {
       color: rgba(255,255,255,0.55);
@@ -398,6 +425,32 @@
       opacity: 0;
       transform: translateY(24px) rotate(var(--tilt, 0deg));
       animation: fadeUpTilt 0.9s ease-out var(--delay, 1s) forwards;
+    }
+    /* Mobile-only hero extras (one stat + the ride chip), shown by the mobile
+       query. Built as separate elements rather than repositioning .hero-stat /
+       .hero-chip: those carry inline top/left/width that beat stylesheet rules,
+       and both are absolutely positioned against .hero-content, so relocating
+       the originals would change what their percentages resolve against on
+       desktop. Hidden here = no desktop impact at all. */
+    /* Stat sits above the headline, chip below it — each nudged off-centre and
+       tilted so they read hand-placed, matching the desktop scatter (the desktop
+       stats use -6/7/-4deg and the chip 3deg). */
+    .hero-mobile-stat {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      margin: 0 auto 26px;
+      transform: translateX(-18%) rotate(-7deg);
+    }
+    .hero-mobile-chip {
+      display: none;
+      width: 190px;
+      max-width: 62%;
+      height: auto;
+      margin: 34px auto 0;
+      transform: translateX(14%) rotate(4deg);
     }
     .hero-stat-number {
       font-family: 'Fraunces', serif;
@@ -1053,38 +1106,127 @@
 
     /* ─── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .nav { padding: 8px 16px; }
+      /* ── Navbar → hamburger ──
+         .nav-links goes absolute, which removes it from the grid flow, so the
+         bar collapses cleanly to: logo | Get KOVA | toggle. */
+      .nav { padding: 8px 16px; grid-template-columns: 1fr auto auto; gap: 10px; }
       .nav-logo { height: 24px; }
+      .nav-toggle { display: block; }
       .nav-btn { font-size: 12px; padding: 7px 10px; }
+      .nav-btn.primary { display: inline-flex; align-items: center; min-height: 40px; }
+      /* Frosted from the top rather than fading in on scroll (mobile only —
+         updateNavGlass still drives --nav-glass, this just overrides the opacity). */
+      .nav::before { opacity: 1; }
+      .nav-links {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 6px 8px 10px;
+        /* Same glass as .nav::before instead of a solid fill. Only painted while
+           the menu is open (visibility:hidden otherwise), so the filter costs
+           nothing when closed — and you aren't scrolling with it open. */
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.4,0,0.2,1), visibility 0.25s;
+      }
+      .nav.menu-open .nav-links { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links .nav-btn {
+        display: flex; align-items: center; justify-content: flex-start;
+        min-height: 44px; padding: 0 12px; font-size: 14px;
+      }
 
-      .hiw-step, .hiw-step--left, .hiw-step--right { flex-direction: column; align-self: center; width: 100%; }
-      .hiw-shot { width: 78%; }
+      /* ── Viewport height: svh ignores the collapsing URL bar, so sections stop
+         being taller than the screen and stop resizing mid-scroll. ── */
+      #hero, .site-section { min-height: 100svh; }
+      /* Height budget so an opening FAQ answer never resizes the section (and the
+         .card-bg sized off it) mid-transition — the desktop equivalent of #faq's
+         840px budget in the min-width:769px block. */
+      #faq { min-height: max(100svh, 900px); }
+
+      /* ── Hero ── */
+      .hero-content { transform: translateY(2vh); padding: 0 20px; }
+      /* Stack the two descriptor words — side by side they need ~470px and get
+         clipped by body{overflow-x:hidden}. Dropping translateX(28px) matters too. */
+      .hero-seq-wrap { flex-direction: column; gap: 0; transform: none; align-items: center; }
+      /* Both must match so the swap from the sequence to the headline is seamless. */
+      .hero-seq-line, .hero-title { font-size: clamp(2.3rem, 10vw, 3.5rem); }
+      .hero-chip { display: none; }
+      .hero-mobile-stat { display: flex; }
+      .hero-mobile-chip { display: block; }
+
+      /* ── How it works ──
+         One shared left edge for number, screenshot and text. The number goes
+         static so left/right stop applying at all — that also kills the
+         specificity bug where .hiw-step--right .hiw-step-num (left:auto;
+         right:-24px) out-ranked the old mobile rule and stranded "02" at the
+         right edge while 01/03 moved left. */
+      .hiw-step, .hiw-step--left, .hiw-step--right {
+        flex-direction: column; align-self: center; width: 100%;
+        align-items: flex-start; gap: 18px;
+      }
       .hiw-inner { padding: 80px 24px 60px; gap: 56px; }
-      .hiw-step-num { font-size: 3.5rem; top: -12px; left: 0; }
+      .hiw-step-num, .hiw-step--right .hiw-step-num {
+        position: static;
+        top: auto; left: auto; right: auto;
+        font-size: 3rem;
+        margin-bottom: -10px;
+      }
+      .hiw-step-screen { width: 100%; max-width: 320px; }
+      .hiw-shot { width: 100%; }
+      .hiw-step-text { width: 100%; max-width: 320px; }
+      .hiw-step-desc { max-width: none; }
 
+      /* ── More than a ride: scale down ── */
       .mtr-bento { flex-direction: column; align-items: flex-start; gap: 40px; }
-      .mtr-right { width: 100%; }
+      .mtr-right { width: 100%; gap: 40px; }
       .mtr-inner { padding: 80px 24px 60px; }
+      .mtr-card { gap: 14px; }
+      .mtr-shot, .mtr-card--earn .mtr-shot { width: 100%; max-width: 280px; }
+      .mtr-heading { font-size: 1.25rem; }
+      .mtr-card--earn .mtr-heading { font-size: 1.5rem; }
 
       .safety-pillars { grid-template-columns: 1fr; }
       .safety-inner { padding: 80px 24px 60px; }
 
-      .hero-chip { display: none; }
-
       .amb-feats { flex-direction: column; align-items: center; }
       .faq-inner, .ambassador-inner { padding: 80px 20px; }
+      .faq-question { min-height: 44px; }
 
       .dl-card { flex-direction: column; text-align: center; padding: 36px 24px; width: calc(100% - 40px); gap: 28px; }
       .dl-info { align-items: center; }
       .dl-card .section-sub { max-width: 100%; }
 
+      /* ── Testimonials ── */
+      .testimonials-inner { padding: 80px 20px; gap: 36px; }
       .marquee-outer {
         mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
       }
+      /* Slower: the same travel past a narrow screen reads much faster than on a
+         wide one. Duration only — keyframes, pause observer and loop maths unchanged. */
+      .testimonials-track { animation-duration: 85s; padding: 20px 0; }
+      /* Narrower cards + halved stagger. Still on the 6-card cycle, so both
+         marquee halves stay identical widths and translateX(-50%) loops clean. */
+      .testimonial-card:nth-child(6n+1) { flex-basis: 250px; --drop: 0px; }
+      .testimonial-card:nth-child(6n+2) { flex-basis: 268px; --drop: 9px; }
+      .testimonial-card:nth-child(6n+3) { flex-basis: 238px; --drop: 4px; }
+      .testimonial-card:nth-child(6n+4) { flex-basis: 260px; --drop: 12px; }
+      .testimonial-card:nth-child(6n+5) { flex-basis: 246px; --drop: 2px; }
+      .testimonial-card:nth-child(6n+6) { flex-basis: 256px; --drop: 7px; }
 
-      .footer-top { flex-direction: column; align-items: flex-start; gap: 24px; }
-      .footer-nav { flex-wrap: wrap; gap: 20px; }
+      /* ── Footer ── */
+      .footer-top { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .footer-top-left { gap: 20px; }
+      .footer-logo { height: 24px; }
+      .footer-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+      .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 40px; }
       .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
       .footer-bottom-right { flex-wrap: wrap; gap: 16px; }
     }
@@ -1144,12 +1286,15 @@
   <!-- ─── Navbar ───────────────────────────────────────────────── -->
   <nav class="nav" id="navbar" aria-label="Main navigation">
     <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
-    <div class="nav-links">
+    <div class="nav-links" id="nav-links">
       <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="nav-btn">Ambassadors</a>
       <a href="businesses.html" class="nav-btn">For Businesses</a>
       <a href="manifesto.html" class="nav-btn">Manifesto</a>
     </div>
     <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- ─── Hero ─────────────────────────────────────────────────── -->
@@ -1173,12 +1318,21 @@
     <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <div class="hero-content">
+      <!-- Mobile only (hidden ≥769px): stat above the headline, chip below it.
+           The desktop floating .hero-stat / .hero-chip are display:none on phones. -->
+      <div class="hero-mobile-stat">
+        <span class="hero-stat-label" style="margin-bottom:-6px">Keep</span>
+        <span class="hero-stat-number">100%</span>
+        <span class="hero-stat-label">of what you earn</span>
+      </div>
       <div class="hero-seq-wrap" id="hero-seq-wrap">
         <div class="hero-seq-line" id="hl-top"></div>
         <div class="hero-seq-line" id="hl-bottom"></div>
       </div>
       <h1 class="hero-title" id="hero-headline" aria-label="Your world just got bigger." style="display:none"></h1>
-      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗</a>
+      <a href="https://www.purdue.edu/entr/your-world-just-got-bigger-building-belonging-at-purdue-through-kova/" class="hero-press-link" target="_blank" rel="noopener noreferrer">Featured on Purdue.edu ↗&#xFE0E;</a>
+
+      <img class="hero-mobile-chip" src="road_chip1.png" alt="" decoding="async" width="190" height="119" />
     </div>
   </section>
 
@@ -1647,6 +1801,33 @@
       navButtons.forEach(b => b.classList.toggle('active', b === current));
     }
     const navbar = document.getElementById('navbar');
+
+    /* ── Mobile menu (hamburger ⇄ X) ── */
+    (function () {
+      const toggle = document.querySelector('.nav-toggle');
+      const links  = document.getElementById('nav-links');
+      if (!toggle || !navbar || !links) return;
+
+      function setMenu(open) {
+        navbar.classList.toggle('menu-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('click', () => {
+        setMenu(!navbar.classList.contains('menu-open'));
+      });
+      // Close on link tap, on Escape, and whenever we grow past the mobile breakpoint
+      links.addEventListener('click', (e) => {
+        if (e.target.closest('a')) setMenu(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setMenu(false);
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) setMenu(false);
+      });
+    })();
+
     function updateNavGlass() {
       const p = Math.min(window.scrollY / 100, 1);
       if (navbar) navbar.style.setProperty('--nav-glass', p);
@@ -1808,6 +1989,20 @@
         'ambassador':      [[0.92, -0.45], [0.45, 0.20], [0.72, 0.50], [0.30, 0.78], [0.10, 1.10]],
       };
 
+      /* Phone variants: the desktop x-fractions span only ~0.28–0.72, which on a
+         narrow, tall section covers a few hundred px horizontally against ~800px
+         vertically — the S-curve collapses into what reads as a straight line.
+         These widen the swing so the road still reads as a road. Picked per
+         build(), and scheduleBuild() already reruns on resize, so rotating the
+         phone re-selects without any extra code. */
+      const ROADS_MOBILE = {
+        'how-it-works':    [[0.50, -0.45], [0.88, 0.24], [0.12, 0.50], [0.86, 0.76], [0.50, 1.10]],
+        'testimonials':    [[1.15, 0.50], [0.72, 0.72], [0.28, 0.28], [-0.15, 0.50]],
+        'more-than-a-ride':[[0.44, -0.45], [0.86, 0.26], [0.14, 0.54], [0.84, 0.80], [0.46, 1.08]],
+        'ambassador':      [[0.95, -0.45], [0.30, 0.20], [0.86, 0.50], [0.16, 0.78], [0.06, 1.10]],
+      };
+      const isPhone = () => window.innerWidth <= 768;
+
       function catmullRomPath(pts) {
         if (pts.length < 2) return '';
         let path = `M ${pts[0][0]} ${pts[0][1]}`;
@@ -1843,7 +2038,7 @@
           base:   svg.querySelector('.road-base'),
           center: svg.querySelector('.road-center'),
           brush:  svg.querySelector('.road-brush'),
-          wp: ROADS[id],
+          id,
           totalLen: 0, drawnLen: 0, targetLen: 0, cache: null, top: 0,
         };
         inst.brush.style.opacity = '0';
@@ -1861,7 +2056,8 @@
       function build(inst) {
         const W = inst.card.offsetWidth, H = inst.card.offsetHeight;
         inst.svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        const pts = inst.wp.map(([fx, fy]) => [fx * W, fy * H]);
+        const wp = (isPhone() && ROADS_MOBILE[inst.id]) || ROADS[inst.id];
+        const pts = wp.map(([fx, fy]) => [fx * W, fy * H]);
         const d = catmullRomPath(pts);
         inst.base.setAttribute('d', d);
         inst.center.setAttribute('d', d);
@@ -2059,15 +2255,20 @@
         // Reserve a constant width for the cycling slot (widest of the two words). The hero column
         // is centered, so without this the line's width would change on "for students" → "by students"
         // and re-center the whole column, dragging "rides" sideways. Fixed slot = "rides" stays static.
-        let slotW = 0;
-        ['for students', 'by students'].forEach(w => {
-          hlBottom.textContent = w;
-          slotW = Math.max(slotW, hlBottom.scrollWidth);
-        });
-        hlBottom.textContent  = '';
-        hlBottom.style.width     = slotW + 'px';
-        hlBottom.style.textAlign = 'left'; // word anchored at slot start → gap to "rides" stays constant
-        hlBottom.style.flexShrink = '0';
+        // Mobile stacks the two words in a column, so a width change can't
+        // re-centre the row and drag "rides" sideways — the reserved slot is
+        // unnecessary there, and its inline width would fight the stacked layout.
+        if (!window.matchMedia('(max-width: 768px)').matches) {
+          let slotW = 0;
+          ['for students', 'by students'].forEach(w => {
+            hlBottom.textContent = w;
+            slotW = Math.max(slotW, hlBottom.scrollWidth);
+          });
+          hlBottom.textContent  = '';
+          hlBottom.style.width     = slotW + 'px';
+          hlBottom.style.textAlign = 'left'; // word anchored at slot start → gap to "rides" stays constant
+          hlBottom.style.flexShrink = '0';
+        }
 
         // Phase 1 — "rides" drops from above, "for students" rises from below 150ms later
         hlTop.textContent    = 'rides';

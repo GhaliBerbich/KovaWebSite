@@ -64,6 +64,32 @@
       justify-content: center;
       gap: 4px;
     }
+    /* Mobile menu button — hidden on desktop; the mobile query turns it on.
+       Bars rotate into an X via transform + opacity only. */
+    .nav-toggle {
+      display: none;
+      position: relative;
+      width: 44px; height: 44px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      justify-self: end;
+    }
+    .nav-toggle span {
+      position: absolute;
+      left: 12px;
+      width: 20px; height: 2px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.85);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease;
+    }
+    .nav-toggle span:nth-child(1) { top: 15px; }
+    .nav-toggle span:nth-child(2) { top: 21px; }
+    .nav-toggle span:nth-child(3) { top: 27px; }
+    .nav.menu-open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
     .nav > .nav-btn.primary { justify-self: end; }
     .nav-btn {
       color: rgba(255,255,255,0.55);
@@ -286,14 +312,45 @@
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
-      .nav { padding: 8px 16px; }
+      /* Navbar → hamburger. .nav-links goes absolute, which drops it out of the
+         grid flow, so the bar collapses to: logo | Get KOVA | toggle. */
+      .nav { padding: 8px 16px; grid-template-columns: 1fr auto auto; gap: 10px; }
       .nav-logo { height: 24px; }
+      .nav-toggle { display: block; }
       .nav-btn { font-size: 12px; padding: 7px 10px; }
+      .nav-btn.primary { display: inline-flex; align-items: center; min-height: 40px; }
+      /* Frosted from the top rather than fading in on scroll (mobile only). */
+      .nav::before { opacity: 1; }
+      .nav-links {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 6px 8px 10px;
+        /* Same glass as .nav::before; only painted while the menu is open. */
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.4,0,0.2,1), visibility 0.25s;
+      }
+      .nav.menu-open .nav-links { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links .nav-btn {
+        display: flex; align-items: center; justify-content: flex-start;
+        min-height: 44px; padding: 0 12px; font-size: 14px;
+      }
       .biz-content { padding: 110px 24px 80px; }
       .page-bg::after { background: rgba(13,17,23,0.92); }
       .biz-email-card { padding: 16px 18px; }
-      .footer-top { flex-direction: column; align-items: flex-start; gap: 24px; }
-      .footer-nav { flex-wrap: wrap; gap: 20px; }
+      .footer-top { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .footer-top-left { gap: 20px; }
+      .footer-logo { height: 24px; }
+      .footer-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+      .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 40px; }
       .footer-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
       .footer-bottom-right { flex-wrap: wrap; gap: 16px; }
     }
@@ -308,12 +365,15 @@
     <a href="index.html">
       <img class="nav-logo" src="KOVA logo.png" alt="KOVA" decoding="async" />
     </a>
-    <div class="nav-links">
+    <div class="nav-links" id="nav-links">
       <a href="index.html#ambassador" class="nav-btn">Ambassadors</a>
       <a href="businesses.html" class="nav-btn active">For Businesses</a>
       <a href="manifesto.html" class="nav-btn">Manifesto</a>
     </div>
     <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <main>
@@ -398,6 +458,24 @@
       }
       window.addEventListener('scroll', updateGlass, { passive: true });
       updateGlass();
+    })();
+
+    /* ── Mobile menu (hamburger ⇄ X) ── */
+    (function () {
+      const nav    = document.querySelector('.nav');
+      const toggle = document.querySelector('.nav-toggle');
+      const links  = document.getElementById('nav-links');
+      if (!nav || !toggle || !links) return;
+
+      function setMenu(open) {
+        nav.classList.toggle('menu-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('click', () => setMenu(!nav.classList.contains('menu-open')));
+      links.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+      window.addEventListener('resize', () => { if (window.innerWidth > 768) setMenu(false); });
     })();
 
     /* ── Fade-up reveal (content, staggered) + footer block fade ── */
