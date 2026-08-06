@@ -188,11 +188,7 @@
     }
 
     /* Uniform text — every block shares one font + size (Round 19) */
-    .manifesto-opener,
-    .manifesto-punch,
-    .manifesto-body,
-    .manifesto-statement,
-    .manifesto-close {
+    .manifesto-body {
       font-family: 'Lora', serif;
       font-size: 1.2rem;
       font-weight: 400;
@@ -200,22 +196,9 @@
       line-height: 1.8;
       letter-spacing: normal;
       color: rgba(255,255,255,0.80);
+      margin-bottom: 36px;
     }
-    .manifesto-opener    { margin-bottom: 36px; }
-    .manifesto-punch     { margin-bottom: 48px; }
-    .manifesto-body      { margin-bottom: 36px; }
-    .manifesto-statement { margin-bottom: 48px; }
 
-    /* Header */
-    .manifesto-header {
-      font-family: 'Lora', serif;
-      font-size: 1.5rem;
-      font-weight: 400;
-      font-style: italic;
-      line-height: 1.6;
-      color: rgba(255,255,255,0.90);
-      margin-bottom: 56px;
-    }
     /* Thin rule */
     .manifesto-rule {
       width: 32px;
@@ -356,16 +339,10 @@
         min-height: 44px; padding: 0 12px; font-size: 14px;
       }
       .manifesto-content { padding: 110px 20px 80px; }
-      /* The header is Lora *italic*, and every .char is an inline-block whose box
-         stops at the glyph's advance width — italic ink leans past that, so the
-         last letter of a line can lose its tail. Smaller type leaves slack before
-         the line ever reaches the edge, and padding-right gives the lean room. */
-      .manifesto-header { font-size: 1.2rem; padding-right: 0.35em; margin-bottom: 44px; }
-      .manifesto-opener,
-      .manifesto-punch,
-      .manifesto-body,
-      .manifesto-statement,
-      .manifesto-close { padding-right: 0.2em; }
+      /* Every .char is an inline-block whose box stops at the glyph's advance
+         width, so ink can lean past it and the last letter of a line can lose
+         its tail. padding-right gives that lean room. */
+      .manifesto-body { padding-right: 0.2em; }
       .page-bg::after {
         background: rgba(13,17,23,0.92);
       }
@@ -418,42 +395,41 @@
   <main>
     <div class="manifesto-content">
 
-      <p class="manifesto-header m-reveal">by students. for students.</p>
+      <p class="manifesto-body m-reveal">I spent most of my first year at Purdue asking people for rides.</p>
 
-      <p class="manifesto-opener m-reveal">
-        A group chat text.<br>
-        A show. A game. A weekend trip.
-      </p>
+      <p class="manifesto-body m-reveal">One night I was texting three group chats trying to get to the Indianapolis airport for a 6am flight.</p>
 
-      <p class="manifesto-body m-reveal">
-        You get excited.<br>
-        Then no one commits.
-      </p>
+      <p class="manifesto-body m-reveal">The one person who answered wanted to leave at midnight and sleep at the airport</p>
 
-      <p class="manifesto-body m-reveal">
-        Uber's $100.<br>
-        Bus doesn't go there.<br>
-        No one else to go with.
-      </p>
+      <p class="manifesto-body m-reveal">I took it. It was still the better option.</p>
 
-      <p class="manifesto-punch m-reveal">So you stay home and doomscroll instead.</p>
+      <p class="manifesto-body m-reveal">Everyone here has a version of that story. Without a car you miss things.</p>
 
-      <p class="manifesto-statement m-reveal">This is why we built KOVA.</p>
+      <p class="manifesto-body m-reveal">You never notice it happening.</p>
 
-      <p class="manifesto-body m-reveal">
-        Students driving students.<br>
-        Set a price. Pick up someone.<br>
-        Keep everything.<br>
-        No platform taking a cut.
-      </p>
+      <p class="manifesto-body m-reveal">There's no moment where you decide to stay in. The plan falls apart before it starts, and then it's eleven at night and you've been in bed with your phone for three hours and you couldn't say what you looked at.</p>
 
-      <p class="manifesto-body m-reveal">Just you and someone heading the same direction.</p>
+      <p class="manifesto-body m-reveal">College is four years and most of what people remember from it happened somewhere else. The drive there, whoever was in the car.</p>
 
-      <p class="manifesto-close m-reveal">
-        We built this for the concerts you missed,<br>
-        the road trips that fell through,<br>
-        the people you could meet.
-      </p>
+      <p class="manifesto-body m-reveal">Campus ends and that's the edge of the map.</p>
+
+      <p class="manifesto-body m-reveal">Record shops, restaurants, places open thirty years that would be packed every weekend if forty thousand students could reach them.</p>
+
+      <p class="manifesto-body m-reveal">Some of them close, which is dumb when the customers are four miles away.</p>
+
+      <p class="manifesto-body m-reveal">So we built Kova. The math was stupid and somebody had to fix it.</p>
+
+      <p class="manifesto-body m-reveal">Everyone told us why it wouldn't work, so we drove fifty rides ourselves to find out.</p>
+
+      <p class="manifesto-body m-reveal">It worked. Then a thousand people downloaded the app before we spent a dollar on ads.</p>
+
+      <p class="manifesto-body m-reveal">Somebody posts where they're going, you claim a seat, you pay them. Not us.</p>
+
+      <p class="manifesto-body m-reveal">We don't take a percentage and the money never touches us, because we weren't building a smaller Uber and nobody was asking for one.</p>
+
+      <p class="manifesto-body m-reveal">The driver was going anyway and you were trying to get there.</p>
+
+      <p class="manifesto-body m-reveal">Somebody's driving this weekend. Go.</p>
 
     </div>
   </main>
