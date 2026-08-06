@@ -190,7 +190,7 @@
     /* Uniform text — every block shares one font + size (Round 19) */
     .manifesto-body {
       font-family: 'Lora', serif;
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       font-weight: 400;
       font-style: normal;
       line-height: 1.8;
@@ -342,7 +342,7 @@
       /* Every .char is an inline-block whose box stops at the glyph's advance
          width, so ink can lean past it and the last letter of a line can lose
          its tail. padding-right gives that lean room. */
-      .manifesto-body { padding-right: 0.2em; }
+      .manifesto-body { font-size: 0.98rem; padding-right: 0.2em; }
       .page-bg::after {
         background: rgba(13,17,23,0.92);
       }
