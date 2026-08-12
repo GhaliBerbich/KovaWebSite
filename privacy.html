@@ -489,7 +489,7 @@
 
       <div class="legal-head fade-up">
         <h1 class="legal-title">Privacy Policy</h1>
-        <p class="legal-updated">Last Updated: August 5, 2026</p>
+        <p class="legal-updated">Last Updated: August 11, 2026</p>
       </div>
 
       <nav class="legal-toc fade-up" aria-label="Contents">
@@ -519,10 +519,11 @@
         <p>When you create an account, we collect:</p>
         <ul>
           <li>Name and surname</li>
-          <li>Email address (for students)</li>
-          <li>Phone number (for professional drivers)</li>
-          <li>University affiliation (for students)</li>
-          <li>Graduation year (for students)</li>
+          <li>Email address</li>
+          <li>Phone number, used for notifications and account security</li>
+          <li>Date of birth, used to confirm you meet our age requirement</li>
+          <li>University affiliation</li>
+          <li>Graduation year</li>
           <li>Gender (optional)</li>
           <li>Profile picture (optional)</li>
         </ul>
@@ -531,18 +532,28 @@
         <ul>
           <li>Driver's license information and images</li>
           <li>Insurance documents</li>
-          <li>Employment verification (for professional drivers)</li>
+          <li>Vehicle information, including make, model, and license plate</li>
           <li>Driving history questionnaire responses</li>
         </ul>
-        <h3>1.3 Referral Information</h3>
-        <p>We generate a unique referral code for each user to track referrals within the platform.</p>
+        <p>This information is self reported by the driver. Kova does not run background checks and relies on the accuracy of what each driver submits.</p>
+        <h3>1.3 Location Information</h3>
+        <p>While you are on an active, matched ride, we collect the location of both the rider and the driver. That location is visible to the two of you on that ride. You may choose to share your live location with a friend from within the app. We may share aggregated and anonymized location trends with business partners, for example overall ride activity on campus. That data cannot be used to identify you personally.</p>
+        <h3>1.4 Messages Between Riders and Drivers</h3>
+        <p>Riders and drivers can message each other through the app to arrange ride details, including price and payment method. We store these messages, but we only review them if there is a dispute, safety concern, or investigation. We do not routinely monitor message content.</p>
+        <h3>1.5 Emergency Contact Information</h3>
+        <p>If you choose to add an emergency contact for our safety features, we collect that person's name and phone number. We only use it if you activate a safety feature that involves contacting them. By adding an emergency contact, you confirm that you have their permission to share their name and phone number with us.</p>
+        <h3>1.6 Waitlist Information</h3>
+        <p>If you sign up for our waitlist for a school where Kova is not yet available, we collect your email address and school. We use this solely to notify you when Kova becomes available there.</p>
         <h2 id="s2">2. How We Use Your Information</h2>
         <p>We use your information to:</p>
         <ul>
           <li>Create and manage your account</li>
           <li>Verify driver credentials and ensure safety</li>
-          <li>Process referrals and track waitlist status</li>
+          <li>Facilitate messaging between riders and drivers</li>
+          <li>Enable location sharing during active rides and our safety features</li>
+          <li>Notify you when Kova expands to your school, if you've joined our waitlist</li>
           <li>Communicate with you about your account</li>
+          <li>Share aggregated and anonymized data with business partners for promotional and sponsorship purposes</li>
           <li>Improve our services and user experience</li>
           <li>Comply with legal obligations</li>
         </ul>
@@ -564,7 +575,7 @@
           <li>Passwords are never stored in plain text</li>
         </ul>
         <h3>3.3 Document Storage</h3>
-        <p>Driver verification documents (license, insurance, employment proof) are stored as base64-encoded images in our secure Firestore database. These documents are:</p>
+        <p>Driver verification documents (license and insurance) are stored as base64-encoded images in our secure Firestore database. These documents are:</p>
         <ul>
           <li>Only accessible to authorized Kova administrators</li>
           <li>Used solely for verification purposes</li>
@@ -580,13 +591,15 @@
           <li>Your university (for students)</li>
           <li>Driver verification status (verified/not verified badge)</li>
         </ul>
-        <h3>4.2 Service Providers</h3>
+        <h3>4.2 Business Partners</h3>
+        <p>We may share aggregated and anonymized data, such as overall ride activity or campus trends, with business partners and sponsors. This data cannot be used to identify you personally. If you redeem a discount or perk from a business partner, that business does not receive any information that identifies you.</p>
+        <h3>4.3 Service Providers</h3>
         <p>We work with trusted third-party service providers:</p>
         <ul>
           <li>Firebase/Google Cloud: Data storage and authentication</li>
           <li>Expo: Mobile app development and delivery</li>
         </ul>
-        <h3>4.3 Legal Requirements</h3>
+        <h3>4.4 Legal Requirements</h3>
         <p>We may disclose your information if required by law, such as to:</p>
         <ul>
           <li>Comply with legal processes (subpoenas, court orders)</li>
@@ -608,14 +621,14 @@
           <li>Your profile is immediately removed from the platform</li>
           <li>All personal information is permanently deleted from our databases</li>
           <li>Driver verification documents are permanently deleted</li>
-          <li>Your referral code becomes inactive</li>
           <li>This action cannot be undone</li>
         </ul>
         <p>We may retain certain information for a limited period to comply with legal obligations or resolve disputes.</p>
         <h2 id="s7">7. Data Retention</h2>
         <p>We retain your information for as long as your account is active. If you delete your account, we permanently delete your data within 30 days, except where we're required by law to retain it longer.</p>
         <h2 id="s8">8. Children's Privacy</h2>
-        <p>Kova is intended for users who are at least 18 years old. We do not knowingly collect information from children under 18. If we discover that we have collected information from a child under 18, we will delete it immediately.</p>
+        <p>Kova requires all users to be at least 18 years old. We ask for your date of birth when you create an account, and we block account creation for anyone who enters a birth date showing they're under 18. We rely on the information you provide and do not independently verify your age. If we later learn that a user misrepresented their age, we will delete their account.</p>
+        <p>Our waitlist, for students at schools where Kova is not yet available, is not intended for children under 13. If we learn we've collected information from a child under 13 through the waitlist, we will delete it.</p>
         <h2 id="s9">9. International Users</h2>
         <p>Your information may be transferred to and stored on servers located in the United States. By using Kova, you consent to this transfer.</p>
         <h2 id="s10">10. Email and Phone Verification</h2>
