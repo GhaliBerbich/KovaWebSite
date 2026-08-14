@@ -30,3 +30,7 @@
 
 # Playwright artifacts
 .playwright-mcp/
+
+# Retired manifesto page - kept locally, not published
+manifesto.html
+Manifesto Kova.txt
