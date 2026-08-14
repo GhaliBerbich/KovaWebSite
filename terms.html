@@ -420,11 +420,7 @@
          head/body rhythm is unchanged. */
       .legal-wrap { grid-template-columns: 1fr; gap: 0; padding: 96px 20px 56px; }
       .legal-title { font-size: 1.85rem; }
-      .legal-head {
-        margin-bottom: 34px;
-        padding-bottom: 26px;
-        border-bottom: 1px solid rgba(255,255,255,0.10);
-      }
+      .legal-head { margin-bottom: 56px; }
       .legal-toc { display: none; }
       .legal-doc h2 { font-size: 1.18rem; margin: 34px 0 10px; scroll-margin-top: 76px; }
       .legal-doc h3 { font-size: 0.98rem; }
@@ -463,6 +459,11 @@
       .footer-bottom-right { flex-wrap: wrap; gap: 12px; }
     }
   </style>
+  <!-- .fade-up/.reveal start at opacity:0 and are cleared by JS. Without JS that
+       would hide the entire document, so un-hide everything up front. -->
+  <noscript><style>
+    .fade-up, .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  </style></noscript>
 </head>
 <body>
 
@@ -705,16 +706,19 @@
 
   <div class="grain" aria-hidden="true"></div>
 
-  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <!-- defer: this CDN script used to block parsing, and the reveal observer below
+       sat behind it — so a slow/blocked unpkg left the whole page at opacity:0.
+       Deferred scripts run before DOMContentLoaded, so the init below still finds it. -->
+  <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script>
     /* ── Lenis smooth scroll (match index.html: lerp 0.06, wheelMultiplier 0.9) ── */
-    (function () {
+    window.addEventListener('DOMContentLoaded', function () {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.Lenis) return;
       const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.9, smoothWheel: true });
       const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
       requestAnimationFrame(raf);
       window.lenis = lenis;
-    })();
+    });
 
     /* ── Nav glass on scroll ── */
     (function () {
@@ -796,7 +800,13 @@
             observer.unobserve(e.target);
           }
         });
-      }, { threshold: 0.08 });
+      /* threshold MUST stay 0. It is an *area ratio*, and .legal-doc is one
+         element 5,000–9,000px tall — the slice of it visible at load is only
+         ~4–6% of its area, so any non-zero threshold leaves the whole document
+         invisible until you scroll (and on a tall enough page + short viewport,
+         the ratio caps below the threshold and it never reveals at all).
+         The negative bottom rootMargin keeps the "rises into view" feel. */
+      }, { threshold: 0, rootMargin: '0px 0px -5% 0px' });
 
       document.querySelectorAll('.fade-up').forEach((el, i) => {
         el.style.transitionDelay = `${i * 0.08}s`;

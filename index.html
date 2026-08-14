@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Marks that JS is available. Everything that starts at opacity:0 and is
+       revealed by script is scoped to html.js, so a no-JS visitor sees the page
+       fully painted instead of a blank one. Must run before the stylesheet. -->
+  <script>document.documentElement.className += ' js';</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ride KOVA</title>
   <meta name="description" content="Rides between Purdue students. Agree on a price with your driver directly, no commission." />
@@ -27,6 +31,10 @@
   <meta name="twitter:title" content="Ride KOVA" />
   <meta name="twitter:description" content="Rides between Purdue students. Agree on a price with your driver directly, no commission." />
   <meta name="twitter:image" content="og-image.jpg" />
+  <!-- The hero is a CSS background-image, so the preload scanner can't see it —
+       without this it isn't requested until ~1,300 lines of inline CSS have
+       parsed, which is the worst possible discovery path for the LCP image. -->
+  <link rel="preload" as="image" href="drive pic.jpg" fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -349,8 +357,17 @@
       background-size: cover;
       background-position: center 40%;
       background-repeat: no-repeat;
-      background-color: #122a1c;
+      /* Placeholder shown while the photo loads. This was #122a1c (dark green),
+         which is what produced the green flash on every cold load — the photo
+         itself averages a neutral grey, so the green never matched it. */
+      background-color: var(--bg);
     }
+    /* Fade the hero photo (and its gradient) up once the preloaded file has
+       decoded, instead of snapping. #hero underneath is the same var(--bg), so
+       at rest this reads as a flat dark frame, not a hole. Scoped to html.js and
+       backed by a timeout in the JS, so it can never strand the hero invisible. */
+    html.js .hero-bg { opacity: 0; transition: opacity 0.5s ease; }
+    html.js .hero-bg.hero-ready { opacity: 1; }
     .hero-bg::before {
       content: '';
       position: absolute;
@@ -545,27 +562,48 @@
     #more-than-a-ride .card-bg-edge,
     #ambassador .card-bg-edge { transform: translateZ(0); }
 
-    /* Per-section background variation (image / crop / rotation / blur / overlay) */
-    #how-it-works .card-bg      { background-image: url('hiw-bg.jpg');        background-position: center 70%; transform: scale(1.05) rotate(-1deg) translateZ(0); }
-    #how-it-works .card-bg-edge { background-image: url('hiw-bg.jpg');        background-position: center 70%; }
+    /* Deferred section photos.
+       CSS background-images cannot be lazy-loaded, so all seven of these used to be
+       requested at parse time — ~3MB competing with the hero for the same connections,
+       which is what made the page arrive top-to-bottom. The image URL now lives behind
+       .bg-ready, added per-section by an IntersectionObserver once the file has actually
+       decoded (see the "Deferred section backgrounds" IIFE). The gradient ::before
+       overlays are NOT deferred — they're cheap and they keep each section looking
+       intentional while its photo is still on the way.
+       The opacity:0 is scoped to html.js so a no-JS visitor just gets them immediately. */
+    html.js .card-bg,
+    html.js .card-bg-edge { opacity: 0; transition: opacity 0.45s ease; }
+    html.js .bg-ready .card-bg,
+    html.js .bg-ready .card-bg-edge { opacity: 1; }
+
+    /* Per-section background variation (image / crop / rotation / overlay) */
+    #how-it-works.bg-ready .card-bg      { background-image: url('hiw-bg.jpg');        background-position: center 70%; }
+    #how-it-works.bg-ready .card-bg-edge { background-image: url('hiw-bg.jpg');        background-position: center 70%; }
+    #how-it-works .card-bg      { transform: scale(1.05) rotate(-1deg) translateZ(0); }
     #how-it-works::before       { background: linear-gradient(105deg, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.62) 100%); }
-    #testimonials .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; transform: scale(1.04) rotate(-0.4deg) translateZ(0); }
-    #testimonials .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
+    #testimonials.bg-ready .card-bg      { background-image: url('concert pic.jpg');   background-position: center 30%; }
+    #testimonials.bg-ready .card-bg-edge { background-image: url('concert pic.jpg');   background-position: center 30%; }
+    #testimonials .card-bg      { transform: scale(1.04) rotate(-0.4deg) translateZ(0); }
     #testimonials::before       { background: linear-gradient(to top, rgba(0,0,0,0.85) 25%, rgba(0,0,0,0.55) 100%); }
-    #more-than-a-ride .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; transform: scale(1.05) rotate(-0.8deg) translateZ(0); }
-    #more-than-a-ride .card-bg-edge { background-image: url('social-bg.jpg');  background-position: center center; }
+    #more-than-a-ride.bg-ready .card-bg      { background-image: url('social-bg.jpg');  background-position: center center; }
+    #more-than-a-ride.bg-ready .card-bg-edge { background-image: url('social-bg.jpg');  background-position: center center; }
+    #more-than-a-ride .card-bg      { transform: scale(1.05) rotate(-0.8deg) translateZ(0); }
     #more-than-a-ride::before       { background: linear-gradient(285deg, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.60) 100%); }
-    #safety .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; transform: scale(1.05) rotate(0.6deg); }
-    #safety .card-bg-edge       { background-image: url('safety-bg.jpg');     background-position: center 60%; }
+    #safety.bg-ready .card-bg            { background-image: url('safety-bg.jpg');     background-position: center 60%; }
+    #safety.bg-ready .card-bg-edge       { background-image: url('safety-bg.jpg');     background-position: center 60%; }
+    #safety .card-bg            { transform: scale(1.05) rotate(0.6deg); }
     #safety::before             { background: linear-gradient(to bottom, rgba(0,0,0,0.60), rgba(0,0,0,0.85) 70%); }
-    #ambassador .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; transform: scale(1.07) rotate(0.7deg) translateZ(0); }
-    #ambassador .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
+    #ambassador.bg-ready .card-bg        { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
+    #ambassador.bg-ready .card-bg-edge   { background-image: url('nightclub pic.jpg'); background-position: 60% center; }
+    #ambassador .card-bg        { transform: scale(1.07) rotate(0.7deg) translateZ(0); }
     #ambassador::before         { background: linear-gradient(75deg, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.58) 100%); }
-    #faq .card-bg               { background-image: url('faq-bg.jpg');        background-position: center 65%; transform: scale(1.05) rotate(-1.1deg); }
-    #faq .card-bg-edge          { background-image: url('faq-bg.jpg');        background-position: center 65%; }
+    #faq.bg-ready .card-bg               { background-image: url('faq-bg.jpg');        background-position: center 65%; }
+    #faq.bg-ready .card-bg-edge          { background-image: url('faq-bg.jpg');        background-position: center 65%; }
+    #faq .card-bg               { transform: scale(1.05) rotate(-1.1deg); }
     #faq::before                { background: linear-gradient(to bottom, rgba(0,0,0,0.82), rgba(0,0,0,0.88)); }
-    #download .card-bg          { background-image: url('download-bg.jpg');   background-position: 40% center; transform: scale(1.03) rotate(0.3deg); }
-    #download .card-bg-edge     { background-image: url('download-bg.jpg');   background-position: 40% center; }
+    #download.bg-ready .card-bg          { background-image: url('download-bg.jpg');   background-position: 40% center; }
+    #download.bg-ready .card-bg-edge     { background-image: url('download-bg.jpg');   background-position: 40% center; }
+    #download .card-bg          { transform: scale(1.03) rotate(0.3deg); }
     #download::before           { background: linear-gradient(100deg, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.62) 100%); }
 
     /* ─── Road (per card) ────────────────────────────────────── */
@@ -1290,6 +1328,15 @@
       .btn-pull-up { width: 100%; max-width: 280px; }
     }
   </style>
+  <!-- Everything revealed by script starts hidden. Without JS, un-hide it all.
+       (.card-bg / .hero-bg are already scoped to html.js, so they need no entry.) -->
+  <noscript><style>
+    .reveal, .letter-reveal .char, .word-reveal .word {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+    #hero-seq-wrap { display: none !important; }
+    #hero-headline { display: block !important; }
+  </style></noscript>
 </head>
 <body>
 
@@ -1335,7 +1382,7 @@
 
   <!-- ─── Navbar ───────────────────────────────────────────────── -->
   <nav class="nav" id="navbar" aria-label="Main navigation">
-    <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" />
+    <img class="nav-logo" src="KOVA logo.png" alt="KOVA" onclick="scrollToTop()" decoding="async" width="91" height="28" fetchpriority="high" />
     <div class="nav-links" id="nav-links">
       <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="nav-btn">Ambassadors</a>
       <a href="/businesses" class="nav-btn">For Businesses</a>
@@ -1365,7 +1412,8 @@
       <span class="hero-stat-label">average rating</span>
     </div>
 
-    <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
+    <!-- fetchpriority=low: decorative, and it was outweighing the hero photo itself -->
+    <img class="hero-chip" src="road_chip1.png" alt="" decoding="async" width="325" height="203" fetchpriority="low" style="position:absolute;z-index:5;width:325px;right:4%;bottom:14%;--tilt:3deg;--delay:0.95s" />
 
     <!-- Mobile only (hidden ≥769px): pinned to the hero's top-left / bottom-right
          corners. Siblings of .hero-content (not children) so they position against
@@ -1377,7 +1425,7 @@
       <span class="hero-stat-number">100%</span>
       <span class="hero-stat-label">of what you earn</span>
     </div>
-    <img class="hero-mobile-chip" src="road_chip1.png" alt="" decoding="async" width="250" height="156" />
+    <img class="hero-mobile-chip" src="road_chip1.png" alt="" decoding="async" width="250" height="156" fetchpriority="low" />
 
     <div class="hero-content">
       <div class="hero-seq-wrap" id="hero-seq-wrap">
@@ -1958,6 +2006,64 @@
       });
       el.innerHTML = parts.join('');
     });
+
+    /* ── Hero photo: fade in once the preloaded file has decoded ──
+       <link rel=preload> has already started the fetch, so this Image() resolves
+       from cache almost immediately. The timeout is the safety net: if the file
+       404s or the network dies, the hero must still appear. */
+    (function () {
+      const bg = document.querySelector('.hero-bg');
+      if (!bg) return;
+      let done = false;
+      const show = () => { if (!done) { done = true; bg.classList.add('hero-ready'); } };
+      const img = new Image();
+      img.onload = show;
+      img.onerror = show;
+      img.src = 'drive pic.jpg';
+      if (img.complete) show();
+      setTimeout(show, 2500);
+    })();
+
+    /* ── Deferred section backgrounds ──
+       The seven section photos are CSS background-images, which the browser cannot
+       lazy-load — they all used to be fetched at parse time and crowd out the hero.
+       Here each .site-section gets .bg-ready (which is what carries the background-image
+       URL, see the variation block) only once its photo has decoded, and the CSS fades
+       it up. rootMargin starts the fetch ~600px before the section reaches the viewport,
+       so at normal scroll speed the photo is already there when you arrive. */
+    (function () {
+      const SECTION_BG = {
+        'how-it-works': 'hiw-bg.jpg',
+        'testimonials': 'concert pic.jpg',
+        'more-than-a-ride': 'social-bg.jpg',
+        'safety': 'safety-bg.jpg',
+        'ambassador': 'nightclub pic.jpg',
+        'faq': 'faq-bg.jpg',
+        'download': 'download-bg.jpg'
+      };
+      const ready = (el) => el.classList.add('bg-ready');
+      const load = (el) => {
+        const src = SECTION_BG[el.id];
+        if (!src) { ready(el); return; }
+        let done = false;
+        const show = () => { if (!done) { done = true; ready(el); } };
+        const img = new Image();
+        img.onload = show;
+        img.onerror = show;   // a missing photo must not leave the section blank
+        img.src = src;
+        if (img.complete) show();
+        setTimeout(show, 3000);
+      };
+
+      const sections = document.querySelectorAll('.site-section');
+      if (!('IntersectionObserver' in window)) { sections.forEach(load); return; }
+      const bgObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { bgObs.unobserve(e.target); load(e.target); }
+        });
+      }, { rootMargin: '600px 0px' });
+      sections.forEach(el => bgObs.observe(el));
+    })();
 
     /* ── Scroll reveal observer ── */
     const revealObs = new IntersectionObserver((entries) => {

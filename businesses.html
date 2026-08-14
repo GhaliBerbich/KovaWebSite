@@ -388,6 +388,11 @@
       .footer-bottom-right { flex-wrap: wrap; gap: 12px; }
     }
   </style>
+  <!-- .fade-up/.reveal start at opacity:0 and are cleared by JS. Without JS that
+       would hide the entire document, so un-hide everything up front. -->
+  <noscript><style>
+    .fade-up, .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  </style></noscript>
 </head>
 <body>
 
@@ -471,16 +476,19 @@
 
   <div class="grain" aria-hidden="true"></div>
 
-  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <!-- defer: this CDN script used to block parsing, and the reveal observer below
+       sat behind it — so a slow/blocked unpkg left the whole page at opacity:0.
+       Deferred scripts run before DOMContentLoaded, so the init below still finds it. -->
+  <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script>
     /* ── Lenis smooth scroll (match index.html: lerp 0.06, wheelMultiplier 0.9) ── */
-    (function () {
+    window.addEventListener('DOMContentLoaded', function () {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.Lenis) return;
       const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.9, smoothWheel: true });
       const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
       requestAnimationFrame(raf);
       window.lenis = lenis;
-    })();
+    });
 
     /* ── Nav glass on scroll ── */
     (function () {
@@ -520,7 +528,9 @@
             observer.unobserve(e.target);
           }
         });
-      }, { threshold: 0.08 });
+      /* threshold 0 — an area ratio is the wrong trigger for blocks taller than
+         the viewport (see terms.html for the bug it caused there). */
+      }, { threshold: 0, rootMargin: '0px 0px -5% 0px' });
 
       document.querySelectorAll('.fade-up').forEach((el, i) => {
         el.style.transitionDelay = `${i * 0.08}s`;
