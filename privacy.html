@@ -414,16 +414,18 @@
         display: flex; align-items: center; justify-content: flex-start;
         min-height: 44px; padding: 0 12px; font-size: 14px;
       }
-      /* Single column: contents list moves above the document. */
+      /* Single column, and the contents rail is hidden entirely — stacked above
+         the document it was just a screenful of links between the title and the
+         first clause. Its divider + spacing move up under the title block so the
+         head/body rhythm is unchanged. */
       .legal-wrap { grid-template-columns: 1fr; gap: 0; padding: 96px 20px 56px; }
       .legal-title { font-size: 1.85rem; }
-      .legal-toc {
-        position: static;
+      .legal-head {
         margin-bottom: 34px;
         padding-bottom: 26px;
         border-bottom: 1px solid rgba(255,255,255,0.10);
       }
-      .legal-toc a { font-size: 13px; padding: 7px 0 7px 12px; }
+      .legal-toc { display: none; }
       .legal-doc h2 { font-size: 1.18rem; margin: 34px 0 10px; scroll-margin-top: 76px; }
       .legal-doc h3 { font-size: 0.98rem; }
       .legal-doc p, .legal-doc li { font-size: 14.5px; }
