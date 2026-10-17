@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Your Account — KOVA</title>
+  <meta name="description" content="How to delete your KOVA account and data, in the app or by email, and what happens to your data when you do." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,800;1,9..144,800&family=Inter:wght@400;500;600&family=Lora:wght@400&display=swap" rel="stylesheet" />
+
+  <link rel="canonical" href="https://www.ridekova.com/delete-account" />
+  <meta name="theme-color" content="#0D1117" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      background: #0D1117;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    :root { --green: #3EE06F; }
+
+    /* Lenis smooth-scroll resets */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-stopped { overflow: hidden; }
+
+    /* ── Nav — exact match to index.html ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      isolation: isolate;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      padding: 12px 32px;
+      white-space: nowrap;
+    }
+    .nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      opacity: var(--nav-glass, 0);
+    }
+    .nav-logo {
+      height: 28px; width: auto;
+      cursor: pointer;
+      filter: invert(1) hue-rotate(180deg);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    /* Mobile menu button — hidden on desktop; the mobile query turns it on.
+       Bars rotate into an X via transform + opacity only. */
+    .nav-toggle {
+      display: none;
+      position: relative;
+      width: 44px; height: 44px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      justify-self: end;
+    }
+    .nav-toggle span {
+      position: absolute;
+      left: 12px;
+      width: 20px; height: 2px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.85);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease;
+    }
+    .nav-toggle span:nth-child(1) { top: 15px; }
+    .nav-toggle span:nth-child(2) { top: 21px; }
+    .nav-toggle span:nth-child(3) { top: 27px; }
+    .nav.menu-open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+    .nav.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    .nav > .nav-btn.primary { justify-self: end; }
+    .nav-btn {
+      color: rgba(255,255,255,0.55);
+      background: transparent;
+      border: none;
+      padding: 8px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      text-decoration: none;
+      transition: color 0.4s ease;
+      cursor: pointer;
+    }
+    .nav-btn:hover { color: #fff; }
+    .nav-btn.active { color: #fff; }
+    .nav-btn.primary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: rgba(255,255,255,0.04);
+      color: #9af0b8;
+      border: 1px solid rgba(125,242,166,0.30);
+      border-radius: 999px;
+      padding: 9px 24px;
+      font-weight: 600;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      box-shadow:
+        0 0 8px rgba(0,0,0,0.10),
+        0 2px 6px rgba(0,0,0,0.18),
+        inset 3px 3px 0.5px -3.5px rgba(125,242,166,0.9),
+        inset -3px -3px 0.5px -3.5px rgba(125,242,166,0.85),
+        inset 1px 1px 1px -0.5px rgba(125,242,166,0.6),
+        inset -1px -1px 1px -0.5px rgba(125,242,166,0.6),
+        inset 0 0 6px 6px rgba(125,242,166,0.12),
+        inset 0 0 2px 2px rgba(125,242,166,0.06);
+      transition: transform 0.3s ease, box-shadow 0.4s ease, background 0.4s ease, color 0.4s ease;
+    }
+    .nav-btn.primary:hover {
+      transform: scale(1.02);
+      background: rgba(255,255,255,0.08);
+      color: #bff8d2;
+    }
+
+    /* ── Background image ── */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: url('faq-bg.jpg');
+      background-size: cover;
+      background-position: right center;
+      background-repeat: no-repeat;
+    }
+    /* Same near-flat overlay as the legal pages: even contrast for body text. */
+    .page-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(13,17,23,0.94) 0%,
+        rgba(13,17,23,0.90) 100%
+      );
+    }
+
+    /* ── Page layout ── */
+    /* One column: the page is short enough that a contents rail would be noise. */
+    .legal-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 132px 24px 100px;
+    }
+
+    .legal-head { margin-bottom: 36px; }
+    .legal-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .legal-updated {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.42);
+      letter-spacing: 0.02em;
+    }
+
+    /* The document itself */
+    .legal-doc { min-width: 0; }
+    .legal-doc h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.32rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      margin: 44px 0 12px;
+    }
+    .legal-doc h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.08rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 14px;
+    }
+    .legal-doc p {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 12px;
+    }
+    .legal-doc ul {
+      list-style: none;
+      margin: 0 0 14px;
+      padding: 0;
+    }
+    .legal-doc ul li {
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.72);
+      padding-left: 18px;
+      margin-bottom: 6px;
+    }
+    .legal-doc ul li::before {
+      content: '';
+      position: absolute;
+      left: 2px; top: 0.62em;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.34);
+    }
+    .legal-doc .bold { font-weight: 600; color: rgba(255,255,255,0.90); }
+    .legal-doc a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+    .legal-doc .legal-intro { font-size: 16px; color: rgba(255,255,255,0.80); }
+
+    /* ── Deletion options ── */
+    /* Neutral glass with the same fill/border/radius as the site's other cards
+       (.dl-card, .biz-email-card). No backdrop-filter: the photo sits under a
+       ~90% overlay, so a blur would re-raster every scroll frame for no visible
+       difference. No green either — it stays reserved for the primary CTA. */
+    .del-option {
+      margin-top: 16px;
+      padding: 24px 28px 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+    }
+    .legal-doc .del-option h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      margin: 0 0 16px;
+    }
+    .legal-doc .del-option p:last-child { margin-bottom: 0; }
+
+    /* Numbered steps — faded Fraunces numerals, the homepage how-it-works
+       "01 / 02 / 03" treatment scaled down to a list. */
+    .del-steps {
+      list-style: none;
+      counter-reset: step;
+      margin: 0 0 16px;
+      padding: 0;
+    }
+    .del-steps li {
+      counter-increment: step;
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 24px;
+      color: rgba(255,255,255,0.80);
+      padding-left: 40px;
+      margin-bottom: 10px;
+    }
+    .del-steps li::before {
+      content: counter(step, decimal-leading-zero);
+      position: absolute;
+      left: 0; top: 0;
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 24px;
+      color: rgba(255,255,255,0.30);
+    }
+    .del-steps .sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.56);
+    }
+    .legal-doc .del-hint {
+      font-size: 14px;
+      color: rgba(255,255,255,0.56);
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Permanence warning — the legal pages' closing-box style */
+    .legal-note {
+      margin-top: 20px;
+      padding: 18px 22px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+    }
+    .legal-doc .legal-note p {
+      margin: 0;
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    /* ── Fade-up reveal (content) ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .fade-up.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Block fade-in (footer) — same as index.html .reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease var(--reveal-delay, 0s),
+                  transform 0.6s ease var(--reveal-delay, 0s);
+    }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+
+    /* ── Footer (same as index.html) ── */
+    footer {
+      background: #0D1117;
+      padding: 40px 32px 32px;
+      position: relative;
+      z-index: 10000;
+    }
+    .footer-inner { max-width: 1320px; margin: 0 auto; }
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-bottom: 28px;
+    }
+    .footer-top-left { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
+    .footer-logo { height: 28px; width: auto; filter: brightness(0) invert(1); }
+    .footer-nav { display: flex; flex-wrap: wrap; column-gap: 36px; row-gap: 12px; }
+    .footer-social-group { display: flex; align-items: center; gap: 16px; }
+    .footer-social { color: rgba(255,255,255,0.50); transition: color 0.35s ease; line-height: 0; }
+    .footer-social:hover { color: rgba(255,255,255,0.85); }
+    .footer-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.35s ease;
+    }
+    .footer-link:hover { color: rgba(255,255,255,0.85); }
+    .footer-link--legal {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.30);
+    }
+    .footer-link--legal:hover { color: rgba(255,255,255,0.65); }
+    .footer-divider { height: 1px; background: rgba(255,255,255,0.07); }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 28px;
+      gap: 16px;
+    }
+    .footer-bottom-left { display: flex; flex-direction: column; gap: 4px; }
+    .footer-bottom-right { display: flex; align-items: center; gap: 24px; }
+    .footer-copy { font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(255,255,255,0.30); }
+    .footer-location { font-family: 'Inter', sans-serif; font-size: 12.5px; color: rgba(255,255,255,0.20); display: flex; align-items: center; }
+    .footer-purdue { height: 11.5px; width: auto; margin-left: 3px; opacity: 0.75; }
+
+    /* ── Grain ── */
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      /* Navbar → hamburger. .nav-links goes absolute, which drops it out of the
+         grid flow, so the bar collapses to: logo | Get KOVA | toggle. */
+      .nav { padding: 8px 16px; grid-template-columns: 1fr auto auto; gap: 10px; }
+      .nav-logo { height: 24px; }
+      .nav-toggle { display: block; }
+      .nav-btn { font-size: 12px; padding: 7px 10px; }
+      .nav-btn.primary { display: inline-flex; align-items: center; min-height: 40px; }
+      /* Frosted from the top rather than fading in on scroll (mobile only). */
+      .nav::before { opacity: 1; }
+      .nav-links {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 6px 8px 10px;
+        /* Same glass as .nav::before; only painted while the menu is open. */
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.4,0,0.2,1), visibility 0.25s;
+      }
+      .nav.menu-open .nav-links { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links .nav-btn {
+        display: flex; align-items: center; justify-content: flex-start;
+        min-height: 44px; padding: 0 12px; font-size: 14px;
+      }
+      .legal-wrap { padding: 96px 20px 56px; }
+      .legal-title { font-size: 1.85rem; }
+      .legal-head { margin-bottom: 28px; }
+      .legal-doc h2 { font-size: 1.18rem; margin: 34px 0 10px; }
+      .legal-doc p, .legal-doc ul li, .del-steps li { font-size: 14.5px; }
+      .legal-doc .legal-intro { font-size: 15px; }
+      .del-option { padding: 20px 20px 16px; border-radius: 24px; }
+      .legal-doc .del-option h3 { font-size: 1.08rem; margin-bottom: 14px; }
+      .del-steps li { padding-left: 36px; }
+      .legal-note { padding: 16px 18px; }
+      /* The fixed bg is sized by inset:0, i.e. the *visible* viewport — so every
+         time the URL bar collapses or expands the element resizes and
+         background-size:cover re-scales the photo, which reads as the image
+         drifting while you scroll. Pinning it to 100lvh (the viewport height
+         with the bar retracted) keeps the box a constant size, so the image
+         never re-scales. Anchored at the top, so it still covers either way. */
+      .page-bg { bottom: auto; height: 100lvh; }
+      .page-bg::after { background: rgba(13,17,23,0.92); }
+      /* Footer: tighter, with Terms/Privacy stacked and right-aligned.
+         stretch (not flex-start) so .footer-top-left spans the full width and the
+         right-hand column can actually reach the right edge. */
+      footer { padding: 28px 20px 24px; }
+      .footer-top { flex-direction: column; align-items: stretch; gap: 16px; padding-bottom: 18px; }
+      .footer-top-left { gap: 14px; width: 100%; }
+      .footer-logo { height: 24px; }
+      .footer-nav {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        column-gap: 20px;
+        row-gap: 0;
+        width: 100%;
+      }
+      .footer-nav .footer-link:nth-child(1) { grid-area: 1 / 1; }
+      .footer-nav .footer-link:nth-child(2) { grid-area: 2 / 1; }
+      .footer-nav .footer-link:nth-child(3) { grid-area: 3 / 1; }
+      .footer-nav .footer-link:nth-child(4) { grid-area: 1 / 2; justify-self: end; }
+      .footer-nav .footer-link:nth-child(5) { grid-area: 2 / 2; justify-self: end; }
+      .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 30px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; padding-top: 18px; }
+      .footer-bottom-right { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+  <!-- .fade-up/.reveal start at opacity:0 and are cleared by JS. Without JS that
+       would hide the entire page, so un-hide everything up front. -->
+  <noscript><style>
+    .fade-up, .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  </style></noscript>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <!-- Nav — same structure as index.html -->
+  <nav class="nav" aria-label="Main navigation">
+    <a href="/">
+      <img class="nav-logo" src="KOVA logo.png" alt="KOVA" decoding="async" />
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="nav-btn">Ambassadors</a>
+      <a href="/businesses" class="nav-btn">For Businesses</a>
+      <a href="https://ridekova.notion.site/waitlist" target="_blank" rel="noopener" class="nav-btn">Waitlist</a>
+    </div>
+    <a href="https://apps.apple.com/us/app/ridekova/id6757269118" target="_blank" rel="noopener noreferrer" class="nav-btn primary" aria-label="Get KOVA on the App Store">Get KOVA</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main>
+    <div class="legal-wrap">
+
+      <div class="legal-head fade-up">
+        <h1 class="legal-title">Delete your KOVA account</h1>
+        <p class="legal-updated">Last Updated: October 17, 2026</p>
+      </div>
+
+      <article class="legal-doc fade-up">
+        <p class="legal-intro">This page explains how to delete your account in KOVA, the app developed by Kova Group, Inc., and what happens to your data when you do.</p>
+
+        <h2 id="how">How to delete your account</h2>
+
+        <section class="del-option" aria-labelledby="opt-app">
+          <h3 id="opt-app">In the app</h3>
+          <ol class="del-steps">
+            <li>Open the <span class="bold">Profile</span> tab.</li>
+            <li>Tap the <span class="bold">gear icon</span>.</li>
+            <li>Tap <span class="bold">Delete Account</span>, then <span class="bold">Continue</span>.</li>
+            <li>Tap <span class="bold">Delete</span>.<span class="sub">If you signed up with an email and password, enter your password to confirm.</span></li>
+          </ol>
+          <p class="del-hint">If the app asks you to sign in again, sign in and try again, or email us instead.</p>
+        </section>
+
+        <section class="del-option" aria-labelledby="opt-email">
+          <h3 id="opt-email">Without the app, by email</h3>
+          <p>Email <a href="mailto:help@ridekova.com?subject=Delete%20my%20KOVA%20account">help@ridekova.com</a> from the email address on your KOVA account and ask us to delete your account.</p>
+          <p>We will reply within 7 days to confirm that your account has been deleted.</p>
+        </section>
+
+        <div class="legal-note">
+          <p>Deletion is permanent and cannot be undone.</p>
+        </div>
+
+        <h2 id="deleted">What we delete</h2>
+        <p>When you delete your account, we permanently delete all of your personal data, including:</p>
+        <ul>
+          <li>Your account and sign-in</li>
+          <li>Your profile and public profile: name, phone number, date of birth, bio, friends, vehicle and emergency contact</li>
+          <li>Your profile photo, and your driver verification photos and answers</li>
+          <li>Messages and photos you sent in chats</li>
+          <li>Your trips and ride requests</li>
+          <li>Ratings you gave and feedback you sent</li>
+          <li>The links we use to send notifications to your device</li>
+        </ul>
+        <p>Your data is deleted right away. Deleted files are permanently erased from our storage within 7 days, and server logs are erased after 30 days.</p>
+        <p>We may retain certain information for a limited period to comply with legal obligations or resolve disputes.</p>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- ─── Footer (same as index.html) ─────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+
+      <!-- Top row: logo | nav | social -->
+      <div class="footer-top reveal">
+        <div class="footer-top-left">
+          <img class="footer-logo" src="KOVA logo.png" alt="KOVA" loading="lazy" decoding="async" />
+
+          <nav class="footer-nav">
+            <a href="https://ridekova.notion.site/join?v=38a7fa18132180f1869c000cd7287201&source=copy_link" target="_blank" rel="noopener" class="footer-link">Ambassadors</a>
+            <a href="/businesses" class="footer-link">For Businesses</a>
+            <a href="https://ridekova.notion.site/waitlist" target="_blank" rel="noopener" class="footer-link">Waitlist</a>
+            <a href="/terms" class="footer-link">Terms of Service</a>
+            <a href="/privacy" class="footer-link">Privacy Policy</a>
+          </nav>
+        </div>
+
+        <div class="footer-social-group">
+          <a href="https://www.instagram.com/ridekova/" class="footer-social" aria-label="KOVA on Instagram" target="_blank" rel="noopener noreferrer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="footer-divider"></div>
+
+      <!-- Bottom row: copyright | built-with-love -->
+      <div class="footer-bottom reveal" style="--reveal-delay:0.1s">
+        <div class="footer-bottom-left">
+          <p class="footer-copy">© 2026 KOVA Group, Inc. All rights reserved.</p>
+        </div>
+        <div class="footer-bottom-right">
+          <p class="footer-location">Built with love, at&nbsp;<img src="purdue.png" alt="Purdue University" class="footer-purdue" loading="lazy" decoding="async" /></p>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- defer: keeps the CDN script off the critical path; the reveal observer
+       below registers immediately and doesn't wait on it. -->
+  <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script>
+    /* ── Lenis smooth scroll (match index.html: lerp 0.06, wheelMultiplier 0.9) ── */
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.Lenis) return;
+      const lenis = new Lenis({ lerp: 0.06, wheelMultiplier: 0.9, smoothWheel: true });
+      const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+      window.lenis = lenis;
+    });
+
+    /* ── Nav glass on scroll ── */
+    (function () {
+      const nav = document.querySelector('.nav');
+      if (!nav) return;
+      function updateGlass() {
+        nav.style.setProperty('--nav-glass', Math.min(window.scrollY / 100, 1));
+      }
+      window.addEventListener('scroll', updateGlass, { passive: true });
+      updateGlass();
+    })();
+
+    /* ── Mobile menu (hamburger ⇄ X) ── */
+    (function () {
+      const nav    = document.querySelector('.nav');
+      const toggle = document.querySelector('.nav-toggle');
+      const links  = document.getElementById('nav-links');
+      if (!nav || !toggle || !links) return;
+
+      function setMenu(open) {
+        nav.classList.toggle('menu-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('click', () => setMenu(!nav.classList.contains('menu-open')));
+      links.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+      window.addEventListener('resize', () => { if (window.innerWidth > 768) setMenu(false); });
+    })();
+
+    /* ── Fade-up reveal (content, staggered) + footer block fade ── */
+    (function () {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            observer.unobserve(e.target);
+          }
+        });
+      /* threshold MUST stay 0: it's an area ratio, and .legal-doc can be taller
+         than the viewport, so a non-zero value can leave it hidden on load. */
+      }, { threshold: 0, rootMargin: '0px 0px -5% 0px' });
+
+      document.querySelectorAll('.fade-up').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 0.08}s`;
+        observer.observe(el);
+      });
+      // Footer rows use .reveal (no stagger) — observed by the same observer
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    })();
+  </script>
+
+</body>
+</html>
