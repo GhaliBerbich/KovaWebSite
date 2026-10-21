@@ -454,6 +454,7 @@
       .footer-nav .footer-link:nth-child(3) { grid-area: 3 / 1; }
       .footer-nav .footer-link:nth-child(4) { grid-area: 1 / 2; justify-self: end; }
       .footer-nav .footer-link:nth-child(5) { grid-area: 2 / 2; justify-self: end; }
+      .footer-nav .footer-link:nth-child(6) { grid-area: 3 / 2; justify-self: end; }
       .footer-link { font-size: 0.8rem; display: inline-flex; align-items: center; min-height: 30px; }
       .footer-bottom { flex-direction: column; align-items: flex-start; gap: 10px; padding-top: 18px; }
       .footer-bottom-right { flex-wrap: wrap; gap: 12px; }
@@ -490,7 +491,7 @@
 
       <div class="legal-head fade-up">
         <h1 class="legal-title">Privacy Policy</h1>
-        <p class="legal-updated">Last Updated: August 11, 2026</p>
+        <p class="legal-updated">Last Updated: October 21, 2026</p>
       </div>
 
       <nav class="legal-toc fade-up" aria-label="Contents">
@@ -568,20 +569,19 @@
           <li>Regular security audits and compliance certifications</li>
         </ul>
         <h3>3.2 Authentication</h3>
-        <p>We use Firebase Authentication for secure user login:</p>
+        <p>We use Firebase Authentication to sign you in:</p>
         <ul>
-          <li>Email/password authentication with industry-standard encryption</li>
-          <li>Phone number verification using SMS codes</li>
-          <li>Email verification links sent securely</li>
+          <li>Sign-in with your Purdue account, or with your email and a password</li>
+          <li>One-time codes sent to your email to verify it</li>
           <li>Passwords are never stored in plain text</li>
         </ul>
         <h3>3.3 Document Storage</h3>
-        <p>Driver verification documents (license and insurance) are stored as base64-encoded images in our secure Firestore database. These documents are:</p>
+        <p>Driver verification documents (license and insurance) are stored in secure Firebase file storage. These documents are:</p>
         <ul>
-          <li>Only accessible to authorized Kova administrators</li>
+          <li>Only accessible to you and authorized Kova administrators</li>
           <li>Used solely for verification purposes</li>
           <li>Encrypted at rest and in transit</li>
-          <li>Automatically deleted if your account is deleted</li>
+          <li>Permanently deleted if your account is deleted</li>
         </ul>
         <h2 id="s4">4. Data Sharing and Disclosure</h2>
         <p>We do not sell your personal information to third parties.</p>
@@ -617,16 +617,17 @@
         </ul>
         <p>To exercise these rights, contact us at help@ridekova.com or use the "Delete Account" option in your profile settings.</p>
         <h2 id="s6">6. Account Deletion</h2>
+        <p>You can <a href="/delete-account">delete your account</a> in the app (Profile → Settings → Delete Account), or by emailing help@ridekova.com from the email address on your account.</p>
         <p>When you delete your account:</p>
         <ul>
           <li>Your profile is immediately removed from the platform</li>
-          <li>All personal information is permanently deleted from our databases</li>
-          <li>Driver verification documents are permanently deleted</li>
+          <li>Your personal information, profile picture and driver verification documents are permanently deleted</li>
+          <li>Messages you sent to other users, and records of rides you shared with them, stay in their history</li>
           <li>This action cannot be undone</li>
         </ul>
         <p>We may retain certain information for a limited period to comply with legal obligations or resolve disputes.</p>
         <h2 id="s7">7. Data Retention</h2>
-        <p>We retain your information for as long as your account is active. If you delete your account, we permanently delete your data within 30 days, except where we're required by law to retain it longer.</p>
+        <p>We retain your information for as long as your account is active. If you delete your account, we delete your personal information within 30 days, except as described in section 6 or where we're required by law to retain it longer.</p>
         <h2 id="s8">8. Children's Privacy</h2>
         <p>Kova requires all users to be at least 18 years old. We ask for your date of birth when you create an account, and we block account creation for anyone who enters a birth date showing they're under 18. We rely on the information you provide and do not independently verify your age. If we later learn that a user misrepresented their age, we will delete their account.</p>
         <p>Our waitlist, for students at schools where Kova is not yet available, is not intended for children under 13. If we learn we've collected information from a child under 13 through the waitlist, we will delete it.</p>
@@ -642,13 +643,7 @@
         </ul>
         <p>We will never sell your contact information or send spam.</p>
         <h2 id="s11">11. Cookies and Tracking</h2>
-        <p>Our mobile app does not use cookies. We use Firebase Analytics to understand how users interact with our app, which may collect:</p>
-        <ul>
-          <li>Device type and operating system</li>
-          <li>App usage patterns (anonymized)</li>
-          <li>Crash reports to improve stability</li>
-        </ul>
-        <p>This data is anonymized and cannot be used to identify you personally.</p>
+        <p>Our mobile app does not use cookies, analytics, advertising trackers or crash reporting tools.</p>
         <h2 id="s12">12. Updates to This Policy</h2>
         <p>We may update this Privacy Policy from time to time. We will notify you of any significant changes by:</p>
         <ul>
@@ -684,6 +679,7 @@
             <a href="https://ridekova.notion.site/waitlist" target="_blank" rel="noopener" class="footer-link">Waitlist</a>
             <a href="/terms" class="footer-link">Terms of Service</a>
             <a href="/privacy" class="footer-link">Privacy Policy</a>
+            <a href="/delete-account" class="footer-link">Delete Account</a>
           </nav>
         </div>
 
